@@ -1,0 +1,11 @@
+export { default as ArrowDown } from "./ArrowDown";
+export { default as Check } from "./Check";
+export { default as Facebook } from "./Facebook";
+export { default as ForkKnife } from "./ForkKnife";
+export { default as Heart } from "./Heart";
+export { default as Instagram } from "./Instagram";
+export { default as PlayBtn } from "./PlayBtn";
+export { default as Printer } from "./Printer";
+export { default as Share } from "./Share";
+export { default as Timer } from "./Timer";
+export { default as Twitter } from "./Twitter";

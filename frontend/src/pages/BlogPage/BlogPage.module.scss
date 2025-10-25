@@ -1,0 +1,22 @@
+.blog {
+  padding: 2rem;
+
+  .posts {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .post {
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: 0.2s ease;
+
+    &:hover {
+      border-color: #bbb;
+      background-color: #fafafa;
+    }
+  }
+}
