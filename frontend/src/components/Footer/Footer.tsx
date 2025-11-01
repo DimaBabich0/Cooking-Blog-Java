@@ -1,5 +1,5 @@
 import { Facebook, Instagram, Twitter } from '../../iconComponents';
-import styles from './Footer.module.scss';  
+import styles from './Footer.module.scss';
 import { Link } from 'react-router-dom';
 const Footer = () => {
     return <footer>

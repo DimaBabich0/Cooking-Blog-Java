@@ -1,0 +1,68 @@
+.post_card{
+    display: flex;
+    gap: 2.5rem;
+    align-items: center;
+
+    .post_card_image{
+        border-radius: 1.25rem;
+        height: 100%;
+        width: 100%;
+        max-width: 290px;
+    }
+    .post_card_info{
+        display: flex;
+        flex-direction: column;
+        padding: .75rem 0;
+        .description{
+            margin: 1rem 0 2rem 0;
+        }
+        .bottom{
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            .author{
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                img{
+                    border-radius: 50%;
+                    width: 40px;
+                    height: 40px;
+                }
+                p{
+                    font-weight: 700;
+                }
+            }
+            .separator{
+                width: 1px;
+                height: 40px;
+                background: #00000010;
+            }
+            
+        }
+        .small_card_bottom{
+            display: none;
+        }
+    }
+}
+
+.small_post_card{
+    gap: 1.5rem;
+    .post_card_image{
+        max-width: 180px;
+    }
+    .post_card_info{
+        gap: 1rem;
+        .description, .bottom{
+             display: none;
+        }
+        .small_card_bottom{
+            display: block;
+        }
+    }
+    h4{
+        font-size: 1.25rem;
+        line-height: 1.75rem;
+    }
+
+}

@@ -50,6 +50,9 @@ dd {
   margin: 0;
 }
 
+a, button, input[type="submit"]{
+  cursor: pointer;
+}
 /* Выставляем основные настройки по-умолчанию для body */
 body {
   min-height: 100vh;
