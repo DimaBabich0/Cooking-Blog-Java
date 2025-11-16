@@ -1,0 +1,249 @@
+/* ===== Common things ===== */
+
+* {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/*
+input[type="file"] {
+    display: none;
+}
+*/
+
+.btn {
+    padding: 10px 25px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.2s;
+    color: white;
+}
+
+.btn-create,
+.btn-save,
+.btn-view {
+    background: #3a7ee2;
+}
+.btn-create:hover,
+.btn-save:hover,
+.btn-view:hover {
+    background: #1d5fba;
+}
+
+.btn-edit { background: #f0ad4e; }
+.btn-edit:hover { background: #dd9f46; }
+
+.btn-delete { background: #e44949; }
+.btn-delete:hover { background: #c53b3b; }
+
+.btn-back { background: #777; }
+.btn-back:hover { background: #555; }
+
+/* ===== UsersPage ===== */
+
+.usersPage {
+    padding: 20px;
+}
+
+.usersPage-title {
+    font-size: 26px;
+    margin-bottom: 20px;
+}
+
+/* ===== UsersList ===== */
+
+.usersTable {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 0 6px rgba(0,0,0,0.1);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.usersTable-head th {
+    background: #f5f5f5;
+    padding: 12px;
+    font-weight: 600;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.usersTable-cell {
+    padding: 0px 10px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.usersTable-row:hover {
+    background: #fafafa;
+}
+
+.usersTable-actions {
+    padding: 10px;
+    display: flex;
+    gap: 8px;
+}
+
+/* ===== UserViewPage ===== */
+
+.userView-container {
+    display: flex;
+    justify-content: center;
+    padding: 40px;
+}
+
+.userView-card {
+    width: 550px;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.userView-photo-wrapper {
+    margin-bottom: 20px;
+}
+
+.userView-photo {
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 2px solid #ddd;
+}
+
+.userView-info {
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+.userView-info h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.userView-field {
+    font-size: 16px;
+    margin: 8px 0;
+}
+
+.userView-actions {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+/* ===== UserEditPage ===== */
+
+.userEdit-container {
+    display: flex;
+    justify-content: center;
+    padding: 40px;
+}
+
+.userEdit-card {
+    width: 450px;
+    background: #fff;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+}
+
+.userEdit-title {
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.userEdit-photo-wrapper {
+    margin-bottom: 15px;
+}
+
+.userEdit-photo {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 2px solid #ddd;
+}
+
+.userEdit-label {
+    align-self: flex-start;
+    font-weight: bold;
+}
+
+.userEdit-input {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.userEdit-actions {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* ===== UserCreatePage ===== */
+
+.userCreate-container {
+    display: flex;
+    justify-content: center;
+    padding: 40px;
+}
+
+.userCreate-card {
+    width: 450px;
+    background: #fff;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+}
+
+.userCreate-title {
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.userCreate-label {
+    align-self: flex-start;
+    font-weight: bold;
+}
+
+.userCreate-PhotoLabel {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.userCreate-PhotoLabel:hover { background: #e4e4e4; }
+
+
+.userCreate-input {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.userCreate-actions {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 10px;
+}
