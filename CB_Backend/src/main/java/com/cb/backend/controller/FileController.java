@@ -14,7 +14,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/files")
 public class FileController {
-
     private final FileStorageService storageService;
 
     public FileController(FileStorageService storageService) {

@@ -5,9 +5,14 @@ import {deleteUser} from "../api/usersApi.js";
 export default function UsersList({ users }) {
     const navigate = useNavigate();
     async function handleDelete(id) {
-        if (!confirm("Delete this user?")) return;
-        await deleteUser(id);
-        navigate("/users");
+        try {
+            if (!confirm("Delete this user?")) return;
+            await deleteUser(id);
+            alert("Deleted user: " + id);
+            location.reload();
+        } catch (e) {
+            alert("Error while deleting user: " + e);
+        }
     }
 
     return (

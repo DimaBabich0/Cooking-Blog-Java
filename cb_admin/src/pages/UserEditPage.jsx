@@ -24,9 +24,13 @@ export default function UserEditPage() {
     }
 
     async function save() {
-        await updateUser(id, user);
-        alert("Saved!");
-        navigate(`/users/${id}`);
+        try {
+            await updateUser(id, user);
+            alert("Saved!");
+            navigate(`/users/${id}`);
+        } catch (e) {
+            alert("Error while trying update user: " + e.message);
+        }
     }
 
     if (loading) return <p>Loading...</p>;

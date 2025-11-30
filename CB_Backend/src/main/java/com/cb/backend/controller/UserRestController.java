@@ -1,5 +1,6 @@
 package com.cb.backend.controller;
 
+import com.cb.backend.dto.UserDto;
 import com.cb.backend.model.User;
 import com.cb.backend.service.UserService;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +10,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/users")
 public class UserRestController {
-
     private final UserService userService;
 
     public UserRestController(UserService userService) {
@@ -22,8 +22,8 @@ public class UserRestController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userService.save(user);
+    public User createUser(@RequestBody UserDto user) {
+        return userService.createUser(user);
     }
 
     @GetMapping("/{id}")
@@ -32,9 +32,9 @@ public class UserRestController {
     }
 
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable("id") Long id, @RequestBody User user) {
+    public User updateUser(@PathVariable("id") Long id, @RequestBody UserDto user) {
         user.setId(id);
-        return userService.save(user);
+        return userService.updateUser(id, user);
     }
 
     @DeleteMapping("/{id}")

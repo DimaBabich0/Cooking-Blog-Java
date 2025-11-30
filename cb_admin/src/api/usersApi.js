@@ -1,8 +1,7 @@
-const API_URL = "http://localhost:8080/api/users";
-const UPLOAD_URL = "http://localhost:8080/api/files/upload";
+const USER_API = "http://localhost:8080/api/users";
 
 export async function getUsers() {
-    const res = await fetch(API_URL);
+    const res = await fetch(USER_API);
     if (!res.ok) {
         throw new Error("Error loading users");
     }
@@ -10,7 +9,7 @@ export async function getUsers() {
 }
 
 export async function getUser(id) {
-    const res = await fetch(`${API_URL}/${id}`);
+    const res = await fetch(`${USER_API}/${id}`);
     if (!res.ok) {
         throw new Error("Error loading user");
     }
@@ -18,39 +17,31 @@ export async function getUser(id) {
 }
 
 export async function createUser(user) {
-    const res = await fetch(API_URL, {
+    const res = await fetch(USER_API, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(user),
     });
     if (!res.ok) {
-        throw new Error("Error creating user");
+        const err = await res.json();
+        throw new Error(err.error || "Error creating user");
     }
     return res.json();
 }
 
 export async function updateUser(id, user) {
-    const res = await fetch(`${API_URL}/${id}`, {
+    const res = await fetch(`${USER_API}/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(user),
     });
     if (!res.ok) {
-        throw new Error("Error update user");
+        const err = await res.json();
+        throw new Error(err.error || "Error updating user");
     }
     return res.json();
 }
 
 export async function deleteUser(id) {
-    await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-}
-
-export async function uploadFile(formData) {
-    const res = await fetch(UPLOAD_URL, {
-        method: "POST",
-        body: formData,
-    });
-    if (!res.ok) throw new Error("Error uploading file");
-    const data = await res.json();
-    return data.path;
+    await fetch(`${USER_API}/${id}`, {method: "DELETE"});
 }

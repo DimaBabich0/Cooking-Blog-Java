@@ -1,7 +1,6 @@
 package com.cb.backend.dto;
 
-import java.time.LocalDateTime;
-
+import java.time.LocalDate;
 import jakarta.validation.constraints.*;
 
 public class UserDto {
@@ -27,6 +26,8 @@ public class UserDto {
     private String photoUrl;
 
     private String password;
+    
+    private LocalDate createdAt;
 
     // --- Getters & Setters ---
     public Long getId() { return id; }
@@ -52,4 +53,7 @@ public class UserDto {
 
     public String getPhotoUrl() { return photoUrl; }
     public void setPhotoUrl(String photoUrl) { this.photoUrl = photoUrl; }
+    
+    public LocalDate getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDate createdAt) { this.createdAt = createdAt; }
 }

@@ -13,7 +13,6 @@ import java.util.UUID;
 
 @Service
 public class FileStorageService {
-
     private final Path fileStorageLocation;
 
     public FileStorageService(FileStorageProperties properties) {
@@ -29,17 +28,14 @@ public class FileStorageService {
 
     public String storeFile(MultipartFile file) {
         String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
-
         String fileName = UUID.randomUUID() + "-" + originalFileName;
 
         try {
             if(fileName.contains("..")) {
                 throw new RuntimeException("Filename contains invalid path sequence " + fileName);
             }
-
             Path targetLocation = this.fileStorageLocation.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation);
-
             return fileName;
         } catch (IOException ex) {
             throw new RuntimeException("Could not store file " + fileName, ex);

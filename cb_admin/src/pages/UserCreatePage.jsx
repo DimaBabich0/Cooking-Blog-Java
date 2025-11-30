@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createUser, uploadFile } from "../api/usersApi";
+import { createUser } from "../api/usersApi";
+import { uploadFile } from "../api/filesApi.js";
 
 export default function UserCreatePage() {
     const navigate = useNavigate();
@@ -14,17 +15,19 @@ export default function UserCreatePage() {
         photoUrl: "",
     });
 
+    const fileInputRef = useRef(null);
+    const [uploading, setUploading] = useState(false);
+
     async function handlePhotoUpload(file) {
+        if (!file) return;
         setUploading(true);
+
         try {
             const formData = new FormData();
             formData.append("file", file);
 
-            const uploadedFileName = await uploadFile(formData);
-            setUser(prev => ({
-                ...prev,
-                photoUrl: `http://localhost:8080/api/files/images/${uploadedFileName}`
-            }));
+            const uploadedPath = await uploadFile(formData);
+            setUser({ ...user, photoUrl: "http://localhost:8080/api/files/images/" + uploadedPath });
         } catch (e) {
             alert("Ошибка загрузки фото: " + e.message);
         } finally {
@@ -32,7 +35,17 @@ export default function UserCreatePage() {
         }
     }
 
+    function handleChooseFile() {
+        fileInputRef.current.click();
+    }
+
+    function onFileSelected(e) {
+        const file = e.target.files[0];
+        if (file) handlePhotoUpload(file);
+    }
+
     async function handleSave() {
+        console.log(user);
         try {
             await createUser(user);
             alert("User created successfully!");
@@ -55,16 +68,19 @@ export default function UserCreatePage() {
                     />
                 )}
 
-                <label className="userCreate-PhotoLabel">Photo Upload</label>
                 <input
                     type="file"
                     accept="image/*"
-                    onChange={e => {
-                        const file = e.target.files[0];
-                        setPhotoFile(file);
-                        if (file) handlePhotoUpload(file); // вызываем после выбора
-                    }}
+                    ref={fileInputRef}
+                    onChange={onFileSelected}
                 />
+                <button
+                    className="btn btn-view"
+                    onClick={handleChooseFile}
+                    disabled={uploading}
+                >
+                    {uploading ? "Загрузка..." : "Загрузить фото"}
+                </button>
 
                 <label className="userCreate-label">Username:</label>
                 <input
