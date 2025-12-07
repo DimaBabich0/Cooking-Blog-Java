@@ -45,3 +45,11 @@ export async function updateUser(id, user) {
 export async function deleteUser(id) {
     await fetch(`${USER_API}/${id}`, {method: "DELETE"});
 }
+
+export async function getRoles() {
+    const res = await fetch("http://localhost:8080/api/roles");
+    if (!res.ok) {
+        throw new Error("Error loading users");
+    }
+    return res.json();
+}

@@ -1,5 +1,6 @@
 package com.cb.backend.mapper;
 
+import com.cb.backend.model.Role;
 import com.cb.backend.model.User;
 import com.cb.backend.dto.UserDto;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -12,7 +13,7 @@ public class UserMapper {
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
         dto.setEmail(user.getEmail());
-        dto.setRole(user.getRole());
+        dto.setRole(user.getRole() != null ? user.getRole().name() : null);
         dto.setPhotoUrl(user.getPhotoUrl());
         dto.setCreatedAt(user.getCreatedAt());
         return dto;
@@ -23,7 +24,9 @@ public class UserMapper {
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setEmail(dto.getEmail());
-        user.setRole(dto.getRole());
+        if (dto.getRole() != null) {
+            user.setRole(Role.fromString(dto.getRole()));
+        }
         user.setPhotoUrl(dto.getPhotoUrl());
         user.setCreatedAt(dto.getCreatedAt());
 

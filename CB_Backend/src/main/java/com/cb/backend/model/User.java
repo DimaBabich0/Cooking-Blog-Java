@@ -28,8 +28,8 @@ public class User {
     @Column(name = "password_salt", length = 255)
     private String passwordSalt;
 
-    @Column(length = 20)
-    private String role;
+    @Column(nullable = false)
+    private Role role;
 
     @Column(name = "photo_url", length = 255)
     private String photoUrl;
@@ -64,8 +64,8 @@ public class User {
     public String getPasswordSalt() { return passwordSalt; }
     public void setPasswordSalt(String passwordSalt) { this.passwordSalt = passwordSalt; }
 
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
 
     public String getPhotoUrl() { return photoUrl; }
     public void setPhotoUrl(String photoUrl) { this.photoUrl = photoUrl; }

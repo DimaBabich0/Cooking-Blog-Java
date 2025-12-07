@@ -1,6 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { useNavigate } from "react-router-dom";
-import { createUser } from "../api/usersApi";
+import {createUser, getRoles, getUser} from "../api/usersApi";
 import { uploadFile } from "../api/filesApi.js";
 
 export default function UserCreatePage() {
@@ -14,6 +14,23 @@ export default function UserCreatePage() {
         role: "",
         photoUrl: "",
     });
+    const [roles, setRoles] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        load();
+    }, []);
+
+    async function load() {
+        try {
+            setLoading(true);
+            const roles = await getRoles();
+            console.log(roles);
+            setRoles(roles);
+        } finally {
+            setLoading(false);
+        }
+    }
 
     const fileInputRef = useRef(null);
     const [uploading, setUploading] = useState(false);
@@ -54,6 +71,8 @@ export default function UserCreatePage() {
             alert("Error while trying create user: " + e.message);
         }
     }
+
+    if (loading) return <p>Loading...</p>;
 
     return (
         <div className="userCreate-container">
@@ -119,12 +138,16 @@ export default function UserCreatePage() {
                 />
 
                 <label className="userCreate-label">Role:</label>
-                <input
+                <select
                     className="userCreate-input"
-                    type="text"
                     value={user.role}
                     onChange={e => setUser({ ...user, role: e.target.value })}
-                />
+                >
+                    <option value="" disabled selected>Select role</option>
+                    {roles.map(r => (
+                        <option key={r} value={r}>{r}</option>
+                    ))}
+                </select>
 
                 <div className="userCreate-actions">
                     <button className="btn btn-create" onClick={handleSave}>Create</button>

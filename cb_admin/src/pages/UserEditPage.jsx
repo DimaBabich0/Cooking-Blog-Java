@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getUser, updateUser } from "../api/usersApi";
+import {getRoles, getUser, updateUser} from "../api/usersApi";
 
 export default function UserEditPage() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
+    const [roles, setRoles] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -18,6 +19,10 @@ export default function UserEditPage() {
             const data = await getUser(id);
             console.log(data);
             setUser(data);
+
+            const roles = await getRoles();
+            console.log(roles);
+            setRoles(roles);
         } finally {
             setLoading(false);
         }
@@ -78,11 +83,15 @@ export default function UserEditPage() {
                 />
 
                 <label className="userEdit-label">Role:</label>
-                <input
+                <select
                     className="userEdit-input"
                     value={user.role}
                     onChange={e => setUser({ ...user, role: e.target.value })}
-                />
+                >
+                    {roles.map(r => (
+                        <option key={r} value={r}>{r}</option>
+                    ))}
+                </select>
 
                 <div className="userEdit-actions">
                     <button className="btn btn-save" onClick={save}>Save</button>
