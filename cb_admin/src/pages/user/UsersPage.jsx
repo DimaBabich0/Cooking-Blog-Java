@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import UsersList from "../components/UsersList";
-import { getUsers } from "../api/usersApi";
+import UsersList from "../../components/UsersList.jsx";
+import { getUsers } from "../../api/usersApi.js";
 
 export default function UsersPage() {
     const navigate = useNavigate();

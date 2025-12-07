@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {getRoles, getUser, updateUser} from "../api/usersApi";
+import {getRoles, getUser, updateUser} from "../../api/usersApi.js";
 
 export default function UserEditPage() {
     const { id } = useParams();

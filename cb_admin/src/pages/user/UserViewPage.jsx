@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getUser, deleteUser } from "../api/usersApi";
+import { getUser, deleteUser } from "../../api/usersApi.js";
 
 export default function UserViewPage() {
     const { id } = useParams();
