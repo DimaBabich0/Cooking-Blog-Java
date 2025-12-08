@@ -6,8 +6,10 @@ public class BlogDto {
     private Long id;
     private String title;
     private Long userId;
-    private String text;
+    private String username;
+    private String photoUrl;
     private String description;
+    private String text;
     private Integer cookingTime;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -22,11 +24,17 @@ public class BlogDto {
     public Long getUserId() { return userId; }
     public void setUserId(Long userId) { this.userId = userId; }
 
-    public String getText() { return text; }
-    public void setText(String text) { this.text = text; }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
+    public String getPhotoUrl() { return photoUrl; }
+	public void setPhotoUrl(String photoUrl) { this.photoUrl = photoUrl; }
+    
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
+    public String getText() { return text; }
+    public void setText(String text) { this.text = text; }
 
     public Integer getCookingTime() { return cookingTime; }
     public void setCookingTime(Integer cookingTime) { this.cookingTime = cookingTime; }

@@ -9,10 +9,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
-public class UserRestController {
+public class UserController {
     private final UserService userService;
 
-    public UserRestController(UserService userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
@@ -21,14 +21,14 @@ public class UserRestController {
         return userService.findAll();
     }
 
-    @PostMapping
-    public User createUser(@RequestBody UserDto user) {
-        return userService.createUser(user);
-    }
-
     @GetMapping("/{id}")
     public User getUser(@PathVariable("id") Long id) {
         return userService.findById(id);
+    }
+    
+    @PostMapping
+    public User createUser(@RequestBody UserDto user) {
+        return userService.createUser(user);
     }
 
     @PutMapping("/{id}")

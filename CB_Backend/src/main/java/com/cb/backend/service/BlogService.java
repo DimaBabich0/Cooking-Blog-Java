@@ -28,12 +28,12 @@ public class BlogService {
     }
 
     public BlogDto findById(Long id) {
-        return blogRepository.findById(id)
+    	return blogRepository.findById(id)
                 .map(BlogMapper::toDto)
                 .orElse(null);
     }
 
-    public BlogDto create(BlogDto dto) {
+    public BlogDto createBlog(BlogDto dto) {
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Blog blog = new Blog();
@@ -41,7 +41,7 @@ public class BlogService {
         return BlogMapper.toDto(blogRepository.save(blog));
     }
 
-    public BlogDto update(Long id, BlogDto dto) {
+    public BlogDto updateBlog(Long id, BlogDto dto) {
         Blog blog = blogRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Blog not found"));
         User user = userRepository.findById(dto.getUserId())

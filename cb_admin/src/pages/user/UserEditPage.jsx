@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {getRoles, getUser, updateUser} from "../../api/usersApi.js";
+import { getRoles, getUser, updateUser } from "../../api/usersApi.js";
+import { UserDto } from "../../models/UserDto.js";
+import "../../css/EditPage.css"
 
 export default function UserEditPage() {
     const { id } = useParams();
@@ -16,9 +18,9 @@ export default function UserEditPage() {
     async function load() {
         try {
             setLoading(true);
-            const data = await getUser(id);
-            console.log(data);
-            setUser(data);
+            const user = await getUser(id);
+            console.log(user);
+            setUser({...UserDto, ...user});
 
             const roles = await getRoles();
             console.log(roles);
@@ -28,7 +30,7 @@ export default function UserEditPage() {
         }
     }
 
-    async function save() {
+    async function handleSave() {
         try {
             await updateUser(id, user);
             alert("Saved!");
@@ -42,49 +44,49 @@ export default function UserEditPage() {
     if (!user) return <p>User not found</p>;
 
     return (
-        <div className="userEdit-container">
-            <div className="userEdit-card">
-                <div className="userEdit-photo-wrapper">
+        <div className="edit-container">
+            <div className="edit-card">
+                <div className="edit-photo-wrapper">
                     <img
-                        src={user.photoUrl || "https://via.placeholder.com/150"}
+                        src={user.photoUrl}
                         alt="user"
-                        className="userEdit-photo"
+                        className="edit-photo"
                     />
                 </div>
 
-                <h2 className="userEdit-title">Id: #{id}</h2>
+                <h2>Id: #{id}</h2>
 
-                <label className="userEdit-label">Username:</label>
+                <label className="edit-label">Username:</label>
                 <input
-                    className="userEdit-input"
+                    className="edit-input"
                     value={user.username}
                     onChange={e => setUser({ ...user, username: e.target.value })}
                 />
 
-                <label className="userEdit-label">Email:</label>
+                <label className="edit-label">Email:</label>
                 <input
-                    className="userEdit-input"
+                    className="edit-input"
                     value={user.email}
                     onChange={e => setUser({ ...user, email: e.target.value })}
                 />
 
-                <label className="userEdit-label">First name:</label>
+                <label className="edit-label">First name:</label>
                 <input
-                    className="userEdit-input"
+                    className="edit-input"
                     value={user.firstName}
                     onChange={e => setUser({ ...user, firstName: e.target.value })}
                 />
 
-                <label className="userEdit-label">Last name:</label>
+                <label className="edit-label">Last name:</label>
                 <input
-                    className="userEdit-input"
+                    className="edit-input"
                     value={user.lastName}
                     onChange={e => setUser({ ...user, lastName: e.target.value })}
                 />
 
-                <label className="userEdit-label">Role:</label>
+                <label className="edit-label">Role:</label>
                 <select
-                    className="userEdit-input"
+                    className="edit-input"
                     value={user.role}
                     onChange={e => setUser({ ...user, role: e.target.value })}
                 >
@@ -93,8 +95,8 @@ export default function UserEditPage() {
                     ))}
                 </select>
 
-                <div className="userEdit-actions">
-                    <button className="btn btn-save" onClick={save}>Save</button>
+                <div className="edit-actions">
+                    <button className="btn btn-save" onClick={handleSave}>Save</button>
                     <button className="btn btn-back" onClick={() => navigate(`/users/`)}>Back</button>
                 </div>
             </div>

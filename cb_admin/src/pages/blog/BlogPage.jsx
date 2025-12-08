@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import BlogsList from "../../components/BlogsList.jsx";
+import BlogsTable from "../../components/tables/BlogsTable.jsx";
 import { getBlogs } from "../../api/blogApi.js";
 
 export default function BlogsPage() {
@@ -20,9 +20,9 @@ export default function BlogsPage() {
 
     return (
         <div>
-            <h1>Blogs</h1>
-            <button onClick={() => navigate("/blogs/create")}>Create blog</button>
-            <BlogsList blogs={blogs} />
+            <h1 className="page-title">Blogs</h1>
+            <button className="btn btn-create" onClick={() => navigate("/blogs/create")}>Create blog</button>
+            <BlogsTable blogs={blogs} />
         </div>
     );
 }

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getUser, deleteUser } from "../../api/usersApi.js";
+import { UserDto } from "../../models/UserDto.js";
+import "../../css/ViewPage.css"
 
 export default function UserViewPage() {
     const { id } = useParams();
@@ -15,9 +17,9 @@ export default function UserViewPage() {
     async function load() {
         try {
             setLoading(true);
-            const data = await getUser(id);
-            console.log(data);
-            setUser(data);
+            const user = await getUser(id);
+            console.log(user);
+            setUser({...UserDto, ...user});
         } finally {
             setLoading(false);
         }
@@ -33,28 +35,28 @@ export default function UserViewPage() {
     if (!user) return <p>User not found</p>;
 
     return (
-        <div className="userView-container">
-            <div className="userView-card">
+        <div className="view-container">
+            <div className="view-card">
 
-                <div className="userView-photo-wrapper">
+                <div className="view-photo-wrapper">
                     <img
                         src={user.photoUrl}
                         alt="user"
-                        className="userView-photo"
+                        className="view-photo"
                     />
                 </div>
-                <h2 className="user-edit__title">Id: #{id}</h2>
+                <h2>Id: #{id}</h2>
 
-                <div className="userView-info">
-                    <div className="userView-field"><b>Username:</b> {user.username}</div>
-                    <div className="userView-field"><b>Email:</b> {user.email}</div>
-                    <div className="userView-field"><b>First name:</b> {user.firstName}</div>
-                    <div className="userView-field"><b>Last name:</b> {user.lastName}</div>
-                    <div className="userView-field"><b>Role:</b> {user.role}</div>
-                    <div className="userView-field"><b>Create date:</b> {user.createdAt}</div>
+                <div className="view-info">
+                    <div className="view-field"><b>Username:</b> {user.username}</div>
+                    <div className="view-field"><b>Email:</b> {user.email}</div>
+                    <div className="view-field"><b>First name:</b> {user.firstName}</div>
+                    <div className="view-field"><b>Last name:</b> {user.lastName}</div>
+                    <div className="view-field"><b>Role:</b> {user.role}</div>
+                    <div className="view-field"><b>Create date:</b> {user.createdAt}</div>
                 </div>
 
-                <div className="userView-actions">
+                <div className="view-actions">
                     <button className="btn btn-edit" onClick={() => navigate(`/users/${id}/edit`)}>
                         Edit
                     </button>

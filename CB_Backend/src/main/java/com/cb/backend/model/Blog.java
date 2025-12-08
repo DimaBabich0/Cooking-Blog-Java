@@ -17,12 +17,15 @@ public class Blog {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(name = "photo_url", length = 255)
+    private String photoUrl;
+    
+    @Column(length = 100)
+    private String description;
+    
     @Lob
     @Column(nullable = false)
     private String text;
-
-    @Column(length = 100)
-    private String description;
 
     @Column(name = "cooking_time")
     private Integer cookingTime;
@@ -54,11 +57,14 @@ public class Blog {
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
 
-    public String getText() { return text; }
-    public void setText(String text) { this.text = text; }
+    public String getPhotoUrl() { return photoUrl; }
+    public void setPhotoUrl(String photoUrl) { this.photoUrl = photoUrl; }
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+    
+    public String getText() { return text; }
+    public void setText(String text) { this.text = text; }
 
     public Integer getCookingTime() { return cookingTime; }
     public void setCookingTime(Integer cookingTime) { this.cookingTime = cookingTime; }

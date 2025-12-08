@@ -9,8 +9,10 @@ public class BlogMapper {
     public static BlogDto toDto(Blog blog) {
         BlogDto dto = new BlogDto();
         dto.setId(blog.getId());
-        dto.setTitle(blog.getTitle());
         dto.setUserId(blog.getUser() != null ? blog.getUser().getId() : null);
+        dto.setUsername(blog.getUser() != null ? blog.getUser().getUsername() : null);
+        dto.setPhotoUrl(blog.getPhotoUrl());
+        dto.setTitle(blog.getTitle());
         dto.setText(blog.getText());
         dto.setDescription(blog.getDescription());
         dto.setCookingTime(blog.getCookingTime());
@@ -20,6 +22,7 @@ public class BlogMapper {
     }
 
     public static void updateEntity(Blog blog, BlogDto dto, User user) {
+        blog.setPhotoUrl(dto.getPhotoUrl());
         blog.setTitle(dto.getTitle());
         blog.setUser(user);
         blog.setText(dto.getText());

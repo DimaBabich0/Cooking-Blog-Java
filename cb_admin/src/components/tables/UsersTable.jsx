@@ -1,8 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import {deleteUser} from "../api/usersApi.js";
+import { deleteUser } from "../../api/usersApi.js";
+import "../../css/Table.css"
 
-export default function UsersList({ users }) {
+export default function UsersTable({ users }) {
     const navigate = useNavigate();
     async function handleDelete(id) {
         try {
@@ -16,26 +17,26 @@ export default function UsersList({ users }) {
     }
 
     return (
-        <table className="usersTable">
-            <thead className="usersTable-head">
+        <table className="table">
+            <thead className="table-head">
             <tr>
-                <th className="usersTable-cell">ID</th>
-                <th className="usersTable-cell">Username</th>
-                <th className="usersTable-cell">Email</th>
-                <th className="usersTable-cell">Role</th>
-                <th className="usersTable-cell">Actions</th>
+                <th className="table-cell">ID</th>
+                <th className="table-cell">Username</th>
+                <th className="table-cell">Email</th>
+                <th className="table-cell">Role</th>
+                <th className="table-cell">Actions</th>
             </tr>
             </thead>
 
-            <tbody className="usersTable-body">
+            <tbody className="table-body">
             {users.map(u => (
-                <tr key={u.id} className="usersTable-row">
-                    <td className="usersTable-cell">{u.id}</td>
-                    <td className="usersTable-cell">{u.username}</td>
-                    <td className="usersTable-cell">{u.email}</td>
-                    <td className="usersTable-cell">{u.role}</td>
+                <tr className="table-row" key={u.id}>
+                    <td className="table-cell">{u.id}</td>
+                    <td className="table-cell">{u.username}</td>
+                    <td className="table-cell">{u.email}</td>
+                    <td className="table-cell">{u.role}</td>
 
-                    <td className="usersTable-actions">
+                    <td className="table-actions">
                         <button className="btn btn-view" onClick={() => navigate(`/users/${u.id}`)}>
                             View
                         </button>

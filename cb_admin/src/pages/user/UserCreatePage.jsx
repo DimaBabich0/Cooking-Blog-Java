@@ -2,31 +2,27 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUser, getRoles } from "../../api/usersApi.js";
 import { uploadFile } from "../../api/filesApi.js";
+import { UserDto } from "../../models/UserDto.js";
+import "../../css/CreatePage.css"
 
 export default function UserCreatePage() {
     const navigate = useNavigate();
-    const [user, setUser] = useState({
-        username: "",
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        role: "",
-        photoUrl: "",
-    });
+    const [user, setUser] = useState({ ...UserDto });
     const [roles, setRoles] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        load();
+        loadRoles()
+            .then((roles) => setRoles(roles));
     }, []);
 
-    async function load() {
+    async function loadRoles() {
         try {
-            setLoading(true);
             const roles = await getRoles();
             console.log(roles);
-            setRoles(roles);
+            return roles;
+        } catch (e) {
+            alert("Error while trying update user: " + e.message);
         } finally {
             setLoading(false);
         }
@@ -46,7 +42,7 @@ export default function UserCreatePage() {
             const uploadedPath = await uploadFile(formData);
             setUser({ ...user, photoUrl: "http://localhost:8080/api/files/images/" + uploadedPath });
         } catch (e) {
-            alert("Ошибка загрузки фото: " + e.message);
+            alert("Error while trying upload photo: " + e.message);
         } finally {
             setUploading(false);
         }
@@ -75,9 +71,9 @@ export default function UserCreatePage() {
     if (loading) return <p>Loading...</p>;
 
     return (
-        <div className="userCreate-container">
-            <div className="userCreate-card">
-                <h2 className="userCreate-title">Create new user</h2>
+        <div className="create-container">
+            <div className="create-card">
+                <h2 className="create-title">Create new user</h2>
 
                 {user.photoUrl && (
                     <img
@@ -98,48 +94,48 @@ export default function UserCreatePage() {
                     onClick={handleChooseFile}
                     disabled={uploading}
                 >
-                    {uploading ? "Загрузка..." : "Загрузить фото"}
+                    {uploading ? "Loading..." : "Load photo"}
                 </button>
 
-                <label className="userCreate-label">Username:</label>
+                <label className="create-label">Username:</label>
                 <input
-                    className="userCreate-input"
+                    className="create-input"
                     value={user.username}
                     onChange={e => setUser({ ...user, username: e.target.value })}
                 />
 
-                <label className="userCreate-label">Email:</label>
+                <label className="create-label">Email:</label>
                 <input
-                    className="userCreate-input"
+                    className="create-input"
                     value={user.email}
                     onChange={e => setUser({ ...user, email: e.target.value })}
                 />
 
-                <label className="userCreate-label">First name:</label>
+                <label className="create-label">First name:</label>
                 <input
-                    className="userCreate-input"
+                    className="create-input"
                     value={user.firstName}
                     onChange={e => setUser({ ...user, firstName: e.target.value })}
                 />
 
-                <label className="userCreate-label">Last name:</label>
+                <label className="create-label">Last name:</label>
                 <input
-                    className="userCreate-input"
+                    className="create-input"
                     value={user.lastName}
                     onChange={e => setUser({ ...user, lastName: e.target.value })}
                 />
 
-                <label className="userCreate-label">Password:</label>
+                <label className="create-label">Password:</label>
                 <input
-                    className="userCreate-input"
+                    className="create-input"
                     type="password"
                     value={user.password}
                     onChange={e => setUser({ ...user, password: e.target.value })}
                 />
 
-                <label className="userCreate-label">Role:</label>
+                <label className="create-label">Role:</label>
                 <select
-                    className="userCreate-input"
+                    className="create-input"
                     value={user.role}
                     onChange={e => setUser({ ...user, role: e.target.value })}
                 >
@@ -149,7 +145,7 @@ export default function UserCreatePage() {
                     ))}
                 </select>
 
-                <div className="userCreate-actions">
+                <div className="create-actions">
                     <button className="btn btn-create" onClick={handleSave}>Create</button>
                     <button className="btn btn-back" onClick={() => navigate("/users")}>Back</button>
                 </div>

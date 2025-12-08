@@ -1,32 +1,16 @@
 package com.cb.backend.dto;
 
 import java.time.LocalDate;
-import jakarta.validation.constraints.*;
 
 public class UserDto {
     private Long id;
-
-    @NotBlank
-    @Size(max = 30)
     private String username;
-
-    @Size(max = 30)
     private String firstName;
-
-    @Size(max = 30)
     private String lastName;
-
-    @Email
-    @NotBlank
-    @Size(max = 100)
     private String email;
-
     private String role;
-
     private String photoUrl;
-
     private String password;
-    
     private LocalDate createdAt;
 
     // --- Getters & Setters ---

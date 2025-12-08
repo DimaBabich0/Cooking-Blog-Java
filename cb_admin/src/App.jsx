@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+import MainPage from "./pages/MainPage.jsx";
+
 import UsersPage from "./pages/user/UsersPage.jsx";
 import UserCreatePage from "./pages/user/UserCreatePage.jsx";
 import UserViewPage from "./pages/user/UserViewPage.jsx";
@@ -23,7 +25,8 @@ export default function App() {
         <BrowserRouter>
             <Navbar />
             <Routes>
-                <Route path="/" element={<UsersPage />} />
+                <Route path="/" element={<MainPage />} />
+
                 <Route path="/users" element={<UsersPage />} />
                 <Route path="/users/create" element={<UserCreatePage />} />
                 <Route path="/users/:id" element={<UserViewPage />} />
