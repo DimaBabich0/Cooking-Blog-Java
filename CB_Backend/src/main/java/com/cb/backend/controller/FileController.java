@@ -21,15 +21,19 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public Map<String, String> uploadFile(@RequestParam("file") MultipartFile file) {
-        String fileName = storageService.storeFile(file);
-        return Map.of("path", fileName);
+    public Map<String, String> uploadFile(
+    		@RequestParam("file") MultipartFile file,
+    		@RequestParam("folder") String folder) {
+    	String fileName = storageService.storeFile(file, folder);
+        return Map.of("path", folder + "/" + fileName);
     }
 
-    @GetMapping("/images/{fileName:.+}")
-    public ResponseEntity<byte[]> getFile(@PathVariable("fileName") String fileName) {
+    @GetMapping("/images/{folder}/{fileName:.+}")
+    public ResponseEntity<byte[]> getFile(
+            @PathVariable("folder") String folder,
+            @PathVariable("fileName") String fileName) {
         try {
-            Path path = storageService.loadFile(fileName);
+            Path path = storageService.loadFile(folder, fileName);
             byte[] bytes = Files.readAllBytes(path);
 
             String contentType = Files.probeContentType(path);

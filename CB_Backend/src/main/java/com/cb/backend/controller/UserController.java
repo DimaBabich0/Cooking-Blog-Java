@@ -1,7 +1,6 @@
 package com.cb.backend.controller;
 
 import com.cb.backend.dto.UserDto;
-import com.cb.backend.model.User;
 import com.cb.backend.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,22 +16,22 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
+    public List<UserDto> getAllUsers() {
         return userService.findAll();
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable("id") Long id) {
+    public UserDto getUser(@PathVariable("id") Long id) {
         return userService.findById(id);
     }
     
     @PostMapping
-    public User createUser(@RequestBody UserDto user) {
+    public UserDto createUser(@RequestBody UserDto user) {
         return userService.createUser(user);
     }
 
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable("id") Long id, @RequestBody UserDto user) {
+    public UserDto updateUser(@PathVariable("id") Long id, @RequestBody UserDto user) {
         user.setId(id);
         return userService.updateUser(id, user);
     }

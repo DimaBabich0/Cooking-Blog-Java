@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getRoles, getUser, updateUser } from "../../api/usersApi.js";
 import { UserDto } from "../../models/UserDto.js";
 import "../../css/EditPage.css"
+import PhotoUploader from "../../components/PhotoUploader.jsx";
 
 export default function UserEditPage() {
     const { id } = useParams();
@@ -46,13 +47,11 @@ export default function UserEditPage() {
     return (
         <div className="edit-container">
             <div className="edit-card">
-                <div className="edit-photo-wrapper">
-                    <img
-                        src={user.photoUrl}
-                        alt="user"
-                        className="edit-photo"
-                    />
-                </div>
+                <PhotoUploader
+                    folder="avatars"
+                    initialUrl={user.photoUrl}
+                    onUpload={(url) => setUser({ ...user, photoUrl: url })}
+                />
 
                 <h2>Id: #{id}</h2>
 

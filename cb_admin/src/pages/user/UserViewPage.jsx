@@ -40,7 +40,7 @@ export default function UserViewPage() {
 
                 <div className="view-photo-wrapper">
                     <img
-                        src={user.photoUrl}
+                        src={"http://localhost:8080/api/files/images/" + user.photoUrl}
                         alt="user"
                         className="view-photo"
                     />

@@ -6,6 +6,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "CB_USERS")
 public class User {
+	// --- Variables ---
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -37,6 +38,7 @@ public class User {
     @Column(name = "created_at")
     private LocalDate createdAt;
 
+    // --- Methods ---
     @PrePersist
     public void onCreate() {
         this.createdAt = LocalDate.now();

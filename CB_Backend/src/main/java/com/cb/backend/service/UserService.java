@@ -6,6 +6,7 @@ import com.cb.backend.model.User;
 import com.cb.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -15,25 +16,29 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<UserDto> findAll() {
+        return userRepository.findAll().stream()
+                .map(UserMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public User findById(Long id) {
-        return userRepository.findById(id).orElse(null);
+    public UserDto findById(Long id) {
+        return userRepository.findById(id)
+        		.map(UserMapper::toDto)
+        		.orElse(null);
     }
 
-    public User createUser(UserDto dto) {
+    public UserDto createUser(UserDto dto) {
         User user = new User();
         UserMapper.updateEntity(user, dto);
-        return userRepository.save(user);
+        return UserMapper.toDto(userRepository.save(user));
     }
     
-    public User updateUser(Long id, UserDto dto) {
+    public UserDto updateUser(Long id, UserDto dto) {
         User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("User not found"));
         UserMapper.updateEntity(user, dto);
-        return userRepository.save(user);
+        return UserMapper.toDto(userRepository.save(user));
     }
 
     public void deleteById(Long id) {

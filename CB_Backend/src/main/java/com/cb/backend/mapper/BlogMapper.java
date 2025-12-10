@@ -5,7 +5,6 @@ import com.cb.backend.model.Blog;
 import com.cb.backend.model.User;
 
 public class BlogMapper {
-
     public static BlogDto toDto(Blog blog) {
         BlogDto dto = new BlogDto();
         dto.setId(blog.getId());

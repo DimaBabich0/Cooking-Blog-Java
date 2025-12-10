@@ -2,18 +2,20 @@ package com.cb.backend.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "CB_BLOGS")
-public class Blog {
-	// --- Variables ---
+@Table(name = "CB_RECIPES")
+public class Recipe {
+	//--- Variables ---
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(length = 100, nullable = false)
     private String title;
-
+    
     @Column(length = 100)
     private String description;
     
@@ -32,12 +34,27 @@ public class Blog {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    // --- Relationships ---
+    
+    //--- Relationships ---
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
     
+    @ManyToMany
+    @JoinTable(
+    		name = "CB_RECIPE_CATEGORIES",
+    		joinColumns = @JoinColumn(name = "recipe_id"),
+    		inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private List<Category> categories = new ArrayList<>();;
+    
+    @OneToMany(
+    		mappedBy = "recipe",
+    		cascade = CascadeType.ALL,
+    		orphanRemoval = true
+    )
+    private List<Ingredient> ingredients = new ArrayList<>();;
+
     // --- Methods ---
     @PrePersist
     public void onCreate() {
@@ -62,7 +79,7 @@ public class Blog {
     
     public String getText() { return text; }
     public void setText(String text) { this.text = text; }
-
+    
     public String getPhotoUrl() { return photoUrl; }
     public void setPhotoUrl(String photoUrl) { this.photoUrl = photoUrl; }
 
@@ -74,7 +91,11 @@ public class Blog {
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
-
+    
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
+    
+    public List<Category> getCategories() { return categories; }
+    
+    public List<Ingredient> getIngredients() { return ingredients; }
 }

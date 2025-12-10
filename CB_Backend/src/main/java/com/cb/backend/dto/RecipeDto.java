@@ -1,8 +1,9 @@
 package com.cb.backend.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-public class BlogDto {
+public class RecipeDto {
 	// --- Variables ---
     private Long id;
     private String title;
@@ -14,6 +15,8 @@ public class BlogDto {
     private LocalDateTime updatedAt;
     private Long userId;
     private String username;
+    private List<CategoryDto> categories;
+    private List<IngredientDto> ingredients;
 
     // --- Getters & Setters ---
     public Long getId() { return id; }
@@ -45,4 +48,11 @@ public class BlogDto {
 
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
+
+    public List<CategoryDto> getCategories() { return categories; }
+    public void setCategories(List<CategoryDto> categories) { this.categories = categories; }
+    
+    public List<IngredientDto> getIngredients() { return ingredients; }
+    public void setIngredients(List<IngredientDto> ingredients) { this.ingredients = ingredients; }
+
 }

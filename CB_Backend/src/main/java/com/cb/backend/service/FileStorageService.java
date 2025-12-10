@@ -13,20 +13,20 @@ import java.util.UUID;
 
 @Service
 public class FileStorageService {
-    private final Path fileStorageLocation;
+    private final Path rootLocation ;
 
     public FileStorageService(FileStorageProperties properties) {
-        this.fileStorageLocation = Paths.get(properties.getUploadDir())
+        this.rootLocation  = Paths.get(properties.getUploadDir())
                 .toAbsolutePath().normalize();
 
         try {
-            Files.createDirectories(this.fileStorageLocation);
+            Files.createDirectories(this.rootLocation );
         } catch (Exception ex) {
             throw new RuntimeException("Could not create upload directory", ex);
         }
     }
 
-    public String storeFile(MultipartFile file) {
+    public String storeFile(MultipartFile file, String subFolder) {
         String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
         String fileName = UUID.randomUUID() + "-" + originalFileName;
 
@@ -34,7 +34,9 @@ public class FileStorageService {
             if(fileName.contains("..")) {
                 throw new RuntimeException("Filename contains invalid path sequence " + fileName);
             }
-            Path targetLocation = this.fileStorageLocation.resolve(fileName);
+            Path folderLocation = this.rootLocation.resolve(subFolder);
+            Files.createDirectories(folderLocation);
+            Path targetLocation = folderLocation.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation);
             return fileName;
         } catch (IOException ex) {
@@ -42,7 +44,7 @@ public class FileStorageService {
         }
     }
 
-    public Path loadFile(String fileName) {
-        return this.fileStorageLocation.resolve(fileName).normalize();
+    public Path loadFile(String subFolder, String fileName) {
+    	return this.rootLocation.resolve(subFolder).resolve(fileName).normalize();
     }
 }

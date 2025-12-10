@@ -3,6 +3,9 @@ package com.cb.backend.mapper;
 import com.cb.backend.model.Role;
 import com.cb.backend.model.User;
 import com.cb.backend.dto.UserDto;
+
+import java.util.Random;
+
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
 public class UserMapper {
@@ -24,10 +27,18 @@ public class UserMapper {
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setEmail(dto.getEmail());
+        
         if (dto.getRole() != null) {
             user.setRole(Role.fromString(dto.getRole()));
         }
-        user.setPhotoUrl(dto.getPhotoUrl());
+        
+        if (dto.getPhotoUrl() == null || dto.getPhotoUrl().isEmpty()) {
+        	Random r = new Random();
+            user.setPhotoUrl("avatars/default_avatar_0" + r.nextInt(5) + ".jpg");
+        } else {
+            user.setPhotoUrl(dto.getPhotoUrl());
+        }
+        
         user.setCreatedAt(dto.getCreatedAt());
 
         if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
@@ -35,11 +46,6 @@ public class UserMapper {
             String hash = BCrypt.hashpw(dto.getPassword(), salt);
             user.setPasswordSalt(salt);
             user.setPasswordHash(hash);
-            // Test in console data:
-            System.out.println("Update user data:");
-            System.out.println(dto.getPassword());
-            System.out.println(salt);
-            System.out.println(hash);
         }
     }
 }

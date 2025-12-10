@@ -1,10 +1,10 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getBlog, updateBlog } from "../../api/blogApi.js";
 import { getUsers } from "../../api/usersApi.js";
 import { BlogDto } from "../../models/BlogDto.js";
 import "../../css/EditPage.css"
-import {uploadFile} from "../../api/filesApi.js";
+import PhotoUploader from "../../components/PhotoUploader.jsx";
 
 export default function BlogEditPage() {
     const { id } = useParams();
@@ -31,35 +31,6 @@ export default function BlogEditPage() {
         }
     }
 
-    const fileInputRef = useRef(null);
-    const [uploading, setUploading] = useState(false);
-
-    async function handlePhotoUpload(file) {
-        if (!file) return;
-        setUploading(true);
-
-        try {
-            const formData = new FormData();
-            formData.append("file", file);
-
-            const uploadedPath = await uploadFile(formData);
-            setBlog({ ...blog, photoUrl: uploadedPath });
-        } catch (e) {
-            alert("Error while trying upload photo: " + e.message);
-        } finally {
-            setUploading(false);
-        }
-    }
-
-    function handleChooseFile() {
-        fileInputRef.current.click();
-    }
-
-    function onFileSelected(e) {
-        const file = e.target.files[0];
-        if (file) handlePhotoUpload(file);
-    }
-
     async function handleSave() {
         try {
             await updateBlog(id, blog);
@@ -76,27 +47,11 @@ export default function BlogEditPage() {
     return (
         <div className="edit-container">
             <div className="edit-card">
-                {blog.photoUrl && (
-                    <img
-                        src={"http://localhost:8080/api/files/images/" + blog.photoUrl}
-                        alt="preview"
-                        style={{ width: "120px", marginTop: "10px"}}
-                    />
-                )}
-
-                <input
-                    type="file"
-                    accept="image/*"
-                    ref={fileInputRef}
-                    onChange={onFileSelected}
+                <PhotoUploader
+                    folder="blog"
+                    initialUrl={blog.photoUrl}
+                    onUpload={(url) => setBlog({ ...blog, photoUrl: url })}
                 />
-                <button
-                    className="btn btn-view"
-                    onClick={handleChooseFile}
-                    disabled={uploading}
-                >
-                    {uploading ? "Loading..." : "Change photo"}
-                </button>
 
                 <h2>Id: #{id}</h2>
 
