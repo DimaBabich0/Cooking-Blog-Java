@@ -8,10 +8,8 @@ public class CommentDto {
     private String text;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Long userId;
-    private String username;
-    private String userPhotoUrl;
     private Long recipeId;
+    private UserDto userDto;
 
     // --- Getters & Setters ---
     public Long getId() { return id; }
@@ -25,13 +23,10 @@ public class CommentDto {
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
-
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
-
-    public String getUsername() { return username; }
-    public String getUserPhotoUrl() { return userPhotoUrl; }   
     
     public Long getRecipeId() { return recipeId; }
     public void setRecipeId(Long recipeId) { this.recipeId = recipeId; }
+    
+    public UserDto getUserDto() { return userDto; }
+    public void setUserDto(UserDto userDto) { this.userDto = userDto; }
 }

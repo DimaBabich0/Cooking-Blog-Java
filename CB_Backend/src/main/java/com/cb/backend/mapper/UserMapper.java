@@ -28,10 +28,14 @@ public class UserMapper {
         user.setLastName(dto.getLastName());
         user.setEmail(dto.getEmail());
         
+        // Set specific role or the default USER role
         if (dto.getRole() != null) {
             user.setRole(Role.fromString(dto.getRole()));
+        } else {
+        	user.setRole(Role.USER);
         }
         
+        // Set random photo if user doesn't upload photo by themselves
         if (dto.getPhotoUrl() == null || dto.getPhotoUrl().isEmpty()) {
         	Random r = new Random();
             user.setPhotoUrl("avatars/default_avatar_0" + r.nextInt(5) + ".jpg");
@@ -41,6 +45,7 @@ public class UserMapper {
         
         user.setCreatedAt(dto.getCreatedAt());
 
+        // Generate salt and hash the password using BCrypt
         if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
             String salt = BCrypt.gensalt();
             String hash = BCrypt.hashpw(dto.getPassword(), salt);

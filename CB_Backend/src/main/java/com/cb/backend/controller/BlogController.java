@@ -2,42 +2,21 @@ package com.cb.backend.controller;
 
 import com.cb.backend.dto.BlogDto;
 import com.cb.backend.service.BlogService;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import com.cb.backend.service.CrudService;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/blogs")
-public class BlogController {
+public class BlogController extends AbstractCrudController<BlogDto, Long> {
     private final BlogService blogService;
 
     public BlogController(BlogService blogService) {
         this.blogService = blogService;
     }
 
-    @GetMapping
-    public List<BlogDto> getAllBlogs() {
-        return blogService.findAll();
-    }
-
-    @GetMapping("/{id}")
-    public BlogDto getBlog(@PathVariable("id") Long id) {
-        return blogService.findById(id);
-    }
-
-    @PostMapping
-    public BlogDto createBlog(@RequestBody BlogDto blog) {
-        return blogService.createBlog(blog);
-    }
-
-    @PutMapping("/{id}")
-    public BlogDto updateBlog(@PathVariable("id") Long id, @RequestBody BlogDto blog) {
-        blog.setId(id);
-    	return blogService.updateBlog(id, blog);
-    }
-
-    @DeleteMapping("/{id}")
-    public void deleteBlog(@PathVariable("id") Long id) {
-        blogService.deleteById(id);
+    @Override
+    protected CrudService<BlogDto, Long> getService() {
+        return blogService;
     }
 }

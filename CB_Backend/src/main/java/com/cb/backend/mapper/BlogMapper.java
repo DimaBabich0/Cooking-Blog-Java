@@ -8,8 +8,7 @@ public class BlogMapper {
     public static BlogDto toDto(Blog blog) {
         BlogDto dto = new BlogDto();
         dto.setId(blog.getId());
-        dto.setUserId(blog.getUser() != null ? blog.getUser().getId() : null);
-        dto.setUsername(blog.getUser() != null ? blog.getUser().getUsername() : null);
+        dto.setUserDto(blog.getUser() != null ? UserMapper.toDto(blog.getUser()) : null);
         dto.setPhotoUrl(blog.getPhotoUrl());
         dto.setTitle(blog.getTitle());
         dto.setText(blog.getText());

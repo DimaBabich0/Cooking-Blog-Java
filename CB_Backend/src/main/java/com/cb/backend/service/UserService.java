@@ -9,39 +9,44 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class UserService {
-    private final UserRepository userRepository;
+public class UserService implements CrudService<UserDto, Long> {
+    private final UserRepository userRepo;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserService(UserRepository userRepo) {
+        this.userRepo = userRepo;
     }
 
+    @Override
     public List<UserDto> findAll() {
-        return userRepository.findAll().stream()
+        return userRepo.findAll().stream()
                 .map(UserMapper::toDto)
                 .collect(Collectors.toList());
     }
 
+    @Override
     public UserDto findById(Long id) {
-        return userRepository.findById(id)
+        return userRepo.findById(id)
         		.map(UserMapper::toDto)
         		.orElse(null);
     }
 
-    public UserDto createUser(UserDto dto) {
+    @Override
+    public UserDto create(UserDto dto) {
         User user = new User();
         UserMapper.updateEntity(user, dto);
-        return UserMapper.toDto(userRepository.save(user));
+        return UserMapper.toDto(userRepo.save(user));
     }
     
-    public UserDto updateUser(Long id, UserDto dto) {
-        User user = userRepository.findById(id)
+    @Override
+    public UserDto update(Long id, UserDto dto) {
+        User user = userRepo.findById(id)
             .orElseThrow(() -> new RuntimeException("User not found"));
         UserMapper.updateEntity(user, dto);
-        return UserMapper.toDto(userRepository.save(user));
+        return UserMapper.toDto(userRepo.save(user));
     }
-
+    
+    @Override
     public void deleteById(Long id) {
-        userRepository.deleteById(id);
+    	userRepo.deleteById(id);
     }
 }

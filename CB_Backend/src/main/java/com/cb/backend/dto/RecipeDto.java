@@ -13,8 +13,7 @@ public class RecipeDto {
     private Integer cookingTime;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Long userId;
-    private String username;
+    private UserDto userDto;
     private List<CategoryDto> categories;
     private List<IngredientDto> ingredients;
 
@@ -43,16 +42,12 @@ public class RecipeDto {
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
-
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
+    public UserDto getUserDto() { return userDto; }
+    public void setUserDto(UserDto userDto) { this.userDto = userDto; }
 
     public List<CategoryDto> getCategories() { return categories; }
     public void setCategories(List<CategoryDto> categories) { this.categories = categories; }
     
     public List<IngredientDto> getIngredients() { return ingredients; }
     public void setIngredients(List<IngredientDto> ingredients) { this.ingredients = ingredients; }
-
 }

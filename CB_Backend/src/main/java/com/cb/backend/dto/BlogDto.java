@@ -12,8 +12,7 @@ public class BlogDto {
     private Integer cookingTime;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Long userId;
-    private String username;
+    private UserDto userDto;
 
     // --- Getters & Setters ---
     public Long getId() { return id; }
@@ -40,9 +39,6 @@ public class BlogDto {
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
-
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
+    public UserDto getUserDto() { return userDto; }
+    public void setUserDto(UserDto userDto) { this.userDto = userDto; }
 }
