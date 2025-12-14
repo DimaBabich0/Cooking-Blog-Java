@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import BlogsTable from "../../components/tables/BlogsTable.jsx";
-import { getBlogs } from "../../api/blogApi.js";
+import Page from "../../components/Page.jsx";
+import Table from "../../components/Table.jsx";
+import { getBlogs, deleteBlog } from "../../api/blogApi.js";
 
 export default function BlogsPage() {
     const navigate = useNavigate();
@@ -16,13 +17,33 @@ export default function BlogsPage() {
         setLoading(false);
     }
 
+    async function handleDelete(blog) {
+        if (!confirm(`Delete blog "${blog.title}"?`)) return;
+        await deleteBlog(blog.id);
+        setBlogs(blogs.filter(b => b.id !== blog.id));
+    }
+
     if (loading) return <p>Loading...</p>;
 
     return (
-        <div>
-            <h1 className="page-title">Blogs</h1>
-            <button className="btn btn-create" onClick={() => navigate("/blogs/create")}>Create blog</button>
-            <BlogsTable blogs={blogs} />
-        </div>
+        <Page
+            title="List of Blogs"
+            actions={<button className="btn btn-create" onClick={() => navigate("/blogs/create")}>Create Blog</button>}
+        >
+            <Table
+                columns={[
+                    { key: "id", label: "ID" },
+                    { key: "username", label: "Author" },
+                    { key: "title", label: "Title" },
+                    { key: "description", label: "Description" },
+                ]}
+                data={blogs}
+                actions={[
+                    { label: "View", type: "view", onClick: b => navigate(`/blogs/${b.id}`) },
+                    { label: "Edit", type: "edit", onClick: b => navigate(`/blogs/${b.id}/edit`) },
+                    { label: "Delete", type: "delete", onClick: handleDelete },
+                ]}
+            />
+        </Page>
     );
 }

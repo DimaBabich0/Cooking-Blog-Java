@@ -46,6 +46,15 @@ export async function deleteUser(id) {
     await fetch(`${USER_API}/${id}`, {method: "DELETE"});
 }
 
+export async function searchUsers(query) {
+    const res = await fetch(`${USER_API}/search?q=${encodeURIComponent(query)}`);
+    if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Error searching specific users");
+    }
+    return res.json();
+}
+
 export async function getRoles() {
     const res = await fetch("http://localhost:8080/api/roles");
     if (!res.ok) {

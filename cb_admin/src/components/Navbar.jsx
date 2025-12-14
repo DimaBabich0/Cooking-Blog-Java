@@ -8,6 +8,8 @@ export default function Navbar() {
         { name: "Blogs", path: "/blogs" },
         { name: "Recipes", path: "/recipes" },
         { name: "Categories", path: "/categories" },
+        { name: "Products", path: "/products" },
+        { name: "Ingredients", path: "/ingredients" },
         { name: "Comments", path: "/comments" },
         { name: "Ratings", path: "/ratings" },
     ];

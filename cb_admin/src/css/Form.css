@@ -1,10 +1,10 @@
-.edit-container {
+.form-container {
     display: flex;
     justify-content: center;
     padding: 40px;
 }
 
-.edit-card {
+.form-card {
     width: 450px;
     background: #fff;
     padding: 25px;
@@ -16,36 +16,47 @@
     align-items: center;
 }
 
-.edit-title {
+.form-title {
     font-size: 24px;
     margin-bottom: 15px;
 }
 
-.edit-photo-wrapper {
-    margin-bottom: 15px;
-}
-
-.edit-photo {
-    width: 140px;
-    height: 140px;
-    object-fit: cover;
-    border-radius: 12px;
-    border: 2px solid #ddd;
-}
-
-.edit-label {
+.form-label {
     align-self: flex-start;
     font-weight: bold;
 }
 
-.edit-input {
+.form-PhotoLabel {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.form-PhotoLabel:hover { background: #e4e4e4; }
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.form-card,
+.form-field,
+.form-input,
+input
+textarea,
+select {
+    box-sizing: border-box;
+}
+
+.form-input {
     width: 100%;
     padding: 8px 10px;
     border-radius: 6px;
     border: 1px solid #ccc;
 }
 
-.edit-actions {
+.form-actions {
     display: flex;
     justify-content: space-between;
     width: 100%;

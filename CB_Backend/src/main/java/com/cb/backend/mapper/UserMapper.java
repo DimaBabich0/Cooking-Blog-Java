@@ -28,14 +28,14 @@ public class UserMapper {
         user.setLastName(dto.getLastName());
         user.setEmail(dto.getEmail());
         
-        // Set specific role or the default USER role
-        if (dto.getRole() != null) {
-            user.setRole(Role.fromString(dto.getRole()));
+        // Set USER role or the specific role
+        if (dto.getRole() == null || dto.getRole().isEmpty()) {
+            user.setRole(Role.USER);
         } else {
-        	user.setRole(Role.USER);
+        	user.setRole(Role.fromString(dto.getRole()));
         }
         
-        // Set random photo if user doesn't upload photo by themselves
+        // Set random photo or the uploaded photo
         if (dto.getPhotoUrl() == null || dto.getPhotoUrl().isEmpty()) {
         	Random r = new Random();
             user.setPhotoUrl("avatars/default_avatar_0" + r.nextInt(5) + ".jpg");

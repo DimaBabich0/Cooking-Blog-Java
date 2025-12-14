@@ -49,4 +49,10 @@ public class UserService implements CrudService<UserDto, Long> {
     public void deleteById(Long id) {
     	userRepo.deleteById(id);
     }
+    
+    public List<UserDto> searchUsersByUsername(String username) {
+        return userRepo.findByUsernameContainingIgnoreCase(username).stream()
+                .map(UserMapper::toDto)
+                .collect(Collectors.toList());
+    }
 }

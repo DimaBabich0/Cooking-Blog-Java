@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { format } from "date-fns";
 import { useParams, useNavigate } from "react-router-dom";
+import ViewCard from "../../components/ViewCard.jsx";
 import { getBlog, deleteBlog } from "../../api/blogApi.js";
+import { format } from "date-fns";
 import { BlogDto } from "../../models/BlogDto.js";
-import "../../css/ViewPage.css"
 
 export default function BlogViewPage() {
     const { id } = useParams();
@@ -13,18 +13,13 @@ export default function BlogViewPage() {
 
     useEffect(() => {
         load();
-
     }, []);
 
     async function load() {
-        try {
-            setLoading(true);
-            const blog = await getBlog(id);
-            console.log(blog);
-            setBlog({...BlogDto, ...blog});
-        } finally {
-            setLoading(false);
-        }
+        const blog = await getBlog(id);
+        setBlog({...BlogDto, ...blog});
+        console.log(blog);
+        setLoading(false);
     }
 
     async function handleDelete() {
@@ -36,44 +31,26 @@ export default function BlogViewPage() {
     if (loading) return <p>Loading...</p>;
     if (!blog) return <p>Blog not found</p>;
 
+    const fields = [
+        { label: "Title", value: blog.title },
+        { label: "Author", value: blog.userDto.username },
+        { label: "Description", value: blog.description },
+        { label: "Text", value: blog.text },
+        { label: "Cooking time", value: `${blog.cookingTime} minutes` },
+        { label: "Create date", value: format(new Date(blog.createdAt), "HH:mm:ss, d MMMM yyyy") },
+        { label: "Update date", value: format(new Date(blog.updatedAt), "HH:mm:ss, d MMMM yyyy") },
+    ];
+
     return (
-        <div className="view-container">
-            <div className="view-card">
-
-                <div className="view-photo-wrapper">
-                    <img
-                        src={"http://localhost:8080/api/files/images/" + blog.photoUrl}
-                        alt="blog image"
-                        className="view-photo"
-                    />
-                </div>
-                <h2>Id: #{id}</h2>
-
-                <div className="view-info">
-                    <div className="view-field"><b>Title:</b> {blog.title}</div>
-                    <div className="view-field"><b>Author:</b> {blog.username}</div>
-                    <div className="view-field"><b>Description:</b> {blog.description}</div>
-                    <div className="view-field"><b>Text:</b> {blog.text}</div>
-                    <div className="view-field"><b>Cooking time:</b> {blog.cookingTime} minutes</div>
-                    <div className="view-field"><b>Create date:</b> {format(blog.createdAt, "HH:mm:ss, d MMMM yyyy")}</div>
-                    <div className="view-field"><b>Update date:</b> {format(blog.updatedAt, "HH:mm:ss, d MMMM yyyy")}</div>
-                </div>
-
-                <div className="view-actions">
-                    <button className="btn btn-edit" onClick={() => navigate(`/blogs/${id}/edit`)}>
-                        Edit
-                    </button>
-
-                    <button className="btn btn-delete" onClick={handleDelete}>
-                        Delete
-                    </button>
-
-                    <button className="btn btn-back" onClick={() => navigate("/blogs/")}>
-                        Back
-                    </button>
-                </div>
-
-            </div>
-        </div>
+        <ViewCard
+            photoUrl={blog.photoUrl && `http://localhost:8080/api/files/images/${blog.photoUrl}`}
+            title={`Id: #${id}`}
+            fields={fields}
+            actions={{
+                onEdit: () => navigate(`/blogs/${id}/edit`),
+                onDelete: handleDelete,
+                onBack: () => navigate("/blogs")
+            }}
+        />
     );
 }

@@ -4,7 +4,7 @@ export const UserDto = {
     firstName: "",
     lastName: "",
     email: "",
-    role: "",
+    role: null,
     photoUrl: "",
     password: "",
     createdAt: null
