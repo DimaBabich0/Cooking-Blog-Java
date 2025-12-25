@@ -8,7 +8,7 @@ export async function getRecipes() {
     return res.json();
 }
 
-export async function getCategory(id) {
+export async function getRecipe(id) {
     const res = await fetch(`${RECIPE_API}/${id}`);
     if (!res.ok) {
         throw new Error("Error loading recipe");
@@ -16,7 +16,7 @@ export async function getCategory(id) {
     return res.json();
 }
 
-export async function createCategory(recipe) {
+export async function createRecipe(recipe) {
     const res = await fetch(RECIPE_API, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -29,7 +29,7 @@ export async function createCategory(recipe) {
     return res.json();
 }
 
-export async function updateCategory(id, recipe) {
+export async function updateRecipe(id, recipe) {
     const res = await fetch(`${RECIPE_API}/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -42,6 +42,15 @@ export async function updateCategory(id, recipe) {
     return res.json();
 }
 
-export async function deleteCategory(id) {
+export async function deleteRecipe(id) {
     await fetch(`${RECIPE_API}/${id}`, {method: "DELETE"});
+}
+
+export async function searchRecipes(query) {
+    const res = await fetch(`${RECIPE_API}/search?q=${encodeURIComponent(query)}`);
+    if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Error searching specific recipe");
+    }
+    return res.json();
 }

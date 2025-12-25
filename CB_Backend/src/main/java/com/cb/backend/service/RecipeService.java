@@ -7,10 +7,12 @@ import com.cb.backend.mapper.IngredientMapper;
 import com.cb.backend.mapper.RecipeMapper;
 import com.cb.backend.model.Category;
 import com.cb.backend.model.Ingredient;
+import com.cb.backend.model.Product;
 import com.cb.backend.model.Recipe;
 import com.cb.backend.model.User;
 import com.cb.backend.repository.CategoryRepository;
 import com.cb.backend.repository.IngredientRepository;
+import com.cb.backend.repository.ProductRepository;
 import com.cb.backend.repository.RecipeRepository;
 import com.cb.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -24,16 +26,19 @@ public class RecipeService implements CrudService<RecipeDto, Long> {
     private final RecipeRepository recipeRepo;
     private final UserRepository userRepo;
     private final CategoryRepository categoryRepo;
+    private final ProductRepository productRepo;
     private final IngredientRepository ingredientRepo;
 
     public RecipeService(
     		RecipeRepository recipeRepo,
     		UserRepository userRepo,
     		CategoryRepository categoryRepo,
+    		ProductRepository productRepo,
     		IngredientRepository ingredientRepo) {
         this.recipeRepo = recipeRepo;
         this.userRepo = userRepo;
         this.categoryRepo = categoryRepo;
+        this.productRepo = productRepo;
         this.ingredientRepo = ingredientRepo;
     }
 
@@ -56,35 +61,24 @@ public class RecipeService implements CrudService<RecipeDto, Long> {
         User user = userRepo.findById(dto.getUserDto().getId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<Category> categories = dto.getCategories().stream()
-                .map(c -> categoryRepo.findById(c.getId())
+        List<Category> categories = dto.getCategoriesDto() == null
+                ? List.of()
+                : dto.getCategoriesDto().stream()
+                    .map(c -> categoryRepo.findById(c.getId())
                         .orElseThrow(() -> new RuntimeException("Category not found: " + c.getId())))
-                .toList();
+                    .toList();
+
 	    
-     // 1) Создаём рецепт без ингредиентов
         Recipe recipe = new Recipe();
         RecipeMapper.updateEntity(recipe, dto, user, categories, new ArrayList<>());
-        
-        recipe = recipeRepo.save(recipe); // обязательно чтобы появился ID
+        recipeRepo.save(recipe);
 
-        // 2) Создаём ингредиенты
-        List<Ingredient> ingredients = new ArrayList<>();
-
-        if (dto.getIngredients() != null) {
-            for (IngredientDto ingredientDto : dto.getIngredients()) {
-                Ingredient ingredient = IngredientMapper.fromDtoWithRecipe(ingredientDto, recipe);
-                ingredients.add(ingredient);
-            }
-        }
-
-        // 3) Записываем ингредиенты
+        List<Ingredient> ingredients = createIngredientsForRecipe(dto, recipe);
         ingredientRepo.saveAll(ingredients);
-
-        // 4) Привязываем их к рецепту и сохраняем (не обязательно, но корректно)
-        recipe.getIngredients().clear();
         recipe.getIngredients().addAll(ingredients);
+
         return RecipeMapper.toDto(recipeRepo.save(recipe));
-	}
+    }
 
 	@Override
 	public RecipeDto update(Long id, RecipeDto dto) {
@@ -94,38 +88,58 @@ public class RecipeService implements CrudService<RecipeDto, Long> {
 	    var user = userRepo.findById(dto.getUserDto().getId())
 	            .orElseThrow(() -> new RuntimeException("User not found"));
 
-	    List<Category> categories = dto.getCategories().stream()
-                .map(c -> categoryRepo.findById(c.getId())
-                        .orElseThrow(() -> new RuntimeException("Category not found: " + c.getId())))
-                .toList();
+	    List<Category> categories = dto.getCategoriesDto() == null
+	            ? List.of()
+	            : dto.getCategoriesDto().stream()
+	                .map(c -> categoryRepo.findById(c.getId())
+	                    .orElseThrow(() -> new RuntimeException("Category not found: " + c.getId())))
+	                .toList();
 
-        // 1) Обновляем основные поля рецепта
-        RecipeMapper.updateEntity(recipe, dto, user, categories, new ArrayList<>());
+	    RecipeMapper.updateEntity(recipe, dto, user, categories, new ArrayList<>());
         recipeRepo.save(recipe);
 
-        // 2) Удаляем старые ингредиенты (orphanRemoval = true удалит автоматом)
+        ingredientRepo.deleteAll(recipe.getIngredients());
         recipe.getIngredients().clear();
         recipeRepo.save(recipe);
 
-        // 3) Добавляем новые ингредиенты
-        List<Ingredient> newIngredients = new ArrayList<>();
+        List<Ingredient> ingredients = createIngredientsForRecipe(dto, recipe);
+        ingredientRepo.saveAll(ingredients);
+        recipe.getIngredients().addAll(ingredients);
 
-        if (dto.getIngredients() != null) {
-            for (IngredientDto ingDto : dto.getIngredients()) {
-                Ingredient ing = IngredientMapper.fromDtoWithRecipe(ingDto, recipe);
-                newIngredients.add(ing);
-            }
-        }
-
-        ingredientRepo.saveAll(newIngredients);
-
-        // 4) Вернуть связку в объект
-        recipe.getIngredients().addAll(newIngredients);
         return RecipeMapper.toDto(recipeRepo.save(recipe));
 	}
 
 	@Override
 	public void deleteById(Long id) {
-		recipeRepo.deleteById(id);		
+		recipeRepo.deleteById(id);
 	}
+	
+	private List<Ingredient> createIngredientsForRecipe(RecipeDto dto, Recipe recipe) {
+        List<Ingredient> ingredients = new ArrayList<>();
+
+        if (dto.getIngredientsDto() != null) {
+            for (IngredientDto ingredientDto : dto.getIngredientsDto()) {
+                if (ingredientDto.getProductName() == null || ingredientDto.getProductName().isBlank()) {
+                    throw new RuntimeException("Ingredient product name is required");
+                }
+
+                Product product = productRepo
+                        .findByNameIgnoreCase(ingredientDto.getProductName().trim())
+                        .orElseGet(() -> {
+                            Product newProduct = new Product();
+                            newProduct.setName(ingredientDto.getProductName().trim());
+                            return productRepo.save(newProduct);
+                        });
+
+                Ingredient ingredient = new Ingredient();
+                ingredient.setRecipe(recipe);
+                ingredient.setProduct(product);
+                ingredient.setQuantity(ingredientDto.getQuantity());
+
+                ingredients.add(ingredient);
+            }
+        }
+
+        return ingredients;
+    }
 }

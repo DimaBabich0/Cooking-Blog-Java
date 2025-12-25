@@ -19,4 +19,15 @@ public class CategoryDto {
     
     public String getPhotoUrl() { return photoUrl; }
     public void setPhotoUrl(String photoUrl) { this.photoUrl = photoUrl; }
+    
+    // --- Methods ---
+    @Override
+    public String toString() {
+        return "RecipeDto{" +
+                "id=" + id +
+                ", name=" + name + "" +
+                ", description=" + description + "" +
+                ", photoUrl=" + photoUrl + "" +
+                '}';
+    }
 }

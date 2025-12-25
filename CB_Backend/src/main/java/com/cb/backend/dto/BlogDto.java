@@ -41,4 +41,20 @@ public class BlogDto {
 
     public UserDto getUserDto() { return userDto; }
     public void setUserDto(UserDto userDto) { this.userDto = userDto; }
+    
+    // --- Methods ---
+    @Override
+    public String toString() {
+        return "BlogDto{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", text='" + (text != null ? text.substring(0, Math.min(text.length(), 50)) + "..." : null) + '\'' +
+                ", photoUrl='" + photoUrl + '\'' +
+                ", cookingTime=" + cookingTime +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", userDto=" + userDto +
+                '}';
+    }
 }

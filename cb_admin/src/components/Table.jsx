@@ -1,19 +1,29 @@
 import React from "react";
-import "../css/Table.css"
+import "../css/Table.css";
 
 export default function Table({ columns = [], data = [], actions }) {
     return (
         <table className="table">
             <thead className="table-head">
             <tr>
-                {columns.map(col => <th key={col.key} className="table-cell">{col.label}</th>)}
+                {columns.map((col, index) => (
+                    <th key={index} className="table-cell">
+                        {col.label}
+                    </th>
+                ))}
                 {actions && <th className="table-cell">Actions</th>}
             </tr>
             </thead>
+
             <tbody className="table-body">
             {data.map(item => (
                 <tr key={item.id} className="table-row">
-                    {columns.map(col => <td key={col.key} className="table-cell">{item[col.key]}</td>)}
+                    {columns.map((col, index) => (
+                        <td key={index} className="table-cell">
+                            {col.render ? col.render(item) : item[col.key]}
+                        </td>
+                    ))}
+
                     {actions && (
                         <td className="table-actions">
                             {actions.map(a => (

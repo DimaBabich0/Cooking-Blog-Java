@@ -1,30 +1,34 @@
-import React, {useState, useRef} from "react";
+import React, { useState, useRef } from "react";
 import AsyncSelect from "react-select/async";
 import debounce from "lodash.debounce";
-import { searchUsers } from "../api/userApi.js";
+import { searchRecipes } from "../api/recipeApi.js";
 
-export default function UserSelect({ label, value, onChange, placeholder = "Select user..." }) {
-    const [selectedUser, setSelectedUser] = useState(
-        value ? { value: value.id, label: formatLabel(value) } : null
-    );
+export default function RecipeSelect({ label, value, onChange, placeholder = "Select recipe..." }) {
+    const [selectedRecipe, setSelectedRecipe] = useState(value || null);
 
-    function formatLabel(user) {
-        if (!user) return null;
-        return (
-            <div style={{ display: "flex", alignItems: "center" }}>
-                <img
-                    src={`http://localhost:8080/api/files/images/${user.photoUrl}`}
-                    style={{ width: 24, height: 24, borderRadius: "50%", marginRight: 8, objectFit: "cover" }}
-                />
-                {user.username}
-            </div>
-        );
-    }
+    const formatRecipes = (recipes) =>
+        recipes.map(r => ({
+            value: r.id,
+            label: (
+                <div style={{ display: "flex", alignItems: "center" }}>
+                    {r.photoUrl && (
+                        <img
+                            src={`http://localhost:8080/api/files/images/${r.photoUrl}`}
+                            style={{ width: 40, height: 40, borderRadius: "4px", marginRight: 8, objectFit: "cover" }}
+                        />
+                    )}
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                        <span style={{ fontWeight: "bold" }}>{r.title}</span>
+                        <small style={{ color: "#555" }}>by {r.userDto?.username}</small>
+                    </div>
+                </div>
+            )
+        }));
 
     const debouncedLoadRef = useRef(
         debounce((inputValue, callback) => {
-            searchUsers(inputValue)
-                .then(users => callback(users.map(u => ({ value: u, label: formatLabel(u) }))))
+            searchRecipes(inputValue)
+                .then(recipes => callback(formatRecipes(recipes)))
                 .catch(() => callback([]));
         }, 500)
     );
@@ -36,7 +40,7 @@ export default function UserSelect({ label, value, onChange, placeholder = "Sele
     };
 
     const handleChange = (option) => {
-        setSelectedUser(option);
+        setSelectedRecipe(option);
         if (onChange) onChange(option ? option.value : null);
     };
 
@@ -47,7 +51,7 @@ export default function UserSelect({ label, value, onChange, placeholder = "Sele
                 cacheOptions
                 defaultOptions
                 loadOptions={loadOptions}
-                value={selectedUser}
+                value={selectedRecipe}
                 onChange={handleChange}
                 placeholder={placeholder}
                 isClearable

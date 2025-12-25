@@ -38,9 +38,6 @@ import CommentViewPage from "./pages/comment/CommentViewPage.jsx";
 import CommentEditPage from "./pages/comment/CommentEditPage.jsx";
 
 import IngredientsPage from "./pages/ingredient/IngredientsPage.jsx";
-import IngredientCreatePage from "./pages/ingredient/IngredientCreatePage.jsx";
-import IngredientViewPage from "./pages/ingredient/IngredientViewPage.jsx";
-import IngredientEditPage from "./pages/ingredient/IngredientEditPage.jsx";
 
 import Navbar from "./components/Navbar";
 import "./App.css";
@@ -78,9 +75,6 @@ export default function App() {
                 <Route path="/products/:id/edit" element={<ProductEditPage />} />
 
                 <Route path="/ingredients" element={<IngredientsPage />} />
-                <Route path="/ingredients/create" element={<IngredientCreatePage />} />
-                <Route path="/ingredients/:id" element={<IngredientViewPage />} />
-                <Route path="/ingredients/:id/edit" element={<IngredientEditPage />} />
 
                 <Route path="/comments" element={<CommentsPage />} />
                 <Route path="/comments/create" element={<CommentCreatePage />} />

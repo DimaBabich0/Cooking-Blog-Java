@@ -1,13 +1,15 @@
+import { UserDto } from "./UserDto";
+
 export const RecipeDto = {
     id: null,
     title: "",
     description: "",
     text: "",
-    photoURL: null,
+    photoUrl: null,
     cookingTime: null,
     createdAt: null,
     updatedAt: null,
-    userDto: null,
-    categoriesDto: null,
-    ingredientsDto: null,
+    userDto: { ...UserDto },
+    categoriesDto: [],
+    ingredientsDto: [],
 };

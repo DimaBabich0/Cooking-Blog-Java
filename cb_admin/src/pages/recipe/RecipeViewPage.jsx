@@ -39,6 +39,12 @@ export default function RecipeViewPage() {
         { label: "Cooking time", value: `${recipe.cookingTime} minutes` },
         { label: "Create date", value: format(new Date(recipe.createdAt), "HH:mm:ss, d MMMM yyyy") },
         { label: "Update date", value: format(new Date(recipe.updatedAt), "HH:mm:ss, d MMMM yyyy") },
+        { label: "Categories", value: recipe.categoriesDto.map(c => c.name).join(", ") },
+        { label: "Ingredients", value:
+                recipe.ingredientsDto.map(i =>
+                    `${i.productName} — ${i.quantity} ${i.unit}`
+                ).join("; ")
+        },
     ];
 
     return (

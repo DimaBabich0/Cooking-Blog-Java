@@ -40,4 +40,20 @@ public class UserDto {
     
     public LocalDate getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDate createdAt) { this.createdAt = createdAt; }
+    
+    // --- Methods ---
+    @Override
+    public String toString() {
+        return "BlogDto{" +
+                "id=" + id +
+                ", username=" + username  +
+                ", firstName=" + firstName  +
+                ", lastName=" + lastName  +
+                ", email=" + email  +
+                ", password=" + password  +
+                ", role=" + role  +
+                ", photoUrl='" + photoUrl + '\'' +
+                ", createdAt='" + createdAt + '\'' +
+                '}';
+    }
 }

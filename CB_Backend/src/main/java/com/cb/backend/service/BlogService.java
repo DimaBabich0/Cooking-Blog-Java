@@ -36,6 +36,8 @@ public class BlogService implements CrudService<BlogDto, Long> {
 
 	@Override
 	public BlogDto create(BlogDto dto) {
+		System.out.println(dto);
+		
 		User user = userRepo.findById(dto.getUserDto().getId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 		

@@ -2,41 +2,42 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Page from "../../components/Page.jsx";
 import Table from "../../components/Table.jsx";
-import { getRecipess, deleteRecipe } from "../../api/recipeApi.js";
+import { getRecipes, deleteRecipe } from "../../api/recipeApi.js";
 
-export default function RecipessPage() {
+export default function RecipesPage() {
     const navigate = useNavigate();
-    const [recipes, setRecipess] = useState([]);
+    const [recipes, setRecipes] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => { load(); }, []);
 
     async function load() {
-        const data = await getRecipess();
-        setRecipess(data);
+        const data = await getRecipes();
+        console.log(data[0]);
+        setRecipes(data);
         setLoading(false);
     }
 
     async function handleDelete(recipe) {
         if (!confirm(`Delete recipe "${recipe.title}"?`)) return;
         await deleteRecipe(recipe.id);
-        setRecipess(recipes.filter(b => b.id !== recipe.id));
+        setRecipes(recipes.filter(b => b.id !== recipe.id));
     }
 
     if (loading) return <p>Loading...</p>;
 
     return (
         <Page
-            title="List of Recipess"
+            title="List of Recipes"
             actions={<button className="btn btn-create" onClick={() => navigate("/recipes/create")}>Create recipe</button>}
         >
             <Table
                 columns={[
                     { label: "ID", key: "id"  },
-                    { label: "Author", key: "username" },
+                    { label: "Author", render: recipe => recipe.userDto?.username ?? "—"},
                     { label: "Title", key: "title" },
                     { label: "Description", key: "description" },
-                    { label: "Categories", key: "categories" },
+                    { label: "Categories", render: recipe => recipe.categoriesDto.length ? recipe.categoriesDto.map(c => c.name).join(", ") : "—"},
                 ]}
                 data={recipes}
                 actions={[

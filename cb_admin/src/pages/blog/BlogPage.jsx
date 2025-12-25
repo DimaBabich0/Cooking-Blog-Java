@@ -32,10 +32,10 @@ export default function BlogsPage() {
         >
             <Table
                 columns={[
-                    { key: "id", label: "ID" },
-                    { key: "username", label: "Author" },
-                    { key: "title", label: "Title" },
-                    { key: "description", label: "Description" },
+                    { label: "ID", key: "id" },
+                    { label: "Author", render: recipe => recipe.userDto?.username ?? "—"},
+                    { label: "Title", key: "title" },
+                    { label: "Description", key: "description" },
                 ]}
                 data={blogs}
                 actions={[

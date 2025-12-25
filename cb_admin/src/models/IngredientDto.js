@@ -4,5 +4,5 @@ export const IngredientDto = {
     productId: null,
     productName: null,
     quantity: null,
-    units: null,
+    unit: null,
 };

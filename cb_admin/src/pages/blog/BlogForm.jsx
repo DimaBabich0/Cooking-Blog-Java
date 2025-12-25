@@ -16,6 +16,7 @@ export default function BlogForm({ blogData = {}, onSave }) {
 
     useEffect(() => {
         loadUsers();
+        console.log(blog);
     }, []);
 
     async function loadUsers() {
@@ -25,6 +26,8 @@ export default function BlogForm({ blogData = {}, onSave }) {
     }
 
     async function handleSave() {
+        console.log(blog);
+        console.log("-------------------");
         await onSave(blog);
         navigate("/blogs");
     }
@@ -47,8 +50,8 @@ export default function BlogForm({ blogData = {}, onSave }) {
                 />
                 <UserSelect
                     label="Author"
-                    value={users.find(u => u.id === blog.userId)}
-                    onChange={id => setBlog({ ...blog, userId: id })}
+                    value={users.find(u => u.id === blog.userDto.id)}
+                    onChange={id => setBlog({ ...blog, userDto: {...blog.userDto, id: id}})}
                 />
                 <FormField
                     label="Description"

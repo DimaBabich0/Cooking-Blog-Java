@@ -1,12 +1,13 @@
+import { UserDto } from "./UserDto";
+
 export const BlogDto = {
     id: null,
     title: "",
-    userId: null,
-    username: "",
-    photoUrl: "",
     description: "",
     text: "",
+    photoUrl: "",
     cookingTime: null,
     createdAt: null,
     updatedAt: null,
+    userDto: { ...UserDto },
 };
