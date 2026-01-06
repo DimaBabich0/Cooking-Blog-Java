@@ -4,27 +4,26 @@ import debounce from "lodash.debounce";
 import { searchUsers } from "../api/userApi.js";
 
 export default function UserSelect({ label, value, onChange, placeholder = "Select user..." }) {
-    const [selectedUser, setSelectedUser] = useState(
-        value ? { value: value.id, label: formatLabel(value) } : null
-    );
+    const [selectedUser, setSelectedUser] = useState(value || null);
 
-    function formatLabel(user) {
-        if (!user) return null;
-        return (
-            <div style={{ display: "flex", alignItems: "center" }}>
-                <img
-                    src={`http://localhost:8080/api/files/images/${user.photoUrl}`}
-                    style={{ width: 24, height: 24, borderRadius: "50%", marginRight: 8, objectFit: "cover" }}
-                />
-                {user.username}
-            </div>
-        );
-    }
+    const formatUsers = (users) =>
+        users.map(u => ({
+            value: u.id,
+            label: (
+                <div style={{ display: "flex", alignItems: "center" }}>
+                    <img
+                        src={`http://localhost:8080/api/files/images/${u.photoUrl}`}
+                        style={{ width: 24, height: 24, borderRadius: "50%", marginRight: 8, objectFit: "cover" }}
+                    />
+                    {u.username}
+                </div>
+            )
+        }));
 
     const debouncedLoadRef = useRef(
         debounce((inputValue, callback) => {
             searchUsers(inputValue)
-                .then(users => callback(users.map(u => ({ value: u, label: formatLabel(u) }))))
+                .then(users => callback(formatUsers(users)))
                 .catch(() => callback([]));
         }, 500)
     );

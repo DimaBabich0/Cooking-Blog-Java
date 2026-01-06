@@ -74,8 +74,9 @@ The project is split into three independent applications:
 
 ```
 ├── CB_Backend/     # Backend (Spring Boot)
-├── frontend/       # User-facing frontend (React + Vite)
 ├── cb_admin/       # Admin panel (React + Vite)
+├── docs/           # JavaDoc files
+├── frontend/       # User-facing frontend (React + Vite)
 └── screenshots/    # Images for the README.md
 ```
 

@@ -36,5 +36,5 @@ out/
 ### VS Code ###
 .vscode/
 
-### Not add photo from uploads ###
-uploads/
+# ### Don't add files from uploads ###
+# uploads/
