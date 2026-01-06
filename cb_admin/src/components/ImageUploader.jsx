@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { uploadFile } from "../api/filesApi.js";
 
-export default function ImageUploader({ onImageInsert, folder = "blog-content" }) {
+export default function ImageUploader({ label, onImageInsert, folder = "blog-content" }) {
     const fileInputRef = useRef(null);
     const [uploading, setUploading] = useState(false);
     const [uploadedImages, setUploadedImages] = useState([]);
@@ -60,6 +60,7 @@ export default function ImageUploader({ onImageInsert, folder = "blog-content" }
 
     return (
         <div style={{ width: "100%", marginTop: "10px" }}>
+            <label className="form-label">{label}:</label>
             <div style={{ marginBottom: "15px" }}>
                 <input
                     ref={fileInputRef}

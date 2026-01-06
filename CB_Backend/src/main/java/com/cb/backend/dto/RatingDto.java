@@ -1,5 +1,8 @@
 package com.cb.backend.dto;
 
+/**
+ * DTO representing a {@link com.cb.backend.model.Rating} entity.
+ */
 public class RatingDto {
 	// --- Variables ---
     private Long id;
@@ -7,6 +10,17 @@ public class RatingDto {
     private Long userId;
     private Long recipeId;
 
+    // --- Methods ---
+    @Override
+    public String toString() {
+        return "RatingDto{" +
+                "id=" + id +
+                ", rating=" + rating +
+                ", userId=" + userId +
+                ", recipeId=" + recipeId +
+                '}';
+    }
+    
     // --- Getters & Setters ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

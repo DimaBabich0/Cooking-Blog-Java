@@ -9,9 +9,23 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.Map;
 
+/**
+ * Global exception handler for the application.
+ *
+ * <p>
+ * Handles database constraint violations and other general exceptions, providing
+ * consistent HTTP responses with error messages.
+ * </p>
+ */
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    // Error UNIQUE / FK / CONSTRAINT
+    /**
+     * Handles {@link DataIntegrityViolationException}, typically caused by unique constraints
+     * or foreign key violations in the database.
+     *
+     * @param ex the thrown {@link DataIntegrityViolationException}
+     * @return a {@link ResponseEntity} with status 400 and a descriptive error message
+     */
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<?> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
         String message = "";
@@ -58,7 +72,12 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", message));
     }
 
-    // Common errors
+    /**
+     * Handles all other uncaught exceptions.
+     *
+     * @param ex the thrown {@link Exception}
+     * @return a {@link ResponseEntity} with status 500 and the exception message
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGeneral(Exception ex) {
         return ResponseEntity

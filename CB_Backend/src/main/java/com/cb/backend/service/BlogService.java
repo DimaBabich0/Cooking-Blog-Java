@@ -10,6 +10,22 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service class <b>BlogService</b> implements {@link CrudService} for
+ * {@link BlogDto} objects.
+ *
+ * <p>
+ * Provides CRUD operations for {@link Blog} entities, converting between
+ * {@link Blog} and {@link BlogDto} using {@link BlogMapper}.
+ * </p>
+ *
+ * <p>
+ * Handles association with {@link User} for creating and updating blog posts.
+ * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
+ */
 @Service
 public class BlogService implements CrudService<BlogDto, Long> {
     private final BlogRepository blogRepo;
@@ -20,45 +36,84 @@ public class BlogService implements CrudService<BlogDto, Long> {
         this.userRepo = userRepo;
     }
     
-	@Override
-	public List<BlogDto> findAll() {
+    /**
+     * Retrieves all blog posts.
+     *
+     * @return list of {@link BlogDto} representing all blogs
+     */
+    @Override
+    public List<BlogDto> findAll() {
         return blogRepo.findAll().stream()
                 .map(BlogMapper::toDto)
                 .collect(Collectors.toList());
-	}
+    }
 
-	@Override
-	public BlogDto findById(Long id) {
-		return blogRepo.findById(id)
+    /**
+     * Finds a blog post by its ID.
+     *
+     * @param id the identifier of the blog
+     * @return {@link BlogDto} of the found blog, or {@code null} if not found
+     */
+    @Override
+    public BlogDto findById(Long id) {
+        return blogRepo.findById(id)
                 .map(BlogMapper::toDto)
                 .orElse(null);
-	}
+    }
 
-	@Override
-	public BlogDto create(BlogDto dto) {
-		System.out.println(dto);
-		
-		User user = userRepo.findById(dto.getUserDto().getId())
+    /**
+     * Creates a new blog post.
+     *
+     * <p>
+     * Retrieves the associated {@link User} by ID and maps the provided
+     * {@link BlogDto} to a new {@link Blog} entity.
+     * </p>
+     *
+     * @param dto the {@link BlogDto} containing blog data
+     * @return {@link BlogDto} of the created blog
+     * @throws RuntimeException if the associated user is not found
+     */
+    @Override
+    public BlogDto create(BlogDto dto) {
+        User user = userRepo.findById(dto.getUserDto().getId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-		
+
         Blog blog = new Blog();
         BlogMapper.updateEntity(blog, dto, user);
         return BlogMapper.toDto(blogRepo.save(blog));
-	}
+    }
 
-	@Override
-	public BlogDto update(Long id, BlogDto dto) {
+    /**
+     * Updates an existing blog post.
+     *
+     * <p>
+     * Retrieves the existing {@link Blog} and the associated {@link User} by ID,
+     * then applies changes from the provided {@link BlogDto}.
+     * </p>
+     *
+     * @param id  the identifier of the blog to update
+     * @param dto the {@link BlogDto} containing updated blog data
+     * @return {@link BlogDto} of the updated blog
+     * @throws RuntimeException if the blog or associated user is not found
+     */
+    @Override
+    public BlogDto update(Long id, BlogDto dto) {
         User user = userRepo.findById(dto.getUserDto().getId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        
-		Blog blog = blogRepo.findById(id)
+
+        Blog blog = blogRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Blog not found"));
         BlogMapper.updateEntity(blog, dto, user);
         return BlogMapper.toDto(blogRepo.save(blog));
-	}
+    }
 
-	@Override
-	public void deleteById(Long id) {
-		blogRepo.deleteById(id);		
-	}
+    /**
+     * Deletes a blog post by its ID.
+     *
+     * @param id the identifier of the blog to delete
+     */
+    @Override
+    public void deleteById(Long id) {
+        blogRepo.deleteById(id);
+    }
 }

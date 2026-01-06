@@ -7,15 +7,43 @@ import com.cb.backend.service.CrudService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST controller for managing {@link IngredientDto} entities.
+ *
+ * <p>
+ * Provides standard CRUD endpoints inherited from {@link AbstractCrudController}:
+ * <ul>
+ *     <li>GET /api/ingredients – list all ingredients,</li>
+ *     <li>GET /api/ingredients/{id} – get an ingredient by ID,</li>
+ *     <li>POST /api/ingredients – create a new ingredient,</li>
+ *     <li>PUT /api/ingredients/{id} – update an existing ingredient,</li>
+ *     <li>DELETE /api/ingredients/{id} – delete an ingredient by ID.</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Delegates all operations to {@link IngredientService}.
+ * </p>
+ */
 @RestController
 @RequestMapping("/api/ingredients")
 public class IngredientController extends AbstractCrudController<IngredientDto, RecipeIngredientKey> {
 	private final IngredientService ingredientService;
 
+    /**
+     * Constructs a IngredientController with the provided IngredientService.
+     *
+     * @param ingredientService the service used for ingredient CRUD operations
+     */
     public IngredientController(IngredientService ingredientService) {
         this.ingredientService = ingredientService;
     }
 
+    /**
+     * Returns the service used by this controller for CRUD operations.
+     *
+     * @return the {@link CrudService} for ingredients
+     */
     @Override
     protected CrudService<IngredientDto, RecipeIngredientKey> getService() {
         return ingredientService;

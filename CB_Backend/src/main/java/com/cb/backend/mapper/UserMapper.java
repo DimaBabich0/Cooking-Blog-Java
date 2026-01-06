@@ -8,7 +8,21 @@ import java.util.Random;
 
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
+/**
+ * Mapper class for converting between {@link User} entities and {@link UserDto} data transfer objects.
+ *
+ * <p>
+ * Provides methods to convert a User entity to a UserDto and to update an existing User
+ * entity with data from a UserDto.
+ * </p>
+ */
 public class UserMapper {
+	/**
+	 * Converts a {@link User} entity to a {@link UserDto}.
+	 *
+	 * @param user the entity to convert
+	 * @return a UserDto containing values from the entity
+	 */
     public static UserDto toDto(User user) {
         if (user == null) {
             return null;
@@ -25,6 +39,17 @@ public class UserMapper {
         return dto;
     }
 
+    /**
+     * Updates an existing {@link User} entity with data from a {@link UserDto}.
+     *
+     * <p>
+     * Sets username, name, email, role (default USER if missing), photo URL (default random avatar if missing),
+     * creation date, and password (hashed with BCrypt if provided).
+     * </p>
+     *
+     * @param user the entity to update
+     * @param dto the DTO containing new values
+     */
     public static void updateEntity(User user, UserDto dto) {
         user.setUsername(dto.getUsername());
         user.setFirstName(dto.getFirstName());

@@ -4,7 +4,21 @@ import com.cb.backend.dto.BlogDto;
 import com.cb.backend.model.Blog;
 import com.cb.backend.model.User;
 
+/**
+ * Mapper class for converting between {@link Blog} entities and {@link BlogDto} data transfer objects.
+ *
+ * <p>
+ * Provides methods to convert a Blog entity to a BlogDto and to update an existing Blog entity
+ * with data from a BlogDto.
+ * </p>
+ */
 public class BlogMapper {
+    /**
+     * Converts a {@link Blog} entity to a {@link BlogDto}.
+     *
+     * @param blog the {@link Blog} entity to convert
+     * @return a {@link BlogDto} containing data from the Blog entity
+     */
     public static BlogDto toDto(Blog blog) {
         BlogDto dto = new BlogDto();
         dto.setId(blog.getId());
@@ -19,6 +33,13 @@ public class BlogMapper {
         return dto;
     }
 
+    /**
+     * Updates an existing {@link Blog} entity with data from a {@link BlogDto}.
+     *
+     * @param blog the {@link Blog} entity to update
+     * @param dto the {@link BlogDto} containing new values
+     * @param user the {@link User} entity to set as the author of the blog
+     */
     public static void updateEntity(Blog blog, BlogDto dto, User user) {
         blog.setPhotoUrl(dto.getPhotoUrl());
         blog.setTitle(dto.getTitle());

@@ -6,15 +6,43 @@ import com.cb.backend.service.CrudService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST controller for managing {@link BlogDto} entities.
+ *
+ * <p>
+ * Provides standard CRUD endpoints inherited from {@link AbstractCrudController}:
+ * <ul>
+ *     <li>GET /api/blogs – list all blogs,</li>
+ *     <li>GET /api/blogs/{id} – get a blog by ID,</li>
+ *     <li>POST /api/blogs – create a new blog,</li>
+ *     <li>PUT /api/blogs/{id} – update an existing blog,</li>
+ *     <li>DELETE /api/blogs/{id} – delete a blog by ID.</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * Delegates all operations to {@link BlogService}.
+ * </p>
+ */
 @RestController
 @RequestMapping("/api/blogs")
 public class BlogController extends AbstractCrudController<BlogDto, Long> {
     private final BlogService blogService;
 
+    /**
+     * Constructs a BlogController with the provided BlogService.
+     *
+     * @param blogService the service used for blog CRUD operations
+     */
     public BlogController(BlogService blogService) {
         this.blogService = blogService;
     }
 
+    /**
+     * Returns the service used by this controller for CRUD operations.
+     *
+     * @return the {@link CrudService} for blogs
+     */
     @Override
     protected CrudService<BlogDto, Long> getService() {
         return blogService;

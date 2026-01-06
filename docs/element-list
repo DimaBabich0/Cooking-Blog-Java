@@ -1,0 +1,8 @@
+com.cb.backend
+com.cb.backend.controller
+com.cb.backend.converter
+com.cb.backend.dto
+com.cb.backend.mapper
+com.cb.backend.model
+com.cb.backend.repository
+com.cb.backend.service

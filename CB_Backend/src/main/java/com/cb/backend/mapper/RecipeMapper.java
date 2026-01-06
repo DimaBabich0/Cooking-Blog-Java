@@ -10,7 +10,25 @@ import com.cb.backend.model.Ingredient;
 import com.cb.backend.model.Recipe;
 import com.cb.backend.model.User;
 
+/**
+ * Mapper class for converting between {@link Recipe} entities and {@link RecipeDto} data transfer objects.
+ *
+ * <p>
+ * Provides methods to convert a Recipe entity to a RecipeDto and to update an existing Recipe
+ * entity with data from a RecipeDto.
+ * </p>
+ */
 public class RecipeMapper {
+	/**
+	 * Converts a {@link Recipe} entity to a {@link RecipeDto}.
+	 *
+	 * <p>
+	 * Maps basic fields, associated {@link User}, {@link Category} list, and {@link Ingredient} list.
+	 * </p>
+	 *
+	 * @param recipe the entity to convert
+	 * @return a RecipeDto containing values from the entity
+	 */
     public static RecipeDto toDto(Recipe recipe) {
     	RecipeDto dto = new RecipeDto();
         dto.setId(recipe.getId());
@@ -40,6 +58,20 @@ public class RecipeMapper {
         return dto;
     }
 
+    /**
+     * Updates an existing {@link Recipe} entity with data from a {@link RecipeDto}.
+     *
+     * <p>
+     * Sets basic fields, updates the associated {@link User}, and replaces the lists
+     * of {@link Category} and {@link Ingredient} entities.
+     * </p>
+     *
+     * @param recipe the entity to update
+     * @param dto the DTO containing new values
+     * @param user the {@link User} entity associated with the recipe
+     * @param categories list of {@link Category} entities to set
+     * @param ingredients list of {@link Ingredient} entities to set
+     */
     public static void updateEntity(
     		Recipe recipe,
     		RecipeDto dto,

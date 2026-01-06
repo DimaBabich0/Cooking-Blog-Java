@@ -3,6 +3,9 @@ package com.cb.backend.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * DTO representing a {@link com.cb.backend.model.Recipe} entity.
+ */
 public class RecipeDto {
 	// --- Variables ---
     private Long id;
@@ -17,6 +20,27 @@ public class RecipeDto {
     private List<CategoryDto> categoriesDto;
     private List<IngredientDto> ingredientsDto;
 
+    // --- Methods ---
+    @Override
+    public String toString() {
+    	int categoriesDtoSize = categoriesDto != null ? categoriesDto.size() : 0;
+    	int ingredientsDtoSize = ingredientsDto != null ? ingredientsDto.size() : 0;
+    	
+        return "RecipeDto{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", text='" + (text != null ? text.substring(0, Math.min(text.length(), 50)) + "..." : null) + '\'' +
+                ", photoUrl='" + photoUrl + '\'' +
+                ", cookingTime=" + cookingTime +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", userDto=" + (userDto != null ? userDto : null) +
+                ", categoriesDtoDto[" + categoriesDtoSize + "]=" + (categoriesDto != null ? categoriesDto.toString() : null)  +
+                ", ingredientsDtoDto[" + ingredientsDtoSize + "]=" + (ingredientsDto != null ? ingredientsDto.toString() : null) +
+                '}';
+    }
+    
     // --- Getters & Setters ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -50,25 +74,4 @@ public class RecipeDto {
     
     public List<IngredientDto> getIngredientsDto() { return ingredientsDto; }
     public void setIngredients(List<IngredientDto> ingredientsDto) { this.ingredientsDto = ingredientsDto; }
-    
-    // --- Methods ---
-    @Override
-    public String toString() {
-    	int categoriesDtoSize = categoriesDto != null ? categoriesDto.size() : 0;
-    	int ingredientsDtoSize = ingredientsDto != null ? ingredientsDto.size() : 0;
-    	
-        return "RecipeDto{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", text='" + (text != null ? text.substring(0, Math.min(text.length(), 50)) + "..." : null) + '\'' +
-                ", photoUrl='" + photoUrl + '\'' +
-                ", cookingTime=" + cookingTime +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                ", userDto=" + (userDto != null ? userDto : null) +
-                ", categoriesDtoDto[" + categoriesDtoSize + "]=" + (categoriesDto != null ? categoriesDto.toString() : null)  +
-                ", ingredientsDtoDto[" + ingredientsDtoSize + "]=" + (ingredientsDto != null ? ingredientsDto.toString() : null) +
-                '}';
-    }
 }

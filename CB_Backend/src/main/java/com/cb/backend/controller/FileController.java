@@ -11,6 +11,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
+/**
+ * REST controller for handling file uploads and downloads.
+ *
+ * <p>
+ * Provides endpoints to upload files to a specified folder and to retrieve files
+ * as byte arrays for display or download:
+ * <ul>
+ *     <li>GET /api/files/upload – upload file,</li>
+ *     <li>GET /api/files/images/{folder}/{fileName:.+} – get file by path and file name</li>
+ * </ul>
+ * </p>
+ */
 @RestController
 @RequestMapping("/api/files")
 public class FileController {
@@ -20,6 +32,13 @@ public class FileController {
         this.storageService = storageService;
     }
 
+    /**
+     * Uploads a file to the specified folder.
+     *
+     * @param file the file to upload
+     * @param folder the target folder
+     * @return a map containing the path to the stored file
+     */
     @PostMapping("/upload")
     public Map<String, String> uploadFile(
     		@RequestParam("file") MultipartFile file,
@@ -28,6 +47,13 @@ public class FileController {
         return Map.of("path", folder + "/" + fileName);
     }
 
+    /**
+     * Retrieves a file as a byte array from the specified folder and file name.
+     *
+     * @param folder the folder containing the file
+     * @param fileName the name of the file
+     * @return a {@link ResponseEntity} containing the file bytes, content type, and headers
+     */
     @GetMapping("/images/{folder}/{fileName:.+}")
     public ResponseEntity<byte[]> getFile(
             @PathVariable("folder") String folder,

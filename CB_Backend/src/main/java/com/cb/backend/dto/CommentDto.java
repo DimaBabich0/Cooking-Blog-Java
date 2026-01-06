@@ -2,6 +2,9 @@ package com.cb.backend.dto;
 
 import java.time.LocalDateTime;
 
+/**
+ * DTO representing a {@link com.cb.backend.model.Comment} entity.
+ */
 public class CommentDto {
 	// --- Variables ---
     private Long id;
@@ -10,7 +13,20 @@ public class CommentDto {
     private LocalDateTime updatedAt;
     private Long recipeId;
     private UserDto userDto;
-
+	
+    // --- Methods ---
+    @Override
+    public String toString() {
+        return "CommentDto{" +
+                "id=" + id +
+                ", text=" + text + "" +
+                ", createdAt=" + createdAt + "" +
+                ", updatedAt=" + updatedAt + "" +
+                ", recipeId=" + recipeId + "" +
+                ", UserDto=" + userDto + "" +
+                '}';
+    }
+    
     // --- Getters & Setters ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

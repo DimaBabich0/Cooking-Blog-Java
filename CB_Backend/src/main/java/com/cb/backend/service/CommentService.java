@@ -13,6 +13,20 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service class <b>CommentService</b> implements {@link CrudService} for
+ * {@link CommentDto} objects.
+ *
+ * <p>
+ * Provides CRUD operations for {@link Comment} entities, mapping between
+ * {@link Comment} and {@link CommentDto} using {@link CommentMapper}.
+ * Handles associations with {@link User} and {@link Recipe}.
+ * </p>
+ *
+ * <p>
+ * Throws {@link RuntimeException} if referenced user, recipe, or comment is not found.
+ * </p>
+ */
 @Service
 public class CommentService implements CrudService<CommentDto, Long> {
     private final CommentRepository commentRepo;
@@ -25,6 +39,11 @@ public class CommentService implements CrudService<CommentDto, Long> {
         this.userRepo = userRepo;
     }
 
+    /**
+     * Retrieves all comments.
+     *
+     * @return list of {@link CommentDto} representing all comments
+     */
 	@Override
 	public List<CommentDto> findAll() {
 		return commentRepo.findAll().stream()
@@ -32,6 +51,12 @@ public class CommentService implements CrudService<CommentDto, Long> {
                 .collect(Collectors.toList());
 	}
 
+	/**
+	 * Finds a comment by its ID.
+	 *
+	 * @param id the identifier of the comment
+	 * @return {@link CommentDto} of the found comment, or {@code null} if not found
+	 */
 	@Override
 	public CommentDto findById(Long id) {
 		return commentRepo.findById(id)
@@ -39,6 +64,13 @@ public class CommentService implements CrudService<CommentDto, Long> {
                 .orElse(null);
 	}
 
+	/**
+	 * Creates a new comment.
+	 *
+	 * @param dto the {@link CommentDto} containing comment data
+	 * @return {@link CommentDto} of the created comment
+	 * @throws RuntimeException if the associated recipe or user is not found
+	 */
 	@Override
 	public CommentDto create(CommentDto dto) {
 		Recipe recipe = recipeRepo.findById(dto.getRecipeId())
@@ -52,6 +84,15 @@ public class CommentService implements CrudService<CommentDto, Long> {
         return CommentMapper.toDto(commentRepo.save(comment));
 	}
 
+
+	/**
+	 * Updates an existing comment.
+	 *
+	 * @param id  the identifier of the comment to update
+	 * @param dto the {@link CommentDto} containing updated comment data
+	 * @return {@link CommentDto} of the updated comment
+	 * @throws RuntimeException if the comment, associated recipe, or user is not found
+	 */
 	@Override
 	public CommentDto update(Long id, CommentDto dto) {
 		Recipe recipe = recipeRepo.findById(dto.getRecipeId())
@@ -65,6 +106,12 @@ public class CommentService implements CrudService<CommentDto, Long> {
         return CommentMapper.toDto(commentRepo.save(comment));
 	}
 
+
+	/**
+	 * Deletes a comment by its ID.
+	 *
+	 * @param id the identifier of the comment to delete
+	 */
 	@Override
 	public void deleteById(Long id) {
 		commentRepo.deleteById(id);

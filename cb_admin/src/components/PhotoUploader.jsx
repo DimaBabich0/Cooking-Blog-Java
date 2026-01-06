@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { uploadFile } from "../api/filesApi.js";
 
-export default function PhotoUploader({ onUpload, initialUrl, folder }) {
+export default function PhotoUploader({ label, onUpload, initialUrl, folder }) {
     const fileInputRef = useRef(null);
     const [uploading, setUploading] = useState(false);
     const [previewUrl, setPreviewUrl] = useState(initialUrl || null);
@@ -33,6 +33,7 @@ export default function PhotoUploader({ onUpload, initialUrl, folder }) {
 
     return (
         <div>
+            <label className="form-label">{label}:</label>
             {previewUrl && (
                 <img
                     src={`http://localhost:8080/api/files/images/${previewUrl}`}

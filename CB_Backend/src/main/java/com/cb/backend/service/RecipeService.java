@@ -2,8 +2,6 @@ package com.cb.backend.service;
 
 import com.cb.backend.dto.IngredientDto;
 import com.cb.backend.dto.RecipeDto;
-import com.cb.backend.mapper.CategoryMapper;
-import com.cb.backend.mapper.IngredientMapper;
 import com.cb.backend.mapper.RecipeMapper;
 import com.cb.backend.model.Category;
 import com.cb.backend.model.Ingredient;
@@ -22,6 +20,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service class <b>RecipeService</b> implements {@link CrudService} for
+ * {@link RecipeDto} objects.
+ *
+ * <p>
+ * Provides CRUD operations for {@link Recipe} entities, converting between
+ * {@link Recipe} and {@link RecipeDto} using {@link RecipeMapper}.
+ * Handles associations with {@link User}, {@link Category}, {@link Ingredient}, and {@link Product}.
+ * </p>
+ *
+ * <p>
+ * Automatically creates products for ingredients if they do not exist.
+ * Throws {@link RuntimeException} if referenced user, category, or recipe is not found.
+ * </p>
+ */
 @Service
 public class RecipeService implements CrudService<RecipeDto, Long> {
     private final RecipeRepository recipeRepo;
@@ -43,6 +56,11 @@ public class RecipeService implements CrudService<RecipeDto, Long> {
         this.ingredientRepo = ingredientRepo;
     }
 
+    /**
+     * Retrieves all recipes.
+     *
+     * @return list of {@link RecipeDto} representing all recipes
+     */
 	@Override
 	public List<RecipeDto> findAll() {
 		return recipeRepo.findAll().stream()
@@ -50,6 +68,12 @@ public class RecipeService implements CrudService<RecipeDto, Long> {
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * Finds a recipe by its ID.
+	 *
+	 * @param id the identifier of the recipe
+	 * @return {@link RecipeDto} of the found recipe, or {@code null} if not found
+	 */
 	@Override
 	public RecipeDto findById(Long id) {
 		return recipeRepo.findById(id)
@@ -57,6 +81,13 @@ public class RecipeService implements CrudService<RecipeDto, Long> {
 				.orElse(null);
 	}
 
+	/**
+	 * Creates a new recipe along with its ingredients.
+	 *
+	 * @param dto the {@link RecipeDto} containing recipe data
+	 * @return {@link RecipeDto} of the created recipe
+	 * @throws RuntimeException if the associated user or any category/product is not found
+	 */
 	@Override
 	public RecipeDto create(RecipeDto dto) {
         try {
@@ -128,6 +159,14 @@ public class RecipeService implements CrudService<RecipeDto, Long> {
         }
     }
 
+	/**
+	 * Updates an existing recipe and its ingredients.
+	 *
+	 * @param id the identifier of the recipe to update
+	 * @param dto the {@link RecipeDto} containing updated recipe data
+	 * @return {@link RecipeDto} of the updated recipe
+	 * @throws RuntimeException if the recipe, user, or any category/product is not found
+	 */
 	@Override
 	public RecipeDto update(Long id, RecipeDto dto) {
 		Recipe recipe = recipeRepo.findById(id)
@@ -157,11 +196,33 @@ public class RecipeService implements CrudService<RecipeDto, Long> {
         return RecipeMapper.toDto(recipeRepo.save(recipe));
 	}
 
+	/**
+	 * Deletes a recipe by its ID.
+	 *
+	 * @param id the identifier of the recipe to delete
+	 */
 	@Override
 	public void deleteById(Long id) {
 		recipeRepo.deleteById(id);
 	}
 	
+	/**
+	 * Create list of {@link Ingredient} from recipe {@link RecipeDto} and {@link Recipe}
+	 *
+	 * <p>
+	 * For each ingredient in the DTO:
+	 * <ul>
+	 *     <li>Validates that the product name is not null or blank.</li>
+	 *     <li>Finds an existing {@link Product} by name (case-insensitive) or creates a new one if it does not exist.</li>
+	 *     <li>Creates a new {@link Ingredient} linking the {@link Recipe} and the {@link Product} with the specified quantity.</li>
+	 * </ul>
+	 * </p>
+	 *
+	 * @param dto the {@link RecipeDto} containing ingredient data
+	 * @param recipe the {@link Recipe} entity to associate with the ingredients
+	 * @return list of {@link Ingredient} entities ready to be persisted
+	 * @throws RuntimeException if any ingredient in the DTO has a null or blank product name
+	 */
 	private List<Ingredient> createIngredientsForRecipe(RecipeDto dto, Recipe recipe) {
         List<Ingredient> ingredients = new ArrayList<>();
 

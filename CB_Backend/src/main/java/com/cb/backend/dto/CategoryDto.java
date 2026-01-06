@@ -1,11 +1,25 @@
 package com.cb.backend.dto;
 
+/**
+ * DTO representing a {@link com.cb.backend.model.Category} entity.
+ */
 public class CategoryDto {
 	// --- Variables ---
     private Long id;
     private String name;
     private String description;
     private String photoUrl;
+    
+    // --- Methods ---
+    @Override
+    public String toString() {
+        return "RecipeDto{" +
+                "id=" + id +
+                ", name=" + name + "" +
+                ", description=" + description + "" +
+                ", photoUrl=" + photoUrl + "" +
+                '}';
+    }
     
     // --- Getters & Setters ---
     public Long getId() { return id; }
@@ -19,15 +33,4 @@ public class CategoryDto {
     
     public String getPhotoUrl() { return photoUrl; }
     public void setPhotoUrl(String photoUrl) { this.photoUrl = photoUrl; }
-    
-    // --- Methods ---
-    @Override
-    public String toString() {
-        return "RecipeDto{" +
-                "id=" + id +
-                ", name=" + name + "" +
-                ", description=" + description + "" +
-                ", photoUrl=" + photoUrl + "" +
-                '}';
-    }
 }

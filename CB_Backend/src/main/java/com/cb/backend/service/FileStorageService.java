@@ -10,14 +10,22 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+/**
+ * Service class <b>FileStorageService</b> handles storing and loading files
+ * on the server filesystem.
+ *
+ * <p>
+ * Supports subfolders and generates unique filenames using UUIDs to prevent collisions.
+ * Throws {@link RuntimeException} in case of invalid paths or I/O errors.
+ * </p>
+ */
 @Service
 public class FileStorageService {
     private final Path rootLocation ;
 
     public FileStorageService(FileStorageProperties properties) {
-        this.rootLocation  = Paths.get(properties.getUploadDir())
+        this.rootLocation = Paths.get(properties.getUploadDir())
                 .toAbsolutePath().normalize();
-
         try {
             Files.createDirectories(this.rootLocation );
         } catch (Exception ex) {
@@ -25,6 +33,14 @@ public class FileStorageService {
         }
     }
 
+    /**
+     * Stores a file in the specified subfolder.
+     *
+     * @param file the {@link MultipartFile} to store
+     * @param subFolder the subfolder within the root upload directory
+     * @return the stored file name
+     * @throws RuntimeException if the file cannot be stored or contains invalid path sequences
+     */
     public String storeFile(MultipartFile file, String subFolder) {
         String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
         String fileName = UUID.randomUUID() + "-" + originalFileName;
@@ -43,6 +59,13 @@ public class FileStorageService {
         }
     }
 
+    /**
+     * Loads a file path from the specified subfolder and file name.
+     *
+     * @param subFolder the subfolder within the root upload directory
+     * @param fileName the file name to load
+     * @return {@link Path} to the requested file
+     */
     public Path loadFile(String subFolder, String fileName) {
     	return this.rootLocation.resolve(subFolder).resolve(fileName).normalize();
     }

@@ -2,6 +2,9 @@ package com.cb.backend.dto;
 
 import java.time.LocalDate;
 
+/**
+ * DTO representing a {@link com.cb.backend.model.User} entity.
+ */
 public class UserDto {
     private Long id;
     private String username;
@@ -13,6 +16,22 @@ public class UserDto {
     private String password;
     private LocalDate createdAt;
 
+    // --- Methods ---
+    @Override
+    public String toString() {
+        return "UserDto{" +
+                "id=" + id +
+                ", username=" + username  +
+                ", firstName=" + firstName  +
+                ", lastName=" + lastName  +
+                ", email=" + email  +
+                ", password=" + password  +
+                ", role=" + role  +
+                ", photoUrl='" + photoUrl + '\'' +
+                ", createdAt='" + createdAt + '\'' +
+                '}';
+    }
+    
     // --- Getters & Setters ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -40,20 +59,4 @@ public class UserDto {
     
     public LocalDate getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDate createdAt) { this.createdAt = createdAt; }
-    
-    // --- Methods ---
-    @Override
-    public String toString() {
-        return "BlogDto{" +
-                "id=" + id +
-                ", username=" + username  +
-                ", firstName=" + firstName  +
-                ", lastName=" + lastName  +
-                ", email=" + email  +
-                ", password=" + password  +
-                ", role=" + role  +
-                ", photoUrl='" + photoUrl + '\'' +
-                ", createdAt='" + createdAt + '\'' +
-                '}';
-    }
 }

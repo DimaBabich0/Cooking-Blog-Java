@@ -1,5 +1,8 @@
 package com.cb.backend.dto;
 
+/**
+ * DTO representing a {@link com.cb.backend.model.Ingredient} entity.
+ */
 public class IngredientDto {
 	// --- Variables ---
     private Long recipeId;
@@ -7,6 +10,18 @@ public class IngredientDto {
     private String productName;
     private Double quantity;
     private String unit;
+	
+    // --- Methods ---
+    @Override
+    public String toString() {
+        return "RecipeDto{" +
+                "recipeId=" + recipeId +
+                ", productId=" + productId + "" +
+                ", productName=" + productName + "" +
+                ", quantity=" + quantity + "" +
+                ", unit=" + unit + "" +
+                '}';
+    }
     
     // --- Getters & Setters ---
 	public Long getRecipeId() { return recipeId; }
@@ -23,16 +38,4 @@ public class IngredientDto {
 
 	public String getUnit() { return unit; }
 	public void setUnit(String unit) { this.unit = unit; }
-	
-    // --- Methods ---
-    @Override
-    public String toString() {
-        return "RecipeDto{" +
-                "recipeId=" + recipeId +
-                ", productId=" + productId + "" +
-                ", productName=" + productName + "" +
-                ", quantity=" + quantity + "" +
-                ", unit=" + unit + "" +
-                '}';
-    }
 }

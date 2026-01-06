@@ -6,7 +6,25 @@ import com.cb.backend.model.Product;
 import com.cb.backend.model.Recipe;
 import com.cb.backend.model.RecipeIngredientKey;
 
+/**
+ * Mapper class for converting between {@link Ingredient} entities and {@link IngredientDto} data transfer objects.
+ *
+ * <p>
+ * Provides methods to convert an Ingredient entity to a DTO, create a new entity from a DTO,
+ * and update an existing entity from a DTO.
+ * </p>
+ *
+ * <p>
+ * Handles relationships with {@link Product} and {@link Recipe} entities, including composite primary keys.
+ * </p>
+ */
 public class IngredientMapper {
+	/**
+	 * Converts an {@link Ingredient} entity to an {@link IngredientDto}.
+	 *
+	 * @param ingredient the entity to convert
+	 * @return an IngredientDto containing values from the entity
+	 */
     public static IngredientDto toDto(Ingredient ingredient) {
     	IngredientDto dto = new IngredientDto();
     	
@@ -20,6 +38,14 @@ public class IngredientMapper {
         return dto;
     }
 
+    /**
+     * Converts an {@link IngredientDto} to a new {@link Ingredient} entity.
+     *
+     * @param dto the DTO with ingredient data
+     * @param recipe the associated {@link Recipe} entity
+     * @param product the associated {@link Product} entity
+     * @return a new Ingredient entity
+     */
     public static Ingredient toEntity(IngredientDto dto, Recipe recipe, Product product) {
         Ingredient ingredient = new Ingredient();
 
@@ -40,18 +66,15 @@ public class IngredientMapper {
     public static Ingredient fromDto(IngredientDto dto, Recipe recipe, Product product) {
         Ingredient ingredient = new Ingredient();
 
-        // PK
         RecipeIngredientKey key = new RecipeIngredientKey(
                 recipe.getId(),
                 product.getId()
         );
         ingredient.setId(key);
 
-        // relations
         ingredient.setRecipe(recipe);
         ingredient.setProduct(product);
 
-        // fields
         ingredient.setQuantity(dto.getQuantity());
         ingredient.setUnit(dto.getUnit());
 
@@ -64,8 +87,6 @@ public class IngredientMapper {
                 .filter(p -> p.getId().equals(dto.getProductId()))
                 .findFirst()
                 .orElse(null);
-
-        // лучше грузить product через repo в сервисе, но можно так оставить
 
         Ingredient ingredient = new Ingredient();
         ingredient.setRecipe(recipe);
@@ -82,6 +103,13 @@ public class IngredientMapper {
         return ingredient;
     }
     
+    /**
+     * Updates an existing {@link Ingredient} entity with data from a {@link IngredientDto}.
+     *
+     * @param ingredient the entity to update
+     * @param dto the DTO containing new values
+     * @param product the {@link Product} entity associated with the ingredient
+     */
     public static void updateEntity(Ingredient ingredient, IngredientDto dto, Product product) {
         ingredient.setQuantity(dto.getQuantity());
         ingredient.setUnit(dto.getUnit());

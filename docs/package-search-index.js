@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.cb.backend.controller"},{"l":"com.cb.backend.converter"},{"l":"com.cb.backend.dto"},{"l":"com.cb.backend.mapper"},{"l":"com.cb.backend.model"},{"l":"com.cb.backend.repository"},{"l":"com.cb.backend.service"}];updateSearchResults();

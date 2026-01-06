@@ -2,6 +2,9 @@ package com.cb.backend.dto;
 
 import java.time.LocalDateTime;
 
+/**
+ * DTO representing a {@link com.cb.backend.model.Blog} entity.
+ */
 public class BlogDto {
 	// --- Variables ---
     private Long id;
@@ -14,6 +17,22 @@ public class BlogDto {
     private LocalDateTime updatedAt;
     private UserDto userDto;
 
+    // --- Methods ---
+    @Override
+    public String toString() {
+        return "BlogDto{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", text='" + (text != null ? text.substring(0, Math.min(text.length(), 50)) + "..." : null) + '\'' +
+                ", photoUrl='" + photoUrl + '\'' +
+                ", cookingTime=" + cookingTime +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", userDto=" + userDto +
+                '}';
+    }
+    
     // --- Getters & Setters ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -41,20 +60,4 @@ public class BlogDto {
 
     public UserDto getUserDto() { return userDto; }
     public void setUserDto(UserDto userDto) { this.userDto = userDto; }
-    
-    // --- Methods ---
-    @Override
-    public String toString() {
-        return "BlogDto{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", text='" + (text != null ? text.substring(0, Math.min(text.length(), 50)) + "..." : null) + '\'' +
-                ", photoUrl='" + photoUrl + '\'' +
-                ", cookingTime=" + cookingTime +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                ", userDto=" + userDto +
-                '}';
-    }
 }

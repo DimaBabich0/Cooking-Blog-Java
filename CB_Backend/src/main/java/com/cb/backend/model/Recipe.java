@@ -5,66 +5,163 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Entity <b>Recipe</b> represents a cooking recipe created by a user.
+ *
+ * <p>
+ * This entity is mapped to the <b>CB_RECIPES</b> table and is used to store
+ * detailed information about recipes, including title, description,
+ * full recipe content, image, cooking time, and audit timestamps.
+ * </p>
+ *
+ * <p>
+ * Each recipe is authored by exactly one {@link User} and can be associated
+ * with multiple {@link Category} and {@link Ingredient} entities.
+ * </p>
+ *
+ * @author Dmytro Babich
+ * @since 1.0
+ */
 @Entity
 @Table(name = "CB_RECIPES")
 public class Recipe {
 	//--- Variables ---
+	/**
+     * Unique identifier of the recipe.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * Title of the recipe.
+     * <p>Must not be {@code null}. Maximum length is 100 characters.</p>
+     */
     @Column(length = 100, nullable = false)
     private String title;
-    
+
+    /**
+     * Short description of the recipe.
+     * <p>Maximum length is 100 characters.</p>
+     */
     @Column(length = 100)
     private String description;
-    
+
+    /**
+     * Full content of the recipe.
+     * <p>
+     * Must not be {@code null}.
+     * Stored as a {@link Lob} to allow large amounts of text
+     * (e.g. HTML, Markdown).
+     * </p>
+     */
     @Lob
     @Column(nullable = false)
     private String text;
 
+    /**
+     * Path to the image associated with the recipe.
+     * <p>Maximum length is 255 characters.</p>
+     */
     @Column(name = "photo_url", length = 255)
     private String photoUrl;
-    
+
+    /**
+     * Cooking time in minutes.
+     */
     @Column(name = "cooking_time")
     private Integer cookingTime;
 
+    /**
+     * Timestamp when the recipe was created.
+     * <p>Automatically set before persisting the entity.</p>
+     */
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    /**
+     * Timestamp when the recipe was last updated.
+     * <p>Automatically updated before updating the entity.</p>
+     */
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     
     //--- Relationships ---
+    /**
+     * Author of the recipe.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    
+
+    /**
+     * Categories assigned to the recipe.
+     * <p>
+     * One recipe can belong to multiple categories,
+     * and one category can contain multiple recipes.
+     * </p>
+     */
     @ManyToMany
     @JoinTable(
-    		name = "CB_RECIPE_CATEGORIES",
-    		joinColumns = @JoinColumn(name = "recipe_id"),
-    		inverseJoinColumns = @JoinColumn(name = "category_id")
+            name = "CB_RECIPE_CATEGORIES",
+            joinColumns = @JoinColumn(name = "recipe_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
     )
-    private List<Category> categories = new ArrayList<>();;
+    private List<Category> categories = new ArrayList<>();
     
+    /**
+     * Ingredients used in the recipe.
+     * <p>
+     * One recipe can contain multiple ingredients.
+     * </p>
+     */
     @OneToMany(
-    		mappedBy = "recipe",
-    		cascade = CascadeType.ALL,
-    		orphanRemoval = true
+            mappedBy = "recipe",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
-    private List<Ingredient> ingredients = new ArrayList<>();;
+    private List<Ingredient> ingredients = new ArrayList<>();
 
     // --- Methods ---
+    /**
+     * Called before the entity is persisted.
+     * <p>
+     * Initializes {@code createdAt} and {@code updatedAt}
+     * with the current timestamp.
+     * </p>
+     */
     @PrePersist
     public void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = this.createdAt;
     }
 
+    /**
+     * Called before the entity is updated.
+     * <p>
+     * Updates {@code updatedAt} with the current timestamp.
+     * </p>
+     */
     @PreUpdate
     public void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    /**
+     * Returns a string representation of the recipe.
+     */
+    @Override
+    public String toString() {
+        return "Recipe{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", photoUrl='" + photoUrl + '\'' +
+                ", cookingTime=" + cookingTime +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", userId=" + (user != null ? user.getId() : null) +
+                '}';
     }
 
     // --- Getters & Setters ---
