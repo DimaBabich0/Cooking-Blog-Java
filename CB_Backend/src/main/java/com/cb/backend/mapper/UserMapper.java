@@ -10,12 +10,15 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 
 public class UserMapper {
     public static UserDto toDto(User user) {
+        if (user == null) {
+            return null;
+        }
         UserDto dto = new UserDto();
         dto.setId(user.getId());
-        dto.setUsername(user.getUsername());
+        dto.setUsername(user.getUsername() != null ? user.getUsername() : "");
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
-        dto.setEmail(user.getEmail());
+        dto.setEmail(user.getEmail() != null ? user.getEmail() : "");
         dto.setRole(user.getRole() != null ? user.getRole().name() : null);
         dto.setPhotoUrl(user.getPhotoUrl());
         dto.setCreatedAt(user.getCreatedAt());

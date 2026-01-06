@@ -1,0 +1,202 @@
+.createRecipe {
+  padding: 3rem 0;
+  min-height: calc(100vh - 200px);
+  background: #fff;
+
+  .container {
+    max-width: 900px;
+  }
+
+  .form_wrapper {
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      color: #1a1a1a;
+      text-align: center;
+    }
+  }
+
+  .error {
+    background: #fee;
+    border: 1px solid #fcc;
+    color: #c33;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+  }
+
+  .form {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .field {
+    margin-bottom: 2rem;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+
+  .label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #1a1a1a;
+    font-size: 1rem;
+  }
+
+  .required {
+    color: #c41e3a;
+  }
+
+  .input,
+  .textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: #c41e3a;
+      box-shadow: 0 0 0 3px rgba(196, 30, 58, 0.1);
+    }
+
+    &::placeholder {
+      color: #999;
+    }
+  }
+
+  .textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  .hint {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #666;
+  }
+
+  .categories_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .category_checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: all 0.2s;
+
+    &:hover {
+      border-color: #c41e3a;
+      background: #fef7f7;
+    }
+
+    input[type="checkbox"] {
+      cursor: pointer;
+    }
+
+    span {
+      font-size: 0.9rem;
+    }
+  }
+
+  .ingredients_list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .ingredient_row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .add_btn,
+  .remove_btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+
+    &:hover {
+      border-color: #c41e3a;
+      background: #fef7f7;
+      color: #c41e3a;
+    }
+  }
+
+  .add_btn {
+    border-style: dashed;
+    color: #666;
+    margin-top: 0.5rem;
+  }
+
+  .remove_btn {
+    color: #c33;
+    flex-shrink: 0;
+  }
+
+  .actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e5e5e5;
+  }
+}
+
+@media (max-width: 768px) {
+  .createRecipe {
+    padding: 1.5rem 0;
+
+    .form_wrapper {
+      h1 {
+        font-size: 2rem;
+      }
+    }
+
+    .form {
+      padding: 1.5rem;
+    }
+
+    .ingredient_row {
+      flex-direction: column;
+      align-items: stretch;
+
+      .input {
+        width: 100%;
+      }
+    }
+
+    .actions {
+      flex-direction: column-reverse;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+}

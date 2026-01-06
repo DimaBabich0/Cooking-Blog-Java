@@ -1,0 +1,186 @@
+.createBlog {
+  padding: 3rem 0;
+  min-height: calc(100vh - 200px);
+  background: #fff;
+
+  .container {
+    max-width: 900px;
+  }
+
+  .title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    color: #1a1a1a;
+    text-align: center;
+  }
+
+  .error {
+    background: #fee;
+    border: 1px solid #fcc;
+    color: #c33;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+  }
+
+  .form {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .field {
+    margin-bottom: 2rem;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+
+  .label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #1a1a1a;
+    font-size: 1rem;
+  }
+
+  .input,
+  .textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: #c41e3a;
+      box-shadow: 0 0 0 3px rgba(196, 30, 58, 0.1);
+    }
+
+    &::placeholder {
+      color: #999;
+    }
+  }
+
+  .textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  .hint {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #666;
+  }
+
+  .editor {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+
+    :global(.ql-container) {
+      min-height: 300px;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    :global(.ql-editor) {
+      min-height: 300px;
+      
+      &.ql-blank::before {
+        color: #999;
+        font-style: normal;
+      }
+    }
+
+    :global(.ql-toolbar) {
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      border-bottom: 1px solid #ddd;
+      background: #fafafa;
+    }
+
+    :global(.ql-container) {
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+
+    &:focus-within {
+      border-color: #c41e3a;
+      box-shadow: 0 0 0 3px rgba(196, 30, 58, 0.1);
+    }
+  }
+
+  .actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  .cancelBtn,
+  .submitBtn {
+    padding: 0.875rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  .cancelBtn {
+    background: #f5f5f5;
+    color: #666;
+
+    &:hover:not(:disabled) {
+      background: #e5e5e5;
+    }
+  }
+
+  .submitBtn {
+    background: #c41e3a;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: #a01a2e;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .createBlog {
+    padding: 1.5rem 0;
+
+    .title {
+      font-size: 2rem;
+    }
+
+    .form {
+      padding: 1.5rem;
+    }
+
+    .actions {
+      flex-direction: column-reverse;
+
+      .cancelBtn,
+      .submitBtn {
+        width: 100%;
+      }
+    }
+  }
+}

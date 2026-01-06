@@ -12,7 +12,13 @@ type Props = {
 const PostCard = ({author, authorImgSrc, date, title, description, imageSrc, small} : Props ) => {
     return (
         <div className={`${styles.post_card}  ${small ? styles.small_post_card : ''}`}>
-            <img className={styles.post_card_image} src={imageSrc} alt="" />
+            {imageSrc ? (
+                <img className={styles.post_card_image} src={imageSrc} alt={title || ""} />
+            ) : (
+                <div className={styles.post_card_image_placeholder}>
+                    <span>No Image</span>
+                </div>
+            )}
             <div className={styles.post_card_info}>
                 <h4>{title}</h4>
                 <p className={styles.description}>{description}</p>

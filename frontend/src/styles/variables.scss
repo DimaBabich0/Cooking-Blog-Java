@@ -1,7 +1,6 @@
-
 $white: #ffffff;
 $black: #000000;
-$sky-blue: #E7FAFE;
+$sky-blue: #e7fafe;
 $gray: #646666;
 
 @mixin AV($property, $maxVal, $minVal, $measure) {
@@ -37,16 +36,13 @@ $gray: #646666;
   @media (max-width: 1300px) {
     font-size: 1rem;
   }
-
 }
-
-
-
 
 @mixin h1 {
   color: $black;
   font-size: 4rem;
-  line-height: auto; // 40px ÷ 16
+  letter-spacing: -0.04em;
+  line-height: 5rem; // 40px ÷ 16
   font-weight: 600;
   @media (max-width: 1300px) {
     font-size: 2.5rem;
@@ -91,7 +87,6 @@ $gray: #646666;
   font-weight: 300;
   color: $gray;
   letter-spacing: 0;
-
 }
 
 // @mixin large-paragraph {
@@ -103,12 +98,9 @@ $gray: #646666;
 
 // }
 
-
-
 @mixin header-link {
   font-size: 1rem;
   line-height: auto; // 28px ÷ 16
   font-weight: 500;
   color: $black;
 }
-

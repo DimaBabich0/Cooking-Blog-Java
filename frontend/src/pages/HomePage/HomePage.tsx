@@ -1,92 +1,203 @@
-import styles from './HomePage.module.scss'
-import Button from '../../components/Button/Button'
-import Card from '../../components/Card/Card'
-import postCardImg from '../../assets/postCardImg.png'
-import authorImg from '../../assets/author.png'
-import meal1 from '../../assets/meal1.jpg'
-import RecipesSlider from '../../components/RecipesSlider/RecipesSlider'
-import PostCard from '../../components/PostCard/PostCard'
-import Subscription from '../../components/Subscribtion/Subscription'
-export default function HomePage() {
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
+import "swiper/css";
+import Button from "../../components/Button/Button";
+import Card from "../../components/Card/Card";
+import PostCard from "../../components/PostCard/PostCard";
+import Subscription from "../../components/Subscribtion/Subscription";
+import RecipesSlider from "../../components/RecipesSlider/RecipesSlider";
+import { getRecipes, RecipeDto } from "../../api/recipeApi";
+import { getBlogs, BlogDto } from "../../api/blogApi";
+import { getCategories, CategoryDto } from "../../api/categoryApi";
+import { getImageUrl } from "../../api/filesApi";
+import styles from "./HomePage.module.scss";
 
-  const recipes = [
-  {
-    id: 1,
-    title: 'Pumpkin Oatmeal',
-    description: 'Warm and cozy fall breakfast with spices.',
-    image: meal1,
-    author: 'Wade Warren',
-    date: '12 November 2021',
-  },
-  {
-    id: 2,
-    title: 'Avocado Toast',
-    description: 'Crispy sourdough topped with fresh avocado.',
-    image: meal1,
-    author: 'Courtney Henry',
-    date: '13 November 2021',
-  },
-  {
-    id: 3,
-    title: 'Miso Ramen',
-    description: 'Authentic Japanese noodles with rich umami broth.',
-    image: meal1,
-    author: 'Marvin McKinney',
-    date: '15 November 2021',
-  },
-    {
-    id: 34,
-    title: 'Miso Ramen',
-    description: 'Authentic Japanese noodles with rich umami broth.',
-    image: meal1,
-    author: 'Marvin McKinney',
-    date: '15 November 2021',
-  },
-    {
-    id: 5,
-    title: 'Miso Ramen',
-    description: 'Authentic Japanese noodles with rich umami broth.',
-    image: meal1,
-    author: 'Marvin McKinney',
-    date: '15 November 2021',
-  },
-    {
-    id: 6,
-    title: 'Miso Ramen',
-    description: 'Authentic Japanese noodles with rich umami broth.',
-    image: meal1,
-    author: 'Marvin McKinney',
-    date: '15 November 2021',
-  },
-]
+export default function HomePage() {
+  const [topRecipe, setTopRecipe] = useState<RecipeDto | null>(null);
+  const [recipes, setRecipes] = useState<RecipeDto[]>([]);
+  const [blogs, setBlogs] = useState<BlogDto[]>([]);
+  const [categories, setCategories] = useState<CategoryDto[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  async function loadData() {
+    try {
+      setLoading(true);
+      const [recipesData, blogsData, categoriesData] = await Promise.all([
+        getRecipes(),
+        getBlogs(),
+        getCategories(),
+      ]);
+
+      setRecipes(recipesData);
+      setBlogs(blogsData.slice(0, 3)); // Берем первые 3 блога
+      setCategories(categoriesData);
+
+      // Берем первый рецепт как топовый
+      if (recipesData.length > 0) {
+        setTopRecipe(recipesData[0]);
+      }
+    } catch (err) {
+      console.error("Error loading data:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Берем первые 3 рецепта для слайдера
+  const sliderRecipes = recipes.slice(0, 3);
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
+  if (loading) {
+    return (
+      <section className={styles.recipies_slider}>
+        <div className="container">
+          <p>Загрузка...</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <div className={`${styles.home_container} container`}>
-      <h1>Welcome to Culinary Blog</h1>
-      <h2>Welcome to Culinary Blog</h2>
-      <h3>Welcome to Culinary Blog</h3>
-      <h4>Welcome to Culinary Blog</h4>
+    <>
+      <section className={styles.recipies_slider}>
+        <div className="container">
+          <Swiper
+            modules={[Autoplay]}
+            spaceBetween={0}
+            slidesPerView={1}
+            loop={sliderRecipes.length > 1}
+            autoplay={{
+              delay: 10000,
+              disableOnInteraction: false,
+            }}
+            className={styles.swiper}
+          >
+            {sliderRecipes.map((recipe) => (
+              <SwiperSlide key={recipe.id}>
+                <div className={styles.recipe}>
+                  <div className={styles.recipe_info}>
+                    <div className={styles.recipe_category}>
+                      <span>
+                        {recipe.categoryDtos && recipe.categoryDtos.length > 0
+                          ? recipe.categoryDtos[0].name
+                          : "Hot Recipes"}
+                      </span>
+                    </div>
+                    <h1>{recipe.title}</h1>
+                    <p>
+                      {recipe.description ||
+                        "Lorem ipsum dolor sit amet, consectetuipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqut enim ad minim"}
+                    </p>
+                    <div className={styles.recipe_tags}>
+                      {recipe.cookingTime && (
+                        <div className={styles.tag}>
+                          <img src="" alt="" />
+                          <p>{recipe.cookingTime} Minutes</p>
+                        </div>
+                      )}
+                      {recipe.categoryDtos &&
+                        recipe.categoryDtos.length > 0 && (
+                          <div className={styles.tag}>
+                            <img src="" alt="" />
+                            <p>{recipe.categoryDtos[0].name}</p>
+                          </div>
+                        )}
+                    </div>
+                    <div className={styles.recipe_bottom}>
+                      <div className={styles.author}>
+                        {recipe.userDto?.photoUrl && (
+                          <img
+                            src={getImageUrl(recipe.userDto.photoUrl)}
+                            alt={recipe.userDto.username || "Author"}
+                          />
+                        )}
+                        <div>
+                          <span>
+                            {recipe.userDto?.firstName &&
+                            recipe.userDto?.lastName
+                              ? `${recipe.userDto.firstName} ${recipe.userDto.lastName}`
+                              : recipe.userDto?.username || "Unknown"}
+                          </span>
+                          <p>
+                            {recipe.createdAt
+                              ? formatDate(recipe.createdAt)
+                              : "15 March 2022"}
+                          </p>
+                        </div>
+                      </div>
+                      <Button as="a" href={`/recipes/${recipe.id}`}>
+                        View Recipe
+                      </Button>
+                    </div>
+                  </div>
+                  <div className={styles.recipe_image}>
+                    {recipe.photoUrl ? (
+                      <img
+                        src={getImageUrl(recipe.photoUrl)}
+                        alt={recipe.title}
+                      />
+                    ) : (
+                      <div></div>
+                    )}
+                  </div>
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+      </section>
 
-      <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Beatae, maiores blanditiis? Reiciendis magnam odit nostrum, minus reprehenderit beatae doloribus earum qui, quasi atque, similique velit! Repellendus officiis adipisci ullam labore.</p>
-      <div style={{ display: 'flex', gap: '1rem' }}>
-        <Button as='a'>Simple Button</Button>
-        <Button as='a' showIcon iconPosition='right'>Play Video</Button>
-      </div>
-      <div style={{width: "400px"}}>
-          <Card cookingTime='15' foodType="Snack" name='Fruity Pancake with Orange & Blueberry' imageSrc={meal1} />
-          <Card withBlueBg={true} cookingTime='15' foodType="Snack" name='Fruity Pancake with Orange & Blueberry' imageSrc={meal1} />
-      </div>
-
-      <div style={{width: "840px"}}>
-        <PostCard title='Crochet Projects for Noodle Lovers' description='Lorem ipsum dolor sit amet, consectetuipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqut enim' author='Wade Warren' date='12 November 2021' imageSrc={postCardImg} authorImgSrc={authorImg} />
-        <PostCard title='Crochet Projects for Noodle Lovers' description='Lorem ipsum dolor sit amet, consectetuipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqut enim' author='Wade Warren' date='12 November 2021' imageSrc={postCardImg} authorImgSrc={authorImg} />     
-      </div>
-      <div style={{width: "400px"}}>
-        <PostCard small={true} title='Crochet Projects for Noodle Lovers'  description='Lorem ipsum dolor sit amet, consectetuipisicing elit, sed   do eiusmod tempor incididunt ut labore et dolore magna aliqut enim'   author='Wade Warren' date='12 November 2021' imageSrc={postCardImg}   authorImgSrc={authorImg} />
-      </div>
-      <Subscription />
-
-      <RecipesSlider recipes={recipes} slidesPerView={4} autoplay={true} loop={true}/>
-    </div>
-  )
+      <section className={styles.categories}>
+        <div className="container">
+          <div className={styles.categories_header}>
+            <h2>Categories</h2>
+            <Button as="a" href="/recipes" variant="secondary">
+              View All Categories
+            </Button>
+          </div>
+          <div className={styles.categories_list}>
+            {categories.length > 0
+              ? categories.slice(0, 6).map((category) => (
+                  <Link
+                    key={category.id}
+                    to={`/recipes?category=${category.id}`}
+                    className={styles.category_item}
+                  >
+                    {category.photoUrl && (
+                      <img
+                        src={getImageUrl(category.photoUrl)}
+                        alt={category.name}
+                      />
+                    )}
+                    <span>{category.name}</span>
+                  </Link>
+                ))
+              : // Заглушки для верстки, когда категорий нет
+                Array.from({ length: 6 }).map((_, index) => (
+                  <div key={index} className={styles.category_item}>
+                    <div className={styles.category_placeholder}>
+                      {/* Placeholder для изображения */}
+                    </div>
+                    <span>Category {index + 1}</span>
+                  </div>
+                ))}
+          </div>
+        </div>
+      </section>
+    </>
+  );
 }

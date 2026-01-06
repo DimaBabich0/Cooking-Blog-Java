@@ -46,6 +46,13 @@ public class RecipeMapper {
     		User user,
     		List<Category> categories,
     		List<Ingredient> ingredients) {
+    	if (dto.getTitle() == null || dto.getTitle().isBlank()) {
+    		throw new RuntimeException("Recipe title is required");
+    	}
+    	if (dto.getText() == null || dto.getText().isBlank()) {
+    		throw new RuntimeException("Recipe text is required");
+    	}
+    	
     	recipe.setTitle(dto.getTitle());
     	recipe.setDescription(dto.getDescription());
     	recipe.setText(dto.getText());

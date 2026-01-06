@@ -13,6 +13,8 @@ type Recipe = {
   image: string
   author: string
   date: string
+  cookingTime?: string
+  foodType?: string
 }
 
 type RecipesSliderProps = {
@@ -50,7 +52,12 @@ export default function RecipesSlider({
       >
         {recipes.map((recipe) => (
           <SwiperSlide key={recipe.id}>
-            <Card cookingTime='15' foodType="Snack" name='Fruity Pancake with     Orange & Blueberry' imageSrc={recipe.image} />
+            <Card 
+              cookingTime={recipe.cookingTime || '30'} 
+              foodType={recipe.foodType || 'General'} 
+              name={recipe.title} 
+              imageSrc={recipe.image} 
+            />
           </SwiperSlide>
         ))}
       </Swiper>
