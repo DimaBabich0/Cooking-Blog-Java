@@ -1,10 +1,12 @@
 package com.cb.backend.controller;
 
 import com.cb.backend.dto.RecipeDto;
+import com.cb.backend.model.ContentStatus;
 import com.cb.backend.service.RecipeService;
 import com.cb.backend.service.CrudService;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * REST controller for managing {@link RecipeDto} entities.
@@ -44,5 +46,21 @@ public class RecipeController extends AbstractCrudController<RecipeDto, Long> {
     @Override
     protected CrudService<RecipeDto, Long> getService() {
         return recipeService;
+    }
+
+    // Public endpoint - only returns published recipes
+    @GetMapping("/public")
+    public List<RecipeDto> getPublishedRecipes() {
+        return recipeService.findAllByStatus(ContentStatus.PUBLISHED);
+    }
+
+    // Override getAll to return only published for public access
+    // Admin endpoints should use /api/recipes/all or similar
+    @Override
+    @GetMapping
+    public List<RecipeDto> getAll() {
+        // For now, return all (admin panel needs all statuses)
+        // In production, you might want to check user role here
+        return recipeService.findAll();
     }
 }

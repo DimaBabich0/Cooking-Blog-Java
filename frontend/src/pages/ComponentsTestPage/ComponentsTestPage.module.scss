@@ -1,0 +1,68 @@
+@import "../../styles/variables.scss";
+
+.testPage {
+  padding: 2rem 0;
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.pageTitle {
+  font-size: 3rem;
+  font-weight: 600;
+  margin-bottom: 3rem;
+  text-align: center;
+  color: $black;
+}
+
+.section {
+  margin-bottom: 4rem;
+  padding: 2rem;
+  background: $white;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sectionTitle {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: $black;
+  border-bottom: 2px solid $black;
+  padding-bottom: 0.5rem;
+}
+
+.componentGroup {
+  margin-bottom: 3rem;
+  padding: 1.5rem;
+  background: #fafafa;
+  border-radius: 0.5rem;
+  border-left: 4px solid $sky-blue;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.componentTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: $gray;
+}
+
+.cardWrapper {
+  max-width: 300px;
+}
+
+.postCardWrapper {
+  max-width: 400px;
+}
+
+.feedback {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  background: $sky-blue;
+  border-radius: 0.25rem;
+  color: $black;
+  font-size: 0.875rem;
+}

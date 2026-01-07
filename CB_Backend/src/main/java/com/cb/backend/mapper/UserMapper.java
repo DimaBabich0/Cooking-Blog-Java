@@ -59,11 +59,17 @@ public class UserMapper {
         user.setLastName(dto.getLastName());
         user.setEmail(dto.getEmail());
         
-        // Set USER role or the specific role
-        if (dto.getRole() == null || dto.getRole().isEmpty()) {
+        // For new users (id is null), always set USER role regardless of what's in DTO
+        // For existing users, only update role if explicitly provided and user has permission
+        if (user.getId() == null) {
+            // New user - always USER role for security
             user.setRole(Role.USER);
         } else {
-        	user.setRole(Role.fromString(dto.getRole()));
+            // Existing user - only update role if provided, otherwise keep current role
+            if (dto.getRole() != null && !dto.getRole().isEmpty()) {
+                user.setRole(Role.fromString(dto.getRole()));
+            }
+            // If role not provided, keep existing role
         }
         
         // Set random photo or the uploaded photo

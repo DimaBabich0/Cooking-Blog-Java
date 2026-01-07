@@ -28,7 +28,7 @@ export default function CreateBlogPage() {
     },
   });
 
-  // Загружаем первого пользователя при загрузке страницы
+  // Load first user on page load
   useEffect(() => {
     async function loadUser() {
       try {
@@ -47,13 +47,13 @@ export default function CreateBlogPage() {
           }));
         } else {
           setError(
-            "Не найден ни один пользователь в базе данных. Создайте пользователя через админку или выполните SQL скрипт insert_sample_user.sql"
+            "No users found in database. Create a user via admin panel or run SQL script insert_sample_user.sql"
           );
         }
       } catch (err) {
-        console.error("Ошибка загрузки пользователя:", err);
+        console.error("Error loading user:", err);
         setError(
-          "Не удалось загрузить пользователя. Убедитесь, что backend запущен."
+          "Failed to load user. Make sure the backend is running."
         );
       } finally {
         setInitializing(false);
@@ -91,7 +91,7 @@ export default function CreateBlogPage() {
     const end = textarea.selectionEnd;
     const currentText = formData.text || "";
 
-    // Вставляем изображение в позицию курсора
+    // Insert image at cursor position
     const newText =
       currentText.substring(0, start) +
       "\n" +
@@ -101,7 +101,7 @@ export default function CreateBlogPage() {
 
     handleTextChange(newText);
 
-    // Устанавливаем курсор после вставленного изображения
+    // Set cursor after inserted image
     setTimeout(() => {
       const newCursorPos = start + imgTag.length + 2;
       textarea.focus();
@@ -116,13 +116,13 @@ export default function CreateBlogPage() {
 
     try {
       if (!formData.title || !formData.title.trim()) {
-        throw new Error("Заголовок обязателен");
+        throw new Error("Title is required");
       }
       if (!formData.text || !formData.text.trim()) {
-        throw new Error("Текст поста обязателен");
+        throw new Error("Post text is required");
       }
       if (!formData.description || !formData.description.trim()) {
-        throw new Error("Описание обязательно");
+        throw new Error("Description is required");
       }
       if (
         !formData.userDto ||
@@ -130,7 +130,7 @@ export default function CreateBlogPage() {
         formData.userDto.id === 0
       ) {
         throw new Error(
-          "Пользователь не выбран. Убедитесь, что в базе есть хотя бы один пользователь."
+          "User not selected. Make sure there is at least one user in the database."
         );
       }
 
@@ -138,7 +138,7 @@ export default function CreateBlogPage() {
       navigate(`/blog/${blog.id}`);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Ошибка при создании поста"
+        err instanceof Error ? err.message : "Error creating post"
       );
       console.error(err);
     } finally {
@@ -179,7 +179,7 @@ export default function CreateBlogPage() {
     return (
       <section className={styles.createBlog}>
         <div className={`container ${styles.container}`}>
-          <p>Загрузка...</p>
+          <p>Loading...</p>
         </div>
       </section>
     );
@@ -188,14 +188,14 @@ export default function CreateBlogPage() {
   return (
     <section className={styles.createBlog}>
       <div className={`container ${styles.container}`}>
-        <h1 className={styles.title}>Создать новый пост</h1>
+        <h1 className={styles.title}>Create New Post</h1>
 
         {error && <div className={styles.error}>{error}</div>}
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.field}>
             <label htmlFor="title" className={styles.label}>
-              Заголовок *
+              Title *
             </label>
             <input
               id="title"
@@ -203,7 +203,7 @@ export default function CreateBlogPage() {
               value={formData.title || ""}
               onChange={(e) => handleChange("title", e.target.value)}
               className={styles.input}
-              placeholder="Введите заголовок поста"
+              placeholder="Enter post title"
               maxLength={100}
               required
             />
@@ -211,14 +211,14 @@ export default function CreateBlogPage() {
 
           <div className={styles.field}>
             <label htmlFor="description" className={styles.label}>
-              Описание *
+              Description *
             </label>
             <textarea
               id="description"
               value={formData.description || ""}
               onChange={(e) => handleChange("description", e.target.value)}
               className={styles.textarea}
-              placeholder="Краткое описание поста (до 100 символов)"
+              placeholder="Short post description (up to 100 characters)"
               maxLength={100}
               rows={3}
               required
@@ -227,7 +227,7 @@ export default function CreateBlogPage() {
 
           <div className={styles.field}>
             <label className={styles.label}>
-              Главное изображение поста (обложка)
+              Main Post Image (Cover)
             </label>
             <PhotoUploader
               onUpload={handleMainImageUpload}
@@ -235,7 +235,7 @@ export default function CreateBlogPage() {
               initialUrl={formData.photoUrl || undefined}
             />
             <small className={styles.hint} style={{ marginTop: "0.5rem" }}>
-              Или введите URL вручную:
+              Or enter URL manually:
             </small>
             <input
               id="photoUrl"
@@ -244,13 +244,13 @@ export default function CreateBlogPage() {
               onChange={(e) => handleChange("photoUrl", e.target.value)}
               className={styles.input}
               style={{ marginTop: "0.5rem" }}
-              placeholder="http://example.com/image.jpg (опционально)"
+              placeholder="http://example.com/image.jpg (optional)"
             />
           </div>
 
           <div className={styles.field}>
             <label htmlFor="cookingTime" className={styles.label}>
-              Время приготовления (минуты)
+              Cooking Time (minutes)
             </label>
             <input
               id="cookingTime"
@@ -266,13 +266,12 @@ export default function CreateBlogPage() {
           </div>
 
           <div className={styles.field}>
-            <label className={styles.label}>Текст поста *</label>
+            <label className={styles.label}>Post Text *</label>
             <small
               className={styles.hint}
               style={{ display: "block", marginBottom: "0.5rem" }}
             >
-              Загрузи изображения ниже и нажми "Вставить" чтобы добавить их в
-              текст в позиции курсора
+              Upload images below and click "Insert" to add them to the text at cursor position
             </small>
             <ImageUploader
               onImageInsert={handleImageInsert}
@@ -283,14 +282,14 @@ export default function CreateBlogPage() {
               value={formData.text || ""}
               onChange={(e) => handleTextChange(e.target.value)}
               className={styles.textarea}
-              placeholder="Начните писать ваш пост здесь... (HTML поддерживается)"
+              placeholder="Start writing your post here... (HTML supported)"
               rows={15}
               required
             />
             <small className={styles.hint}>
-              Можно использовать HTML-теги для форматирования (например:
-              &lt;strong&gt;жирный&lt;/strong&gt;,
-              &lt;h2&gt;заголовок&lt;/h2&gt;)
+              You can use HTML tags for formatting (e.g.:
+              &lt;strong&gt;bold&lt;/strong&gt;,
+              &lt;h2&gt;heading&lt;/h2&gt;)
             </small>
             {/* Временно отключен WYSIWYG-редактор из-за несовместимости react-quill с React 19
             <div className={styles.editor}>
@@ -313,10 +312,10 @@ export default function CreateBlogPage() {
               variant="secondary"
               disabled={loading}
             >
-              Отмена
+              Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Создание..." : "Создать пост"}
+              {loading ? "Creating..." : "Create Post"}
             </Button>
           </div>
         </form>

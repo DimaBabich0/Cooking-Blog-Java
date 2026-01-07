@@ -14,7 +14,16 @@ export interface RecipeDto {
   description?: string;
   text: string;
   photoUrl?: string;
-  cookingTime?: number;
+  cookingTime?: number; // Оставляем для обратной совместимости
+  prepTime?: number;
+  cookTime?: number;
+  // Nutrition Information
+  calories?: number;
+  totalFat?: number;
+  protein?: number;
+  carbohydrates?: number;
+  cholesterol?: number;
+  status?: string; // PENDING, PUBLISHED, REJECTED
   createdAt: string;
   updatedAt: string;
   userDto: {
@@ -61,6 +70,30 @@ export async function getRecipe(id: number | string): Promise<RecipeDto> {
     throw new Error(errorMessage);
   }
   return res.json();
+}
+
+export async function updateRecipe(id: number, recipe: Partial<RecipeDto>): Promise<RecipeDto> {
+  const res = await fetch(`${RECIPE_API}/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(recipe),
+  });
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || "Error updating recipe");
+  }
+  return res.json();
+}
+
+export async function deleteRecipe(id: number): Promise<void> {
+  const res = await fetch(`${RECIPE_API}/${id}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+  if (!res.ok) {
+    throw new Error("Error deleting recipe");
+  }
 }
 
 export async function createRecipe(recipe: Partial<RecipeDto>): Promise<RecipeDto> {

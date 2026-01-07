@@ -1,0 +1,135 @@
+@import "../../styles/variables.scss";
+
+.adminPage {
+  padding: 3rem 0;
+  min-height: calc(100vh - 200px);
+  background: #f8f9fa;
+
+  .header {
+    margin-bottom: 2rem;
+
+    .backLink {
+      display: inline-block;
+      margin-bottom: 1rem;
+      color: $gray;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+
+      &:hover {
+        color: $black;
+      }
+    }
+
+    .title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 0;
+      color: $black;
+    }
+  }
+
+  .error {
+    background: #fee;
+    border: 1px solid #fcc;
+    color: #c33;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+  }
+
+  .tableWrapper {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+
+    thead {
+      background: rgba(231, 249, 253, 0.3);
+
+      th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: $black;
+        border-bottom: 2px solid rgba(231, 249, 253, 0.5);
+      }
+    }
+
+    tbody {
+      tr {
+        border-bottom: 1px solid #f0f0f0;
+        transition: background 0.2s;
+
+        &:hover {
+          background: rgba(231, 249, 253, 0.1);
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+
+      td {
+        padding: 1rem;
+        color: $black;
+      }
+    }
+  }
+
+  .roleSelect {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: border-color 0.2s;
+
+    &:hover {
+      border-color: $black;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $black;
+    }
+  }
+
+  .roleBadge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: rgba(112, 130, 70, 0.1);
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+
+    a {
+      text-decoration: none;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .adminPage {
+    padding: 1.5rem 0;
+
+    .tableWrapper {
+      overflow-x: auto;
+    }
+
+    .table {
+      min-width: 600px;
+    }
+  }
+}

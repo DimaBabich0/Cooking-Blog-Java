@@ -11,9 +11,9 @@
     "generate:icons": "svgr --typescript --icon --replace-attr-values '#000=currentColor,#000000=currentColor,black=currentColor,white=currentColor' --out-dir src/iconComponents src/icons"
   },
   "dependencies": {
+    "quill": "^2.0.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-quill": "^2.0.0",
     "react-router-dom": "^7.9.4",
     "sass": "^1.93.2",
     "swiper": "^12.0.3"

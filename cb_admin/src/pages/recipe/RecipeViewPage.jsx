@@ -33,18 +33,26 @@ export default function RecipeViewPage() {
 
     const fields = [
         { label: "Title", value: recipe.title },
-        { label: "Author", value: recipe.userDto.username },
-        { label: "Description", value: recipe.description },
-        { label: "Text", value: recipe.text },
-        { label: "Cooking time", value: `${recipe.cookingTime} minutes` },
-        { label: "Create date", value: format(new Date(recipe.createdAt), "HH:mm:ss, d MMMM yyyy") },
-        { label: "Update date", value: format(new Date(recipe.updatedAt), "HH:mm:ss, d MMMM yyyy") },
-        { label: "Categories", value: recipe.categoriesDto.map(c => c.name).join(", ") },
+        { label: "Author", value: recipe.userDto?.username || "N/A" },
+        { label: "Description", value: recipe.description || "N/A" },
+        { label: "Text", value: recipe.text || "N/A" },
+        { label: "Cooking time (устаревшее)", value: recipe.cookingTime ? `${recipe.cookingTime} minutes` : "N/A" },
+        { label: "Prep time", value: recipe.prepTime ? `${recipe.prepTime} minutes` : "N/A" },
+        { label: "Cook time", value: recipe.cookTime ? `${recipe.cookTime} minutes` : "N/A" },
+        { label: "Create date", value: recipe.createdAt ? format(new Date(recipe.createdAt), "HH:mm:ss, d MMMM yyyy") : "N/A" },
+        { label: "Update date", value: recipe.updatedAt ? format(new Date(recipe.updatedAt), "HH:mm:ss, d MMMM yyyy") : "N/A" },
+        { label: "Categories", value: recipe.categoriesDto?.length > 0 ? recipe.categoriesDto.map(c => c.name).join(", ") : "N/A" },
         { label: "Ingredients", value:
-                recipe.ingredientsDto.map(i =>
-                    `${i.productName} — ${i.quantity} ${i.unit}`
-                ).join("; ")
+                recipe.ingredientsDto?.length > 0 ? recipe.ingredientsDto.map(i =>
+                    `${i.productName} — ${i.quantity} ${i.unit || "g"}`
+                ).join("; ") : "N/A"
         },
+        // Nutrition Information
+        { label: "Calories", value: recipe.calories ? `${recipe.calories.toFixed(1)} kcal` : "N/A" },
+        { label: "Total Fat", value: recipe.totalFat ? `${recipe.totalFat.toFixed(1)} g` : "N/A" },
+        { label: "Protein", value: recipe.protein ? `${recipe.protein.toFixed(1)} g` : "N/A" },
+        { label: "Carbohydrates", value: recipe.carbohydrates ? `${recipe.carbohydrates.toFixed(1)} g` : "N/A" },
+        { label: "Cholesterol", value: recipe.cholesterol ? `${recipe.cholesterol.toFixed(1)} mg` : "N/A" },
     ];
 
     return (

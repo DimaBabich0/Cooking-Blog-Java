@@ -16,6 +16,7 @@ public class BlogDto {
     private String text;
     private String photoUrl;
     private Integer cookingTime;
+    private String status; // PENDING, PUBLISHED, REJECTED
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private UserDto userDto;
@@ -54,6 +55,9 @@ public class BlogDto {
     
     public Integer getCookingTime() { return cookingTime; }
     public void setCookingTime(Integer cookingTime) { this.cookingTime = cookingTime; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

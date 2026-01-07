@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createRecipe, RecipeDto, IngredientDto } from "../../api/recipeApi";
+import QuillEditor from "../../components/QuillEditor/QuillEditor";
 import { getUsers, UserDto } from "../../api/userApi";
 import { getCategories, CategoryDto } from "../../api/categoryApi";
 import { useAuth } from "../../contexts/AuthContext";
@@ -12,7 +13,6 @@ import styles from "./CreateRecipePage.module.scss";
 export default function CreateRecipePage() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [initializing, setInitializing] = useState(true);
@@ -32,7 +32,7 @@ export default function CreateRecipePage() {
     ingredientsDto: [],
   });
 
-  // Загружаем данные при загрузке страницы
+  // Load data on page load
   useEffect(() => {
     async function loadData() {
       try {
@@ -53,7 +53,7 @@ export default function CreateRecipePage() {
             },
           }));
         } else {
-          // Если пользователь не залогинен, загружаем первого пользователя
+          // If user is not logged in, load first user
           const users = await getUsers();
           if (users && users.length > 0) {
             const firstUser = users[0];
@@ -70,7 +70,7 @@ export default function CreateRecipePage() {
           }
         }
       } catch (err) {
-        setError("Ошибка загрузки данных");
+        setError("Error loading data");
         console.error(err);
       } finally {
         setInitializing(false);
@@ -95,20 +95,9 @@ export default function CreateRecipePage() {
   };
 
   const handleImageInsert = (imageHtml: string, imagePath: string) => {
-    if (textareaRef.current) {
-      const textarea = textareaRef.current;
-      const start = textarea.selectionStart;
-      const end = textarea.selectionEnd;
-      const text = textarea.value;
-      const before = text.substring(0, start);
-      const after = text.substring(end);
-      // ImageUploader уже передает готовый HTML тег, просто вставляем его
-      const newText = before + imageHtml + "\n" + after;
-      handleChange("text", newText);
-      setTimeout(() => {
-        textarea.focus();
-        textarea.setSelectionRange(start + imageHtml.length + 1, start + imageHtml.length + 1);
-      }, 0);
+    // Use global function to insert image into Quill
+    if ((window as any).__quillInsertImage) {
+      (window as any).__quillInsertImage(imageHtml);
     }
   };
 
@@ -145,26 +134,26 @@ export default function CreateRecipePage() {
     setLoading(true);
 
     try {
-      // Валидация обязательных полей
+      // Validate required fields
       if (!formData.title || formData.title.trim() === "") {
-        setError("Заполните название рецепта");
+        setError("Please fill in the recipe title");
         setLoading(false);
         return;
       }
 
       if (!formData.text || formData.text.trim() === "") {
-        setError("Заполните описание рецепта (Directions)");
+        setError("Please fill in the recipe description (Directions)");
         setLoading(false);
         return;
       }
 
       if (!formData.userDto?.id) {
-        setError("Не выбран автор рецепта");
+        setError("Recipe author not selected");
         setLoading(false);
         return;
       }
 
-      // Фильтруем пустые ингредиенты перед отправкой
+      // Filter empty ingredients before submission
       const filteredIngredients = (formData.ingredientsDto || []).filter(
         (ing) => ing.productName && ing.productName.trim() !== ""
       );
@@ -181,7 +170,7 @@ export default function CreateRecipePage() {
       await createRecipe(recipeToSubmit);
       navigate("/recipes");
     } catch (err: any) {
-      setError(err.message || "Ошибка создания рецепта");
+      setError(err.message || "Error creating recipe");
       console.error("Recipe creation error:", err);
     } finally {
       setLoading(false);
@@ -192,7 +181,7 @@ export default function CreateRecipePage() {
     return (
       <section className={styles.createRecipe}>
         <div className="container">
-          <p>Загрузка...</p>
+          <p>Loading...</p>
         </div>
       </section>
     );
@@ -202,14 +191,14 @@ export default function CreateRecipePage() {
     <section className={styles.createRecipe}>
       <div className="container">
         <div className={styles.form_wrapper}>
-          <h1>Создать рецепт</h1>
+          <h1>Create Recipe</h1>
 
           {error && <div className={styles.error}>{error}</div>}
 
           <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.field}>
               <label className={styles.label}>
-                Название рецепта <span className={styles.required}>*</span>
+                Recipe Title <span className={styles.required}>*</span>
               </label>
               <input
                 id="title"
@@ -218,25 +207,25 @@ export default function CreateRecipePage() {
                 onChange={(e) => handleChange("title", e.target.value)}
                 className={styles.input}
                 required
-                placeholder="Введите название рецепта"
+                placeholder="Enter recipe title"
               />
             </div>
 
             <div className={styles.field}>
-              <label className={styles.label}>Краткое описание</label>
+              <label className={styles.label}>Short Description</label>
               <textarea
                 id="description"
                 value={formData.description || ""}
                 onChange={(e) => handleChange("description", e.target.value)}
                 className={styles.textarea}
                 rows={3}
-                placeholder="Краткое описание рецепта"
+                placeholder="Short recipe description"
               />
             </div>
 
             <div className={styles.field}>
               <label className={styles.label}>
-                Главное изображение рецепта (обложка)
+                Main Recipe Image (Cover)
               </label>
               <PhotoUploader
                 onUpload={handleMainImageUpload}
@@ -244,7 +233,7 @@ export default function CreateRecipePage() {
                 initialUrl={formData.photoUrl || undefined}
               />
               <small className={styles.hint} style={{ marginTop: "0.5rem" }}>
-                Или введите URL вручную:
+                Or enter URL manually:
               </small>
               <input
                 id="photoUrl"
@@ -253,13 +242,13 @@ export default function CreateRecipePage() {
                 onChange={(e) => handleChange("photoUrl", e.target.value)}
                 className={styles.input}
                 style={{ marginTop: "0.5rem" }}
-                placeholder="http://example.com/image.jpg (опционально)"
+                placeholder="http://example.com/image.jpg (optional)"
               />
             </div>
 
             <div className={styles.field}>
               <label className={styles.label}>
-                Время приготовления (минуты)
+                Cooking Time (minutes) - deprecated field
               </label>
               <input
                 id="cookingTime"
@@ -271,10 +260,128 @@ export default function CreateRecipePage() {
                 className={styles.input}
                 placeholder="30"
               />
+              <small className={styles.hint}>
+                Use PREP TIME and COOK TIME below
+              </small>
             </div>
 
             <div className={styles.field}>
-              <label className={styles.label}>Категории</label>
+              <label className={styles.label}>
+                Prep Time (PREP TIME, minutes)
+              </label>
+              <input
+                id="prepTime"
+                type="number"
+                min="0"
+                max="1440"
+                value={formData.prepTime || ""}
+                onChange={(e) => handleChange("prepTime", Number(e.target.value) || undefined)}
+                className={styles.input}
+                placeholder="15"
+              />
+            </div>
+
+            <div className={styles.field}>
+              <label className={styles.label}>
+                Cook Time (COOK TIME, minutes)
+              </label>
+              <input
+                id="cookTime"
+                type="number"
+                min="0"
+                max="1440"
+                value={formData.cookTime || ""}
+                onChange={(e) => handleChange("cookTime", Number(e.target.value) || undefined)}
+                className={styles.input}
+                placeholder="15"
+              />
+            </div>
+
+            <div className={styles.field}>
+              <label className={styles.label}>
+                Nutrition Information (optional)
+              </label>
+              <div className={styles.nutrition_grid}>
+                <div>
+                  <label htmlFor="calories" className={styles.sublabel}>
+                    Calories (kcal)
+                  </label>
+                  <input
+                    id="calories"
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    value={formData.calories || ""}
+                    onChange={(e) => handleChange("calories", Number(e.target.value) || undefined)}
+                    className={styles.input}
+                    placeholder="219.8"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="totalFat" className={styles.sublabel}>
+                    Total Fat (g)
+                  </label>
+                  <input
+                    id="totalFat"
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    value={formData.totalFat || ""}
+                    onChange={(e) => handleChange("totalFat", Number(e.target.value) || undefined)}
+                    className={styles.input}
+                    placeholder="19.7"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="protein" className={styles.sublabel}>
+                    Protein (g)
+                  </label>
+                  <input
+                    id="protein"
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    value={formData.protein || ""}
+                    onChange={(e) => handleChange("protein", Number(e.target.value) || undefined)}
+                    className={styles.input}
+                    placeholder="7.8"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="carbohydrates" className={styles.sublabel}>
+                    Carbohydrates (g)
+                  </label>
+                  <input
+                    id="carbohydrates"
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    value={formData.carbohydrates || ""}
+                    onChange={(e) => handleChange("carbohydrates", Number(e.target.value) || undefined)}
+                    className={styles.input}
+                    placeholder="22.3"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="cholesterol" className={styles.sublabel}>
+                    Cholesterol (mg)
+                  </label>
+                  <input
+                    id="cholesterol"
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    value={formData.cholesterol || ""}
+                    onChange={(e) => handleChange("cholesterol", Number(e.target.value) || undefined)}
+                    className={styles.input}
+                    placeholder="37.4"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.field}>
+              <label className={styles.label}>Categories</label>
               <div className={styles.categories_list}>
                 {categories.map((cat) => (
                   <label key={cat.id} className={styles.category_checkbox}>
@@ -302,13 +409,13 @@ export default function CreateRecipePage() {
             </div>
 
             <div className={styles.field}>
-              <label className={styles.label}>Ингредиенты</label>
+              <label className={styles.label}>Ingredients</label>
               <div className={styles.ingredients_list}>
                 {(formData.ingredientsDto || []).map((ing, index) => (
                   <div key={index} className={styles.ingredient_row}>
                     <input
                       type="text"
-                      placeholder="Название продукта"
+                      placeholder="Product name"
                       value={ing.productName || ""}
                       onChange={(e) => updateIngredient(index, "productName", e.target.value)}
                       className={styles.input}
@@ -316,7 +423,7 @@ export default function CreateRecipePage() {
                     />
                     <input
                       type="number"
-                      placeholder="Количество"
+                      placeholder="Quantity"
                       value={ing.quantity || ""}
                       onChange={(e) => updateIngredient(index, "quantity", Number(e.target.value))}
                       className={styles.input}
@@ -324,7 +431,7 @@ export default function CreateRecipePage() {
                     />
                     <input
                       type="text"
-                      placeholder="Ед. изм. (г, мл, шт)"
+                      placeholder="Unit (g, ml, pcs)"
                       value={ing.unit || ""}
                       onChange={(e) => updateIngredient(index, "unit", e.target.value)}
                       className={styles.input}
@@ -335,7 +442,7 @@ export default function CreateRecipePage() {
                       onClick={() => removeIngredient(index)}
                       className={styles.remove_btn}
                     >
-                      Удалить
+                      Remove
                     </button>
                   </div>
                 ))}
@@ -344,47 +451,43 @@ export default function CreateRecipePage() {
                   onClick={addIngredient}
                   className={styles.add_btn}
                 >
-                  + Добавить ингредиент
+                  + Add Ingredient
                 </button>
               </div>
             </div>
 
             <div className={styles.field}>
               <label className={styles.label}>
-                Описание рецепта (Directions) <span className={styles.required}>*</span>
+                Recipe Description (Directions) <span className={styles.required}>*</span>
               </label>
-              <small className={styles.hint}>
-                Опишите шаги приготовления. Вы можете добавлять изображения прямо в текст.
+              <small className={styles.hint} style={{ display: "block", marginBottom: "0.5rem" }}>
+                Upload images below and click "Insert" to add them to the text at cursor position
               </small>
               <ImageUploader
                 onImageInsert={handleImageInsert}
-                folder="recipe"
+                folder="recipe-content"
               />
-              <textarea
-                ref={textareaRef}
-                id="text"
+              <QuillEditor
                 value={formData.text || ""}
-                onChange={(e) => handleChange("text", e.target.value)}
-                className={styles.textarea}
-                rows={15}
-                required
-                placeholder="Опишите шаги приготовления рецепта..."
+                onChange={(value) => handleChange("text", value)}
+                placeholder="Describe the recipe preparation steps..."
+                onImageInsert={handleImageInsert}
               />
               <small className={styles.hint}>
-                Подсказка: Вы можете использовать HTML теги для форматирования. Изображения можно вставлять через кнопку выше.
+                Use the toolbar to format text. Images can be inserted via the button above.
               </small>
             </div>
 
             <div className={styles.actions}>
               <Button type="submit" disabled={loading}>
-                {loading ? "Создание..." : "Создать рецепт"}
+                {loading ? "Creating..." : "Create Recipe"}
               </Button>
               <Button
                 type="button"
                 variant="secondary"
                 onClick={() => navigate("/recipes")}
               >
-                Отмена
+                Cancel
               </Button>
             </div>
           </form>

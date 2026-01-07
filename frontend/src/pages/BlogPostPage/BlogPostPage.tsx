@@ -30,7 +30,7 @@ export default function BlogPostPage() {
           getRecipes(),
         ]);
         setBlog(blogData);
-        setRelatedRecipes(recipesData.slice(0, 4));
+        setRelatedRecipes(recipesData.slice(0, 12));
       } catch (err) {
         setError("Failed to load blog post");
         console.error(err);
@@ -128,9 +128,6 @@ export default function BlogPostPage() {
                   </a>
                   <a href="#" aria-label="Share on Instagram">
                     <Instagram />
-                  </a>
-                  <a href="#" aria-label="Share">
-                    <Share />
                   </a>
                 </div>
               </div>

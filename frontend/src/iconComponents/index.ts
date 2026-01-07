@@ -1,6 +1,7 @@
 export { default as ArrowDown } from "./ArrowDown";
 export { default as Check } from "./Check";
 export { default as Facebook } from "./Facebook";
+export { default as Filter } from "./Filter";
 export { default as ForkKnife } from "./ForkKnife";
 export { default as Heart } from "./Heart";
 export { default as Instagram } from "./Instagram";

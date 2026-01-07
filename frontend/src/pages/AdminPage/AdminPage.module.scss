@@ -1,0 +1,132 @@
+@import "../../styles/variables.scss";
+
+.adminPage {
+  padding: 3rem 0;
+  min-height: calc(100vh - 200px);
+  background: #f8f9fa;
+
+  .header {
+    text-align: center;
+    margin-bottom: 3rem;
+
+    .title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: $black;
+    }
+
+    .subtitle {
+      font-size: 1.125rem;
+      color: $gray;
+    }
+  }
+
+  .sectionsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .sectionCard {
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .sectionIcon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .sectionTitle {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0 0 0.5rem 0;
+      color: $black;
+    }
+
+    .sectionDescription {
+      font-size: 0.875rem;
+      color: $gray;
+      margin: 0;
+    }
+  }
+
+  .quickStats {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+
+    .statsTitle {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0 0 1.5rem 0;
+      color: $black;
+    }
+
+    .statsGrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .statCard {
+      padding: 1.5rem;
+      background: rgba(231, 249, 253, 0.3);
+      border-radius: 12px;
+      text-align: center;
+
+      .statValue {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: $black;
+        margin-bottom: 0.5rem;
+      }
+
+      .statLabel {
+        font-size: 0.875rem;
+        color: $gray;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .adminPage {
+    padding: 1.5rem 0;
+
+    .header {
+      .title {
+        font-size: 2rem;
+      }
+    }
+
+    .sectionsGrid {
+      grid-template-columns: 1fr;
+    }
+
+    .quickStats {
+      padding: 1.5rem;
+
+      .statsGrid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  }
+}

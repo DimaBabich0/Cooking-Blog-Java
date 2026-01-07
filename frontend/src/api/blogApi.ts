@@ -7,6 +7,7 @@ export interface BlogDto {
   text: string;
   photoUrl: string | null;
   cookingTime: number | null;
+  status?: string; // PENDING, PUBLISHED, REJECTED
   createdAt: string;
   updatedAt: string;
   userDto: {
@@ -41,4 +42,28 @@ export async function createBlog(blog: Partial<BlogDto>): Promise<BlogDto> {
     throw new Error(err.error || "Error creating blog");
   }
   return res.json();
+}
+
+export async function updateBlog(id: number, blog: Partial<BlogDto>): Promise<BlogDto> {
+  const res = await fetch(`${BLOG_API}/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(blog),
+  });
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.message || "Error updating blog");
+  }
+  return res.json();
+}
+
+export async function deleteBlog(id: number): Promise<void> {
+  const res = await fetch(`${BLOG_API}/${id}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+  if (!res.ok) {
+    throw new Error("Error deleting blog");
+  }
 }

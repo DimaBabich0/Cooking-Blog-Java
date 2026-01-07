@@ -1,32 +1,63 @@
-import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { useParams, Link, useSearchParams } from "react-router-dom";
 import { getRecipe, RecipeDto, IngredientDto } from "../../api/recipeApi";
 import { getRecipes } from "../../api/recipeApi";
 import { getBlogs, BlogDto } from "../../api/blogApi";
+import { getCategories, CategoryDto } from "../../api/categoryApi";
 import { getImageUrl } from "../../api/filesApi";
 import Button from "../../components/Button/Button";
 import PostCard from "../../components/PostCard/PostCard";
 import Card from "../../components/Card/Card";
 import RecipesSlider from "../../components/RecipesSlider/RecipesSlider";
 import Subscription from "../../components/Subscribtion/Subscription";
-import { Timer, ForkKnife, Printer, Share } from "../../iconComponents";
+import AdSection from "../../components/AdSection/AdSection";
+import { Timer, ForkKnife, Printer, Share, Filter } from "../../iconComponents";
 import styles from "./RecipesPage.module.scss";
 import blogStyles from "../BlogPage/BlogPage.module.scss";
-import adImage from "../../assets/1.png";
-import maskGroup from "../../assets/Mask Group.svg";
 
 const RECIPES_PER_PAGE = 6;
 
 export default function RecipesPage() {
   const { id } = useParams<{ id: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [recipe, setRecipe] = useState<RecipeDto | null>(null);
   const [allRecipes, setAllRecipes] = useState<RecipeDto[]>([]);
   const [relatedRecipes, setRelatedRecipes] = useState<RecipeDto[]>([]);
   const [blogs, setBlogs] = useState<BlogDto[]>([]);
+  const [categories, setCategories] = useState<CategoryDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(
+    searchParams.get("category")
+      ? parseInt(searchParams.get("category")!)
+      : null
+  );
+  const [cookingTimeFilter, setCookingTimeFilter] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<string>("newest");
   const [currentPage, setCurrentPage] = useState(1);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const filtersRef = useRef<HTMLDivElement>(null);
+
+  // Close filters dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        filtersOpen &&
+        filtersRef.current &&
+        !filtersRef.current.contains(event.target as Node)
+      ) {
+        setFiltersOpen(false);
+      }
+    }
+
+    if (filtersOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }
+  }, [filtersOpen]);
 
   useEffect(() => {
     async function loadData() {
@@ -34,7 +65,7 @@ export default function RecipesPage() {
         setLoading(true);
         setError(null);
         if (id) {
-          // Загружаем один рецепт
+          // Load single recipe
           console.log("Loading recipe with id:", id);
           const [recipeData, recipesData] = await Promise.all([
             getRecipe(id),
@@ -42,18 +73,20 @@ export default function RecipesPage() {
           ]);
           console.log("Recipe loaded:", recipeData);
           setRecipe(recipeData);
-          // Исключаем текущий рецепт из related
+          // Exclude current recipe from related
           setRelatedRecipes(
-            recipesData.filter((r) => r.id !== recipeData.id).slice(0, 4)
+            recipesData.filter((r) => r.id !== recipeData.id).slice(0, 12)
           );
         } else {
-          // Загружаем список рецептов и блоги для сайдбара
-          const [recipesData, blogsData] = await Promise.all([
+          // Load recipes list and blogs for sidebar
+          const [recipesData, blogsData, categoriesData] = await Promise.all([
             getRecipes(),
             getBlogs(),
+            getCategories(),
           ]);
           setAllRecipes(recipesData);
-          setBlogs(blogsData.slice(0, 3)); // Для sidebar
+          setBlogs(blogsData.slice(0, 3)); // For sidebar
+          setCategories(categoriesData);
         }
       } catch (err) {
         console.error("Error loading data:", err);
@@ -66,20 +99,72 @@ export default function RecipesPage() {
     loadData();
   }, [id]);
 
-  // Сбрасываем страницу при изменении поискового запроса
+  // Reset page when filters change
   useEffect(() => {
     if (!id) {
       setCurrentPage(1);
     }
-  }, [searchQuery, id]);
+  }, [searchQuery, selectedCategory, cookingTimeFilter, sortBy, id]);
 
-  const filteredRecipes = allRecipes.filter(
-    (recipe) =>
-      recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      recipe.description?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Update URL when category changes
+  useEffect(() => {
+    if (selectedCategory) {
+      setSearchParams({ category: selectedCategory.toString() });
+    } else {
+      setSearchParams({});
+    }
+  }, [selectedCategory, setSearchParams]);
 
-  // Вычисляем пагинацию
+  // Фильтрация рецептов
+  const filteredRecipes = allRecipes
+    .filter((recipe) => {
+      // Поиск по тексту
+      const matchesSearch =
+        recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        recipe.description?.toLowerCase().includes(searchQuery.toLowerCase());
+
+      // Фильтр по категории
+      const matchesCategory =
+        !selectedCategory ||
+        (recipe.categoryDtos &&
+          recipe.categoryDtos.some((cat) => cat.id === selectedCategory));
+
+      // Фильтр по времени готовки
+      const cookingTime = recipe.cookTime || recipe.cookingTime || 0;
+      let matchesTime = true;
+      if (cookingTimeFilter === "quick") {
+        matchesTime = cookingTime <= 30;
+      } else if (cookingTimeFilter === "medium") {
+        matchesTime = cookingTime > 30 && cookingTime <= 60;
+      } else if (cookingTimeFilter === "long") {
+        matchesTime = cookingTime > 60;
+      }
+
+      return matchesSearch && matchesCategory && matchesTime;
+    })
+    .sort((a, b) => {
+      // Сортировка
+      if (sortBy === "newest") {
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      } else if (sortBy === "oldest") {
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+      } else if (sortBy === "time-asc") {
+        const timeA = a.cookTime || a.cookingTime || 0;
+        const timeB = b.cookTime || b.cookingTime || 0;
+        return timeA - timeB;
+      } else if (sortBy === "time-desc") {
+        const timeA = a.cookTime || a.cookingTime || 0;
+        const timeB = b.cookTime || b.cookingTime || 0;
+        return timeB - timeA;
+      }
+      return 0;
+    });
+
+  // Calculate pagination
   const totalPages = Math.ceil(filteredRecipes.length / RECIPES_PER_PAGE);
   const startIndex = (currentPage - 1) * RECIPES_PER_PAGE;
   const endIndex = startIndex + RECIPES_PER_PAGE;
@@ -179,6 +264,87 @@ export default function RecipesPage() {
           </div>
         </section>
 
+        {/* Filters Section */}
+        <section className={styles.filters_section}>
+          <div className="container">
+            <div className={styles.filters_wrapper}>
+              <div className={styles.filters_bar} ref={filtersRef}>
+                <button
+                  className={styles.filters_icon_btn}
+                  onClick={() => setFiltersOpen(!filtersOpen)}
+                  aria-label="Toggle filters"
+                >
+                  <Filter />
+                </button>
+                {filtersOpen && (
+                  <div className={styles.filters_dropdown}>
+                    {/* Category Filter */}
+                    <div className={styles.filter_item}>
+                      <select
+                        value={selectedCategory || ""}
+                        onChange={(e) =>
+                          setSelectedCategory(
+                            e.target.value ? parseInt(e.target.value) : null
+                          )
+                        }
+                        className={styles.filter_select}
+                      >
+                        <option value="">All Categories</option>
+                        {categories.map((cat) => (
+                          <option key={cat.id} value={cat.id}>
+                            {cat.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Cooking Time Filter */}
+                    <div className={styles.filter_item}>
+                      <select
+                        value={cookingTimeFilter}
+                        onChange={(e) => setCookingTimeFilter(e.target.value)}
+                        className={styles.filter_select}
+                      >
+                        <option value="all">All Times</option>
+                        <option value="quick">Quick (≤30 min)</option>
+                        <option value="medium">Medium (31-60 min)</option>
+                        <option value="long">Long (&gt;60 min)</option>
+                      </select>
+                    </div>
+
+                    {/* Clear Filters Button */}
+                    {(selectedCategory || cookingTimeFilter !== "all") && (
+                      <button
+                        onClick={() => {
+                          setSelectedCategory(null);
+                          setCookingTimeFilter("all");
+                        }}
+                        className={styles.clear_btn}
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Sort Filter - отдельно справа */}
+              <div className={styles.sort_wrapper}>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className={styles.sort_select}
+                >
+                  <option value="newest">Newest First</option>
+                  <option value="oldest">Oldest First</option>
+                  <option value="time-asc">Time: Low to High</option>
+                  <option value="time-desc">Time: High to Low</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Content Section */}
         <section className={blogStyles.list_content}>
           <div className="container">
@@ -188,9 +354,9 @@ export default function RecipesPage() {
                 {error && <div className={blogStyles.error}>{error}</div>}
 
                 {loading ? (
-                  <p>Загрузка...</p>
+                  <p>Loading...</p>
                 ) : filteredRecipes.length === 0 ? (
-                  <p>Рецепты не найдены</p>
+                  <p>No recipes found</p>
                 ) : (
                   <>
                     {currentRecipes.map((r) => (
@@ -202,7 +368,7 @@ export default function RecipesPage() {
                         <PostCard
                           title={r.title}
                           description={r.description || ""}
-                          author={r.userDto?.username || "Неизвестно"}
+                          author={r.userDto?.username || "Unknown"}
                           authorImgSrc={
                             r.userDto?.photoUrl
                               ? getImageUrl(r.userDto.photoUrl)
@@ -288,20 +454,7 @@ export default function RecipesPage() {
                 </div>
 
                 {/* Ad Section */}
-                <div className={blogStyles.ad_section}>
-                  <div className={blogStyles.ad_image}>
-                    <h3 className={blogStyles.ad_title}>
-                      Don't forget to eat healthy food
-                    </h3>
-                    <img src={maskGroup} alt="" className={blogStyles.ad_bg} />
-                    <img
-                      src={adImage}
-                      alt="Healthy food"
-                      className={blogStyles.ad_main_image}
-                    />
-                    <p>www.foodieland.com</p>
-                  </div>
-                </div>
+                <AdSection />
               </div>
             </div>
           </div>
@@ -396,90 +549,248 @@ export default function RecipesPage() {
   // Парсим directions из text (предполагаем, что это HTML или простой текст)
   const parseDirections = (text: string) => {
     if (!text) return [];
-    // Если текст содержит HTML, парсим его
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = text;
-    const paragraphs = tempDiv.querySelectorAll("p, div");
 
-    if (paragraphs.length > 0) {
-      return Array.from(paragraphs).map((p, idx) => ({
-        number: idx + 1,
-        text: p.textContent || p.innerHTML,
-        html: p.innerHTML,
-      }));
+    const tempDiv = document.createElement("div");
+    // Если HTML экранирован, декодируем его
+    // Проверяем, есть ли экранированные теги
+    let decodedText = text;
+    if (text.includes("&lt;") || text.includes("&gt;")) {
+      // Декодируем HTML сущности
+      const txt = document.createElement("textarea");
+      txt.innerHTML = text;
+      decodedText = txt.value;
+    }
+    tempDiv.innerHTML = decodedText;
+
+    // Ищем все заголовки (h2, h3, h4) как разделители шагов
+    const headings = tempDiv.querySelectorAll("h2, h3, h4");
+
+    if (headings.length > 0) {
+      const steps: Array<{
+        number: number;
+        title: string;
+        contentBeforeImage: string;
+        image: string | null;
+        contentAfterImage: string;
+      }> = [];
+
+      // Разбиваем контент по заголовкам
+      headings.forEach((heading, idx) => {
+        const stepNumber = idx + 1;
+        const title = heading.textContent || "";
+
+        // Находим следующий заголовок
+        const nextHeading = headings[idx + 1];
+
+        // Используем более простой подход - извлекаем HTML напрямую
+        // Находим индекс текущего заголовка в исходном HTML
+        const headingHTML = heading.outerHTML;
+        const nextHeadingHTML = nextHeading ? nextHeading.outerHTML : "";
+
+        // Получаем весь HTML исходного контейнера
+        const fullHTML = tempDiv.innerHTML;
+
+        // Находим позиции заголовков в HTML
+        const headingIndex = fullHTML.indexOf(headingHTML);
+        const nextHeadingIndex = nextHeading
+          ? fullHTML.indexOf(nextHeadingHTML, headingIndex + headingHTML.length)
+          : fullHTML.length;
+
+        // Извлекаем HTML между заголовками (исключая сам заголовок)
+        const stepHTML = fullHTML
+          .substring(headingIndex + headingHTML.length, nextHeadingIndex)
+          .trim();
+
+        // Создаем временный контейнер для парсинга изображений
+        const stepContainer = document.createElement("div");
+        stepContainer.innerHTML = stepHTML;
+
+        // Ищем изображение в контенте
+        const image = stepContainer.querySelector("img");
+        const imageSrc = image ? image.getAttribute("src") : null;
+
+        // Разделяем контент на части: до изображения и после
+        let contentBeforeImage = "";
+        let contentAfterImage = "";
+
+        if (image && imageSrc) {
+          // Разделяем HTML по тегу изображения
+          const imageHTML = image.outerHTML;
+          const parts = stepHTML.split(imageHTML);
+          contentBeforeImage = parts[0] || "";
+          contentAfterImage = parts.slice(1).join(imageHTML) || "";
+        } else {
+          // Если нет изображения, весь контент идет в contentBeforeImage
+          contentBeforeImage = stepHTML;
+        }
+
+        steps.push({
+          number: stepNumber,
+          title,
+          contentBeforeImage: contentBeforeImage.trim(),
+          image: imageSrc,
+          contentAfterImage: contentAfterImage.trim(),
+        });
+      });
+
+      // Возвращаем шаги только если их больше 0
+      if (steps.length > 0) {
+        return steps;
+      }
     }
 
-    // Если это простой текст, разбиваем по строкам
-    const lines = text.split("\n").filter((line) => line.trim());
-    return lines.map((line, idx) => ({
-      number: idx + 1,
-      text: line.trim(),
-      html: line.trim(),
-    }));
+    // Если нет заголовков, показываем весь контент как один шаг
+    // или группируем по изображениям (каждое изображение = новый шаг)
+    const allImages = tempDiv.querySelectorAll("img");
+
+    if (allImages.length > 0) {
+      // Группируем по изображениям - каждое изображение создает новый шаг
+      const steps: Array<{
+        number: number;
+        title: string;
+        contentBeforeImage: string;
+        image: string | null;
+        contentAfterImage: string;
+      }> = [];
+
+      let currentHTML = tempDiv.innerHTML;
+      let stepNumber = 1;
+
+      allImages.forEach((img) => {
+        const imageHTML = img.outerHTML;
+        const imageSrc = img.getAttribute("src");
+        const parts = currentHTML.split(imageHTML, 2);
+
+        if (parts.length >= 2) {
+          steps.push({
+            number: stepNumber++,
+            title: "",
+            contentBeforeImage: parts[0].trim(),
+            image: imageSrc,
+            contentAfterImage: parts[1].trim(),
+          });
+          // Обновляем currentHTML для следующей итерации
+          currentHTML = parts[1];
+        } else {
+          // Последнее изображение
+          steps.push({
+            number: stepNumber++,
+            title: "",
+            contentBeforeImage: parts[0].trim(),
+            image: imageSrc,
+            contentAfterImage: "",
+          });
+        }
+      });
+
+      // Если остался контент после последнего изображения
+      if (currentHTML.trim() && steps.length > 0) {
+        steps[steps.length - 1].contentAfterImage = currentHTML.trim();
+      }
+
+      return steps.length > 0
+        ? steps
+        : [
+            {
+              number: 1,
+              title: "",
+              contentBeforeImage: tempDiv.innerHTML.trim(),
+              image: null,
+              contentAfterImage: "",
+            },
+          ];
+    }
+
+    // Если нет изображений и заголовков, показываем весь контент как один шаг
+    return [
+      {
+        number: 1,
+        title: "",
+        contentBeforeImage: tempDiv.innerHTML.trim(),
+        image: null,
+        contentAfterImage: "",
+      },
+    ];
   };
 
   const directions = parseDirections(recipe.text || "");
 
-  // Группируем ингредиенты (пока просто все в одну группу "For main dish")
+  // Все ингредиенты в одном списке
   const ingredients = recipe.ingredientsDto || [];
-  const mainDishIngredients = ingredients.slice(
-    0,
-    Math.ceil(ingredients.length / 2)
-  );
-  const sauceIngredients = ingredients.slice(Math.ceil(ingredients.length / 2));
 
   return (
     <>
-      <section className={styles.recipe}>
-        <div className="container">
-          <div className={styles.recipe_wrapper}>
-            <div className={styles.recipe_main}>
-              <h1>{recipe.title}</h1>
-
-              <div className={styles.recipe_meta}>
-                <div className={styles.author_info}>
-                  {recipe.userDto?.photoUrl && (
-                    <img
-                      src={getImageUrl(recipe.userDto.photoUrl)}
-                      alt={authorName}
-                      className={styles.author_img}
-                    />
-                  )}
-                  <div>
-                    <div className={styles.author_name}>{authorName}</div>
-                    <div className={styles.date}>
-                      {formatDate(recipe.createdAt)}
-                    </div>
-                  </div>
-                </div>
-
-                <div className={styles.recipe_stats}>
-                  {recipe.cookingTime && (
-                    <div className={styles.stat_item}>
-                      <Timer />
-                      <span>PREP TIME {recipe.cookingTime} Minutes</span>
-                    </div>
-                  )}
-                  {recipe.cookingTime && (
-                    <div className={styles.stat_item}>
-                      <Timer />
-                      <span>COOK TIME {recipe.cookingTime} Minutes</span>
-                    </div>
-                  )}
-                  {recipe.categoryDtos && recipe.categoryDtos.length > 0 && (
-                    <div className={styles.stat_item}>
-                      <span>{recipe.categoryDtos[0].name}</span>
-                    </div>
-                  )}
+      <div className="container">
+        <div className={styles.recipe_header}>
+          <div className={styles.recipe_header_left}>
+            <h1>{recipe.title}</h1>
+            <div className={styles.recipe_stats}>
+              <div className={`${styles.recipe_author} ${styles.stat_item}`}>
+                <img
+                  src={getImageUrl(recipe.userDto?.photoUrl)}
+                  alt={recipe.userDto?.username}
+                />
+                <div>
+                  <span>{authorName}</span>
+                  <p>{formatDate(recipe.createdAt)}</p>
                 </div>
               </div>
-
+              {recipe.prepTime && (
+                <div className={styles.stat_item}>
+                  <Timer />
+                  <div>
+                    <span>PREP TIME </span>
+                    <p>{recipe.prepTime} Minutes</p>
+                  </div>
+                </div>
+              )}
+              {recipe.cookTime && (
+                <div className={styles.stat_item}>
+                  <Timer />
+                  <div>
+                    <span>COOK TIME </span>
+                    <p>{recipe.cookTime} Minutes</p>
+                  </div>
+                </div>
+              )}
+              {recipe.categoryDtos && recipe.categoryDtos.length > 0 && (
+                <div className={styles.stat_item}>
+                  <ForkKnife />
+                  <div>
+                    <p>{recipe.categoryDtos[0].name}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          <div className={styles.recipe_header_right}>
+            <div className={styles.sidebar_actions}>
+              <div>
+                <a href="#" className={styles.action_btn} title="Print">
+                  <Printer />
+                </a>
+                <span>PRINT</span>
+              </div>
+              <div>
+                <a href="#" className={styles.action_btn} title="Share">
+                  <Share />
+                </a>
+                <span>SHARE</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <section className={styles.recipe}>
+        <div className="container">
+          <div className={styles.recipe_main}>
+            <div className={styles.recipe_content}>
               {recipe.photoUrl && (
                 <div className={styles.recipe_image}>
                   <img src={getImageUrl(recipe.photoUrl)} alt={recipe.title} />
-                  <div className={styles.play_overlay}>
+                  {/* <div className={styles.play_overlay}>
                     <button className={styles.play_btn}>▶</button>
-                  </div>
+                  </div> */}
                 </div>
               )}
 
@@ -487,139 +798,149 @@ export default function RecipesPage() {
                 {recipe.description || "Delicious recipe for your table"}
               </p>
 
-              <div className={styles.recipe_content_main}>
-                <section className={styles.ingredients_section}>
-                  <h2>Ingredients</h2>
-                  <div className={styles.ingredients_list}>
-                    {mainDishIngredients.length > 0 && (
-                      <div className={styles.ingredient_group}>
-                        <h3>For main dish</h3>
-                        <div className={styles.ingredient_items}>
-                          {mainDishIngredients.map((ing, idx) => (
-                            <label key={idx} className={styles.ingredient_item}>
-                              <input type="checkbox" />
-                              <span>
-                                {ing.productName}
-                                {ing.quantity &&
-                                  ` - ${ing.quantity}${ing.unit || "g"}`}
-                              </span>
-                            </label>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {sauceIngredients.length > 0 && (
-                      <div className={styles.ingredient_group}>
-                        <h3>For the sauce</h3>
-                        <div className={styles.ingredient_items}>
-                          {sauceIngredients.map((ing, idx) => (
-                            <label key={idx} className={styles.ingredient_item}>
-                              <input type="checkbox" />
-                              <span>
-                                {ing.productName}
-                                {ing.quantity &&
-                                  ` - ${ing.quantity}${ing.unit || "g"}`}
-                              </span>
-                            </label>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {ingredients.length === 0 && (
-                      <div className={styles.ingredient_group}>
-                        <h3>For main dish</h3>
-                        <div className={styles.ingredient_items}>
-                          <p className={styles.no_ingredients}>
-                            No ingredients specified
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </section>
-
-                <section className={styles.directions_section}>
-                  <h2>Directions</h2>
-                  <div className={styles.directions_list}>
-                    {directions.length > 0 ? (
-                      directions.map((step) => (
-                        <div
-                          key={step.number}
-                          className={styles.direction_step}
-                        >
-                          <div className={styles.step_number}>
-                            {step.number}
-                          </div>
-                          <div className={styles.step_content}>
-                            <p
-                              dangerouslySetInnerHTML={{ __html: step.html }}
-                            />
-                            {step.number === 1 && recipe.photoUrl && (
-                              <div className={styles.step_image}>
-                                <img
-                                  src={getImageUrl(recipe.photoUrl)}
-                                  alt={`Step ${step.number}`}
-                                />
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className={styles.direction_step}>
-                        <div className={styles.step_number}>1</div>
-                        <div className={styles.step_content}>
-                          <p
-                            dangerouslySetInnerHTML={{
-                              __html: recipe.text || "No directions provided",
-                            }}
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </section>
+              <div className={styles.recipe_ingredients}>
+                <h3>Ingredients</h3>
+                {ingredients.length > 0 ? (
+                  <ul className={styles.ingredients_list}>
+                    {ingredients.map((ing, idx) => (
+                      <li key={idx} className={styles.ingredient_item}>
+                        <input
+                          type="radio"
+                          name="ingredients"
+                          id={`ingredient-${idx}`}
+                        />
+                        <label htmlFor={`ingredient-${idx}`}>
+                          {ing.productName}
+                          {ing.quantity &&
+                            ` - ${ing.quantity}${ing.unit || "g"}`}
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className={styles.no_ingredients}>
+                    No ingredients specified
+                  </p>
+                )}
               </div>
+
+              <section className={styles.recipe_directions}>
+                <h3>Directions</h3>
+                <div className={styles.directions_list}>
+                  {directions.length > 0 ? (
+                    directions.map((step) => (
+                      <div key={step.number} className={styles.direction_step}>
+                        <input
+                          type="radio"
+                          name="directions"
+                          id={`direction-${step.number}`}
+                        />
+                        <div className={styles.step_content}>
+                          {step.title && (
+                            <h4 className={styles.step_title}>{step.title}</h4>
+                          )}
+                          {step.contentBeforeImage && (
+                            <div
+                              className={styles.step_text}
+                              dangerouslySetInnerHTML={{
+                                __html: step.contentBeforeImage,
+                              }}
+                            />
+                          )}
+                          {step.image && (
+                            <div className={styles.step_image}>
+                              <img
+                                src={
+                                  step.image.startsWith("http")
+                                    ? step.image
+                                    : getImageUrl(step.image)
+                                }
+                                alt={`Step ${step.number}`}
+                              />
+                            </div>
+                          )}
+                          {step.contentAfterImage && (
+                            <div
+                              className={styles.step_text}
+                              dangerouslySetInnerHTML={{
+                                __html: step.contentAfterImage,
+                              }}
+                            />
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className={styles.direction_step}>
+                      <input type="radio" name="directions" id="direction-1" />
+                      <div className={styles.step_content}>
+                        <div
+                          className={styles.step_text}
+                          dangerouslySetInnerHTML={{
+                            __html: recipe.text || "No directions provided",
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </section>
             </div>
 
-            <aside className={styles.recipe_sidebar}>
-              <div className={styles.sidebar_actions}>
-                <button className={styles.action_btn} title="Print">
-                  <Printer />
-                  <span>PRINT</span>
-                </button>
-                <button className={styles.action_btn} title="Share">
-                  <Share />
-                  <span>SHARE</span>
-                </button>
-              </div>
-
+            <div className={styles.recipe_sidebar}>
               <div className={styles.nutrition}>
                 <h3>Nutrition Information</h3>
                 <div className={styles.nutrition_list}>
-                  <div className={styles.nutrition_item}>
-                    <span>Calories</span>
-                    <span>219.8 kcal</span>
-                  </div>
-                  <div className={styles.nutrition_item}>
-                    <span>Total Fat</span>
-                    <span>19.7 g</span>
-                  </div>
-                  <div className={styles.nutrition_item}>
-                    <span>Protein</span>
-                    <span>7.8 g</span>
-                  </div>
-                  <div className={styles.nutrition_item}>
-                    <span>Carbohydrates</span>
-                    <span>22.3 g</span>
-                  </div>
-                  <div className={styles.nutrition_item}>
-                    <span>Cholesterol</span>
-                    <span>214 mg</span>
-                  </div>
+                  {recipe.calories !== undefined &&
+                    recipe.calories !== null && (
+                      <div className={styles.nutrition_item}>
+                        <span>Calories</span>
+                        <span>{recipe.calories.toFixed(1)} kcal</span>
+                      </div>
+                    )}
+                  {recipe.totalFat !== undefined &&
+                    recipe.totalFat !== null && (
+                      <div className={styles.nutrition_item}>
+                        <span>Total Fat</span>
+                        <span>{recipe.totalFat.toFixed(1)} g</span>
+                      </div>
+                    )}
+                  {recipe.protein !== undefined && recipe.protein !== null && (
+                    <div className={styles.nutrition_item}>
+                      <span>Protein</span>
+                      <span>{recipe.protein.toFixed(1)} g</span>
+                    </div>
+                  )}
+                  {recipe.carbohydrates !== undefined &&
+                    recipe.carbohydrates !== null && (
+                      <div className={styles.nutrition_item}>
+                        <span>Carbohydrates</span>
+                        <span>{recipe.carbohydrates.toFixed(1)} g</span>
+                      </div>
+                    )}
+                  {recipe.cholesterol !== undefined &&
+                    recipe.cholesterol !== null && (
+                      <div className={styles.nutrition_item}>
+                        <span>Cholesterol</span>
+                        <span>{recipe.cholesterol.toFixed(1)} mg</span>
+                      </div>
+                    )}
+                  {/* Если нет nutrition данных, показываем сообщение */}
+                  {!recipe.calories &&
+                    !recipe.totalFat &&
+                    !recipe.protein &&
+                    !recipe.carbohydrates &&
+                    !recipe.cholesterol && (
+                      <div className={styles.nutrition_item}>
+                        <span style={{ fontStyle: "italic", color: "#999" }}>
+                          Nutrition information not available
+                        </span>
+                      </div>
+                    )}
                 </div>
                 <p className={styles.nutrition_note}>
-                  Lorem ipsum dolor sit amet, consectetuipisicing elit
+                  adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+                  dolore magna aliqua.
                 </p>
               </div>
 
@@ -632,22 +953,26 @@ export default function RecipesPage() {
                       to={`/recipes/${r.id}`}
                       className={styles.other_recipe_item}
                     >
-                      {r.photoUrl && (
-                        <img
-                          src={getImageUrl(r.photoUrl)}
-                          alt={r.title}
-                          className={styles.other_recipe_img}
-                        />
-                      )}
-                      <div className={styles.other_recipe_info}>
-                        <h4>{r.title}</h4>
-                        <p>By {r.userDto?.username || "Unknown"}</p>
-                      </div>
+                      <Card
+                        name={r.title}
+                        imageSrc={
+                          r.photoUrl ? getImageUrl(r.photoUrl) : undefined
+                        }
+                        cookingTime={
+                          r.cookTime
+                            ? r.cookTime.toString()
+                            : r.cookingTime
+                            ? r.cookingTime.toString()
+                            : "30"
+                        }
+                        foodType={r.categoryDtos?.[0]?.name || "General"}
+                      />
                     </Link>
                   ))}
                 </div>
               </div>
-            </aside>
+              <AdSection />
+            </div>
           </div>
         </div>
       </section>

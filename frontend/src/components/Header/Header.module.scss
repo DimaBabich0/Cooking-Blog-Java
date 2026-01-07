@@ -79,6 +79,20 @@ header {
       font-weight: 600;
       @include header-link;
     }
+    .adminLink {
+      padding: 0.5rem 1.25rem;
+      border: 1px solid $sky-blue;
+      border-radius: 8px;
+      background: $sky-blue;
+      color: $black;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      &:hover {
+        background: darken($sky-blue, 5%);
+        border-color: darken($sky-blue, 5%);
+      }
+    }
     .logoutBtn {
       padding: 0.5rem 1.25rem;
       border: 1px solid #ddd;

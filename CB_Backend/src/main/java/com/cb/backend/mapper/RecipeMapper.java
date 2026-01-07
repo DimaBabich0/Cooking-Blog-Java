@@ -9,6 +9,7 @@ import com.cb.backend.model.Category;
 import com.cb.backend.model.Ingredient;
 import com.cb.backend.model.Recipe;
 import com.cb.backend.model.User;
+import com.cb.backend.model.ContentStatus;
 
 /**
  * Mapper class for converting between {@link Recipe} entities and {@link RecipeDto} data transfer objects.
@@ -40,16 +41,35 @@ public class RecipeMapper {
         dto.setText(recipe.getText());
         dto.setPhotoUrl(recipe.getPhotoUrl());
         dto.setCookingTime(recipe.getCookingTime());
+        dto.setPrepTime(recipe.getPrepTime());
+        dto.setCookTime(recipe.getCookTime());
+        // Nutrition Information
+        dto.setCalories(recipe.getCalories());
+        dto.setTotalFat(recipe.getTotalFat());
+        dto.setProtein(recipe.getProtein());
+        dto.setCarbohydrates(recipe.getCarbohydrates());
+        dto.setCholesterol(recipe.getCholesterol());
+        dto.setStatus(recipe.getStatus() != null ? recipe.getStatus().name() : ContentStatus.PENDING.name());
         dto.setCreatedAt(recipe.getCreatedAt());
         dto.setUpdatedAt(recipe.getUpdatedAt());
         
-        dto.setUserDto(UserMapper.toDto(recipe.getUser()));
+        if (recipe.getUser() != null) {
+            dto.setUserDto(UserMapper.toDto(recipe.getUser()));
+        } else {
+            System.err.println("Recipe ID " + recipe.getId() + " has no associated user.");
+        }
         
         List<CategoryDto> categoriesDto = new ArrayList<>();
         List<Category> categories = recipe.getCategories();
-        for (Category category : categories) {
-        	categoriesDto.add(CategoryMapper.toDto(category));
-		}
+        System.out.println("Recipe ID " + recipe.getId() + " has " + (categories != null ? categories.size() : 0) + " categories");
+        if (categories != null && !categories.isEmpty()) {
+            for (Category category : categories) {
+                categoriesDto.add(CategoryMapper.toDto(category));
+                System.out.println("  - Category: " + category.getName());
+            }
+        } else {
+            System.out.println("  WARNING: Recipe ID " + recipe.getId() + " has no categories!");
+        }
         dto.setCategories(categoriesDto);
         
         List<IngredientDto> ingredientsDto = new ArrayList<>();
@@ -93,6 +113,19 @@ public class RecipeMapper {
     	recipe.setText(dto.getText());
     	recipe.setPhotoUrl(dto.getPhotoUrl());
     	recipe.setCookingTime(dto.getCookingTime());
+    	recipe.setPrepTime(dto.getPrepTime());
+    	recipe.setCookTime(dto.getCookTime());
+    	// Nutrition Information
+    	recipe.setCalories(dto.getCalories());
+    	recipe.setTotalFat(dto.getTotalFat());
+    	recipe.setProtein(dto.getProtein());
+    	recipe.setCarbohydrates(dto.getCarbohydrates());
+    	recipe.setCholesterol(dto.getCholesterol());
+    	if (dto.getStatus() != null && !dto.getStatus().isEmpty()) {
+    	    recipe.setStatus(ContentStatus.fromString(dto.getStatus()));
+    	} else if (recipe.getStatus() == null) {
+    	    recipe.setStatus(ContentStatus.PENDING);
+    	}
     	recipe.setUpdatedAt(dto.getUpdatedAt());
     	
     	recipe.setUser(user);

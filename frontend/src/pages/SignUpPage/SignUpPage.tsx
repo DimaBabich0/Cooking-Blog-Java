@@ -34,16 +34,16 @@ export default function SignUpPage() {
 
     try {
       if (!formData.username || !formData.username.trim()) {
-        throw new Error("Имя пользователя обязательно");
+        throw new Error("Username is required");
       }
       if (!formData.email || !formData.email.trim()) {
-        throw new Error("Email обязателен");
+        throw new Error("Email is required");
       }
       if (!formData.password || formData.password.length < 6) {
-        throw new Error("Пароль должен содержать минимум 6 символов");
+        throw new Error("Password must be at least 6 characters");
       }
       if (formData.password !== formData.confirmPassword) {
-        throw new Error("Пароли не совпадают");
+        throw new Error("Passwords do not match");
       }
 
       const userToCreate: Partial<UserDto & { password: string }> = {
@@ -61,7 +61,7 @@ export default function SignUpPage() {
       setAuthUser(createdUser);
       navigate("/");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Ошибка регистрации");
+      setError(err instanceof Error ? err.message : "Registration error");
       console.error(err);
     } finally {
       setLoading(false);
@@ -71,14 +71,14 @@ export default function SignUpPage() {
   return (
     <section className={styles.signUpPage}>
       <div className={`container ${styles.container}`}>
-        <h1 className={styles.title}>Регистрация</h1>
+        <h1 className={styles.title}>Sign Up</h1>
 
         {error && <div className={styles.error}>{error}</div>}
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.field}>
             <label htmlFor="username" className={styles.label}>
-              Имя пользователя *
+              Username *
             </label>
             <input
               id="username"
@@ -86,7 +86,7 @@ export default function SignUpPage() {
               value={formData.username || ""}
               onChange={(e) => handleChange("username", e.target.value)}
               className={styles.input}
-              placeholder="Введите имя пользователя"
+              placeholder="Enter username"
               required
               autoComplete="username"
             />
@@ -110,7 +110,7 @@ export default function SignUpPage() {
 
           <div className={styles.field}>
             <label htmlFor="firstName" className={styles.label}>
-              Имя
+              First Name
             </label>
             <input
               id="firstName"
@@ -118,14 +118,14 @@ export default function SignUpPage() {
               value={formData.firstName || ""}
               onChange={(e) => handleChange("firstName", e.target.value)}
               className={styles.input}
-              placeholder="Введите имя"
+              placeholder="Enter first name"
               autoComplete="given-name"
             />
           </div>
 
           <div className={styles.field}>
             <label htmlFor="lastName" className={styles.label}>
-              Фамилия
+              Last Name
             </label>
             <input
               id="lastName"
@@ -133,14 +133,14 @@ export default function SignUpPage() {
               value={formData.lastName || ""}
               onChange={(e) => handleChange("lastName", e.target.value)}
               className={styles.input}
-              placeholder="Введите фамилию"
+              placeholder="Enter last name"
               autoComplete="family-name"
             />
           </div>
 
           <div className={styles.field}>
             <label htmlFor="password" className={styles.label}>
-              Пароль *
+              Password *
             </label>
             <input
               id="password"
@@ -148,7 +148,7 @@ export default function SignUpPage() {
               value={formData.password || ""}
               onChange={(e) => handleChange("password", e.target.value)}
               className={styles.input}
-              placeholder="Минимум 6 символов"
+              placeholder="At least 6 characters"
               required
               autoComplete="new-password"
             />
@@ -156,7 +156,7 @@ export default function SignUpPage() {
 
           <div className={styles.field}>
             <label htmlFor="confirmPassword" className={styles.label}>
-              Подтвердите пароль *
+              Confirm Password *
             </label>
             <input
               id="confirmPassword"
@@ -164,7 +164,7 @@ export default function SignUpPage() {
               value={formData.confirmPassword || ""}
               onChange={(e) => handleChange("confirmPassword", e.target.value)}
               className={styles.input}
-              placeholder="Повторите пароль"
+              placeholder="Repeat password"
               required
               autoComplete="new-password"
             />
@@ -175,13 +175,13 @@ export default function SignUpPage() {
               type="submit"
               disabled={loading}
             >
-              {loading ? "Регистрация..." : "Зарегистрироваться"}
+              {loading ? "Signing up..." : "Sign Up"}
             </Button>
           </div>
 
           <div className={styles.footer}>
             <p>
-              Уже есть аккаунт? <Link to="/login">Войти</Link>
+              Already have an account? <Link to="/login">Login</Link>
             </p>
           </div>
         </form>

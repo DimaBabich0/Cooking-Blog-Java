@@ -44,7 +44,17 @@ export async function updateUser(id: number, user: Partial<UserDto & { password?
   });
   if (!res.ok) {
     const error = await res.json();
-    throw new Error(error.message || "Ошибка обновления пользователя");
+    throw new Error(error.message || "Error updating user");
   }
   return res.json();
+}
+
+export async function deleteUser(id: number): Promise<void> {
+  const res = await fetch(`${USER_API}/${id}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+  if (!res.ok) {
+    throw new Error("Error deleting user");
+  }
 }

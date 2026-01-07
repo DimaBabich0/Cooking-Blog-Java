@@ -1,5 +1,6 @@
 package com.cb.backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,7 +17,16 @@ public class RecipeDto {
     private String description;
     private String text;
     private String photoUrl;
-    private Integer cookingTime;
+    private Integer cookingTime; // Оставляем для обратной совместимости
+    private Integer prepTime;
+    private Integer cookTime;
+    // Nutrition Information
+    private Double calories;
+    private Double totalFat;
+    private Double protein;
+    private Double carbohydrates;
+    private Double cholesterol;
+    private String status; // PENDING, PUBLISHED, REJECTED
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private UserDto userDto;
@@ -62,6 +72,30 @@ public class RecipeDto {
     
     public Integer getCookingTime() { return cookingTime; }
     public void setCookingTime(Integer cookingTime) { this.cookingTime = cookingTime; }
+    
+    public Integer getPrepTime() { return prepTime; }
+    public void setPrepTime(Integer prepTime) { this.prepTime = prepTime; }
+    
+    public Integer getCookTime() { return cookTime; }
+    public void setCookTime(Integer cookTime) { this.cookTime = cookTime; }
+    
+    public Double getCalories() { return calories; }
+    public void setCalories(Double calories) { this.calories = calories; }
+    
+    public Double getTotalFat() { return totalFat; }
+    public void setTotalFat(Double totalFat) { this.totalFat = totalFat; }
+    
+    public Double getProtein() { return protein; }
+    public void setProtein(Double protein) { this.protein = protein; }
+    
+    public Double getCarbohydrates() { return carbohydrates; }
+    public void setCarbohydrates(Double carbohydrates) { this.carbohydrates = carbohydrates; }
+    
+    public Double getCholesterol() { return cholesterol; }
+    public void setCholesterol(Double cholesterol) { this.cholesterol = cholesterol; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
@@ -72,9 +106,11 @@ public class RecipeDto {
     public UserDto getUserDto() { return userDto; }
     public void setUserDto(UserDto userDto) { this.userDto = userDto; }
 
+    @JsonProperty("categoryDtos")
     public List<CategoryDto> getCategoriesDto() { return categoriesDto; }
     public void setCategories(List<CategoryDto> categoriesDto) { this.categoriesDto = categoriesDto; }
     
+    @JsonProperty("ingredientsDto")
     public List<IngredientDto> getIngredientsDto() { return ingredientsDto; }
     public void setIngredients(List<IngredientDto> ingredientsDto) { this.ingredientsDto = ingredientsDto; }
 }

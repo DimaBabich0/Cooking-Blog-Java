@@ -6,7 +6,15 @@ export const RecipeDto = {
     description: "",
     text: "",
     photoUrl: null,
-    cookingTime: null,
+    cookingTime: null, // Устаревшее поле (для обратной совместимости)
+    prepTime: null,
+    cookTime: null,
+    // Nutrition Information
+    calories: null,
+    totalFat: null,
+    protein: null,
+    carbohydrates: null,
+    cholesterol: null,
     createdAt: null,
     updatedAt: null,
     userDto: { ...UserDto },

@@ -17,9 +17,10 @@ package com.cb.backend.model;
  * @since 1.0
  */
 public enum Role {
-    USER,
-    MODERATOR,
-    ADMIN;
+    USER,        // Regular user - can only view content
+    AUTHOR,      // Can create recipes and blogs (needs moderation)
+    MODERATOR,   // Can moderate content
+    ADMIN;       // Full access - can manage users and content
 	
 	/**
      * Converts a string value to a {@link Role}.

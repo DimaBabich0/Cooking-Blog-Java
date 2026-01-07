@@ -1,10 +1,12 @@
 package com.cb.backend.controller;
 
 import com.cb.backend.dto.BlogDto;
+import com.cb.backend.model.ContentStatus;
 import com.cb.backend.service.BlogService;
 import com.cb.backend.service.CrudService;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * REST controller for managing {@link BlogDto} entities.
@@ -44,5 +46,20 @@ public class BlogController extends AbstractCrudController<BlogDto, Long> {
     @Override
     protected CrudService<BlogDto, Long> getService() {
         return blogService;
+    }
+
+    // Public endpoint - only returns published blogs
+    @GetMapping("/public")
+    public List<BlogDto> getPublishedBlogs() {
+        return blogService.findAllByStatus(ContentStatus.PUBLISHED);
+    }
+
+    // Override getAll to return only published for public access
+    @Override
+    @GetMapping
+    public List<BlogDto> getAll() {
+        // For now, return all (admin panel needs all statuses)
+        // In production, you might want to check user role here
+        return blogService.findAll();
     }
 }

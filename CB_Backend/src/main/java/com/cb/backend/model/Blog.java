@@ -2,6 +2,7 @@ package com.cb.backend.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import com.cb.backend.model.ContentStatus;
 
 /**
  * Entity <b>Blog</b> represents a blog post stored in the database.
@@ -70,6 +71,14 @@ public class Blog {
     private Integer cookingTime;
 
     /**
+     * Publication status of the blog post.
+     * <p>Default value is {@link ContentStatus#PENDING}.</p>
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private ContentStatus status = ContentStatus.PENDING;
+
+    /**
      * Timestamp when the blog post was created.
      * <p>Automatically set before persisting the entity.</p>
      */
@@ -107,6 +116,9 @@ public class Blog {
     public void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = this.createdAt;
+        if (this.status == null) {
+            this.status = ContentStatus.PENDING;
+        }
     }
 
     /**
@@ -164,4 +176,7 @@ public class Blog {
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
+    
+    public ContentStatus getStatus() { return status; }
+    public void setStatus(ContentStatus status) { this.status = status; }
 }

@@ -37,4 +37,4 @@ out/
 .vscode/
 
 # ### Don't add files from uploads ###
-# uploads/
+uploads/

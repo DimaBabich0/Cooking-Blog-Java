@@ -12,18 +12,26 @@ import CreateRecipePage from "./pages/CreateRecipePage/CreateRecipePage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import SignUpPage from "./pages/SignUpPage/SignUpPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
+import ComponentsTestPage from "./pages/ComponentsTestPage/ComponentsTestPage";
+// TODO: Uncomment when admin panel is ready
+// import AdminPage from "./pages/AdminPage/AdminPage";
+// import AdminUsersPage from "./pages/AdminPage/AdminUsersPage";
+// import AdminRecipesPage from "./pages/AdminPage/AdminRecipesPage";
+// import AdminBlogsPage from "./pages/AdminPage/AdminBlogsPage";
+// import AdminCategoriesPage from "./pages/AdminPage/AdminCategoriesPage";
+// import AdminRoute from "./components/AdminRoute/AdminRoute";
 import Footer from "./components/Footer/Footer";
 import { useAuth } from "./contexts/AuthContext";
 
 function NotFound() {
-  return <div style={{ padding: 24 }}>Страница не найдена</div>;
+  return <div style={{ padding: 24 }}>Page not found</div>;
 }
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div style={{ padding: 24, textAlign: "center" }}>Загрузка...</div>;
+    return <div style={{ padding: 24, textAlign: "center" }}>Loading...</div>;
   }
 
   if (!user) {
@@ -73,6 +81,49 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="components-test" element={<ComponentsTestPage />} />
+          {/* TODO: Uncomment when admin panel is ready
+          <Route
+            path="admin"
+            element={
+              <AdminRoute>
+                <AdminPage />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="admin/users"
+            element={
+              <AdminRoute>
+                <AdminUsersPage />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="admin/recipes"
+            element={
+              <AdminRoute>
+                <AdminRecipesPage />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="admin/blogs"
+            element={
+              <AdminRoute>
+                <AdminBlogsPage />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="admin/categories"
+            element={
+              <AdminRoute>
+                <AdminCategoriesPage />
+              </AdminRoute>
+            }
+          />
+          */}
         </Routes>
       </main>
       <Footer />

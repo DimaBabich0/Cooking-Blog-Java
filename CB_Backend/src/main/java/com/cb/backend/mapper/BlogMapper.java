@@ -3,6 +3,7 @@ package com.cb.backend.mapper;
 import com.cb.backend.dto.BlogDto;
 import com.cb.backend.model.Blog;
 import com.cb.backend.model.User;
+import com.cb.backend.model.ContentStatus;
 
 /**
  * Mapper class for converting between {@link Blog} entities and {@link BlogDto} data transfer objects.
@@ -31,6 +32,7 @@ public class BlogMapper {
         dto.setText(blog.getText());
         dto.setDescription(blog.getDescription());
         dto.setCookingTime(blog.getCookingTime());
+        dto.setStatus(blog.getStatus() != null ? blog.getStatus().name() : ContentStatus.PENDING.name());
         dto.setCreatedAt(blog.getCreatedAt());
         dto.setUpdatedAt(blog.getUpdatedAt());
         return dto;
@@ -50,6 +52,11 @@ public class BlogMapper {
         blog.setText(dto.getText());
         blog.setDescription(dto.getDescription());
         blog.setCookingTime(dto.getCookingTime());
+        if (dto.getStatus() != null && !dto.getStatus().isEmpty()) {
+            blog.setStatus(ContentStatus.fromString(dto.getStatus()));
+        } else if (blog.getStatus() == null) {
+            blog.setStatus(ContentStatus.PENDING);
+        }
         blog.setUpdatedAt(dto.getUpdatedAt());
     }
 }

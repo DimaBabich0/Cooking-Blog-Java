@@ -15,6 +15,7 @@ import com.cb.backend.repository.ProductRepository;
 import com.cb.backend.repository.RecipeRepository;
 import com.cb.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,8 +66,27 @@ public class RecipeService implements CrudService<RecipeDto, Long> {
      * @return list of {@link RecipeDto} representing all recipes
      */
 	@Override
+	@Transactional(readOnly = true)
 	public List<RecipeDto> findAll() {
-		return recipeRepo.findAll().stream()
+		return findAllByStatus(null); // null means all statuses
+	}
+
+	@Transactional(readOnly = true)
+	public List<RecipeDto> findAllByStatus(com.cb.backend.model.ContentStatus status) {
+		List<Recipe> recipes;
+		if (status != null) {
+			recipes = recipeRepo.findAllByStatus(status);
+		} else {
+			recipes = recipeRepo.findAllWithCategories();
+		}
+		// Убираем дубликаты, которые могут появиться из-за JOIN FETCH
+		// Используем LinkedHashSet для сохранения порядка
+		java.util.LinkedHashSet<Recipe> uniqueRecipes = new java.util.LinkedHashSet<>(recipes);
+		// Инициализируем ингредиенты отдельно, чтобы избежать MultipleBagFetchException
+		for (Recipe recipe : uniqueRecipes) {
+			recipe.getIngredients().size(); // Инициализация lazy коллекции
+		}
+		return uniqueRecipes.stream()
 				.map(RecipeMapper::toDto)
 				.collect(Collectors.toList());
 	}
@@ -78,9 +98,13 @@ public class RecipeService implements CrudService<RecipeDto, Long> {
 	 * @return {@link RecipeDto} of the found recipe, or {@code null} if not found
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public RecipeDto findById(Long id) {
-		return recipeRepo.findById(id)
-				.map(RecipeMapper::toDto)
+		return recipeRepo.findByIdWithCategories(id)
+				.map(recipe -> {
+					recipe.getIngredients().size(); // Инициализация lazy коллекции
+					return RecipeMapper.toDto(recipe);
+				})
 				.orElse(null);
 	}
 
@@ -102,6 +126,14 @@ public class RecipeService implements CrudService<RecipeDto, Long> {
             
             User user = userRepo.findById(dto.getUserDto().getId())
                     .orElseThrow(() -> new RuntimeException("User not found with ID: " + dto.getUserDto().getId()));
+            
+            // Check if user has permission to create content
+            if (user.getRole() == null || 
+                (user.getRole() != com.cb.backend.model.Role.AUTHOR && 
+                 user.getRole() != com.cb.backend.model.Role.ADMIN && 
+                 user.getRole() != com.cb.backend.model.Role.MODERATOR)) {
+                throw new RuntimeException("Only users with AUTHOR, ADMIN, or MODERATOR role can create recipes");
+            }
 
             List<Category> categories = dto.getCategoriesDto() == null
                     ? List.of()

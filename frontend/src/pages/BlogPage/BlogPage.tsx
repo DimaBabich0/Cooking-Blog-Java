@@ -6,10 +6,9 @@ import { getImageUrl } from "../../api/filesApi";
 import { useAuth } from "../../contexts/AuthContext";
 import PostCard from "../../components/PostCard/PostCard";
 import Button from "../../components/Button/Button";
+import AdSection from "../../components/AdSection/AdSection";
 import styles from "./BlogPage.module.scss";
 import Subscription from "../../components/Subscribtion/Subscription";
-import adImage from "../../assets/1.png";
-import maskGroup from "../../assets/Mask Group.svg";
 
 const POSTS_PER_PAGE = 6;
 
@@ -20,6 +19,7 @@ export default function BlogPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<string>("newest");
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
@@ -34,28 +34,50 @@ export default function BlogPage() {
         getRecipes(),
       ]);
       setBlogs(blogsData);
-      setRecipes(recipesData.slice(0, 3)); // Для sidebar
+      setRecipes(recipesData.slice(0, 3)); // For sidebar
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Ошибка загрузки данных");
+      setError(err instanceof Error ? err.message : "Error loading data");
       console.error(err);
     } finally {
       setLoading(false);
     }
   }
 
-  const filteredBlogs = blogs.filter(
-    (blog) =>
-      blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      blog.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredBlogs = blogs
+    .filter(
+      (blog) =>
+        blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        blog.description.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => {
+      // Sorting
+      if (sortBy === "newest") {
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      } else if (sortBy === "oldest") {
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+      } else if (sortBy === "time-asc") {
+        const timeA = a.cookingTime || 0;
+        const timeB = b.cookingTime || 0;
+        return timeA - timeB;
+      } else if (sortBy === "time-desc") {
+        const timeA = a.cookingTime || 0;
+        const timeB = b.cookingTime || 0;
+        return timeB - timeA;
+      }
+      return 0;
+    });
 
-  // Сбрасываем страницу при изменении поискового запроса
+  // Reset page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery]);
+  }, [searchQuery, sortBy]);
 
-  // Вычисляем пагинацию
+  // Calculate pagination
   const totalPages = Math.ceil(filteredBlogs.length / POSTS_PER_PAGE);
   const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
   const endIndex = startIndex + POSTS_PER_PAGE;
@@ -144,6 +166,24 @@ export default function BlogPage() {
         </div>
       </section>
 
+      {/* Sort Section */}
+      <section className={styles.sort_section}>
+        <div className="container">
+          <div className={styles.sort_wrapper}>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className={styles.sort_select}
+            >
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="time-asc">Time: Low to High</option>
+              <option value="time-desc">Time: High to Low</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
       {/* Content Section */}
       <section className={styles.list_content}>
         <div className="container">
@@ -153,9 +193,9 @@ export default function BlogPage() {
               {error && <div className={styles.error}>{error}</div>}
 
               {loading ? (
-                <p>Загрузка...</p>
+                <p>Loading...</p>
               ) : filteredBlogs.length === 0 ? (
-                <p>Посты не найдены</p>
+                <p>No posts found</p>
               ) : (
                 <>
                   {currentBlogs.map((blog) => (
@@ -167,7 +207,7 @@ export default function BlogPage() {
                       <PostCard
                         title={blog.title}
                         description={blog.description}
-                        author={blog.userDto?.username || "Неизвестно"}
+                        author={blog.userDto?.username || "Unknown"}
                         authorImgSrc={
                           blog.userDto?.photoUrl
                             ? getImageUrl(blog.userDto.photoUrl)
@@ -253,20 +293,7 @@ export default function BlogPage() {
               </div>
 
               {/* Ad Section */}
-              <div className={styles.ad_section}>
-                <div className={styles.ad_image}>
-                  <h3 className={styles.ad_title}>
-                    Don't forget to eat healthy food
-                  </h3>
-                  <img src={maskGroup} alt="" className={styles.ad_bg} />
-                  <img
-                    src={adImage}
-                    alt="Healthy food"
-                    className={styles.ad_main_image}
-                  />
-                  <p>www.foodieland.com</p>
-                </div>
-              </div>
+              <AdSection />
             </div>
           </div>
         </div>

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import com.cb.backend.model.ContentStatus;
 
 /**
  * Entity <b>Recipe</b> represents a cooking recipe created by a user.
@@ -42,9 +43,9 @@ public class Recipe {
 
     /**
      * Short description of the recipe.
-     * <p>Maximum length is 100 characters.</p>
+     * <p>Maximum length is 500 characters.</p>
      */
-    @Column(length = 100)
+    @Column(length = 500)
     private String description;
 
     /**
@@ -70,7 +71,33 @@ public class Recipe {
      * Cooking time in minutes.
      */
     @Column(name = "cooking_time")
-    private Integer cookingTime;
+    private Integer cookingTime; // Оставляем для обратной совместимости
+    
+    @Column(name = "prep_time")
+    private Integer prepTime;
+    
+    @Column(name = "cook_time")
+    private Integer cookTime;
+    
+    // Nutrition Information
+    @Column(name = "calories")
+    private Double calories;
+    
+    @Column(name = "total_fat")
+    private Double totalFat;
+    
+    @Column(name = "protein")
+    private Double protein;
+    
+    @Column(name = "carbohydrates")
+    private Double carbohydrates;
+    
+    @Column(name = "cholesterol")
+    private Double cholesterol;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private ContentStatus status = ContentStatus.PENDING;
 
     /**
      * Timestamp when the recipe was created.
@@ -134,6 +161,9 @@ public class Recipe {
     public void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = this.createdAt;
+        if (this.status == null) {
+            this.status = ContentStatus.PENDING;
+        }
     }
 
     /**
@@ -182,6 +212,27 @@ public class Recipe {
 
     public Integer getCookingTime() { return cookingTime; }
     public void setCookingTime(Integer cookingTime) { this.cookingTime = cookingTime; }
+    
+    public Integer getPrepTime() { return prepTime; }
+    public void setPrepTime(Integer prepTime) { this.prepTime = prepTime; }
+    
+    public Integer getCookTime() { return cookTime; }
+    public void setCookTime(Integer cookTime) { this.cookTime = cookTime; }
+    
+    public Double getCalories() { return calories; }
+    public void setCalories(Double calories) { this.calories = calories; }
+    
+    public Double getTotalFat() { return totalFat; }
+    public void setTotalFat(Double totalFat) { this.totalFat = totalFat; }
+    
+    public Double getProtein() { return protein; }
+    public void setProtein(Double protein) { this.protein = protein; }
+    
+    public Double getCarbohydrates() { return carbohydrates; }
+    public void setCarbohydrates(Double carbohydrates) { this.carbohydrates = carbohydrates; }
+    
+    public Double getCholesterol() { return cholesterol; }
+    public void setCholesterol(Double cholesterol) { this.cholesterol = cholesterol; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
@@ -195,4 +246,7 @@ public class Recipe {
     public List<Category> getCategories() { return categories; }
     
     public List<Ingredient> getIngredients() { return ingredients; }
+    
+    public ContentStatus getStatus() { return status; }
+    public void setStatus(ContentStatus status) { this.status = status; }
 }

@@ -30,10 +30,10 @@ export default function LoginPage() {
 
     try {
       if (!formData.username.trim()) {
-        throw new Error("Имя пользователя обязательно");
+        throw new Error("Username is required");
       }
       if (!formData.password) {
-        throw new Error("Пароль обязателен");
+        throw new Error("Password is required");
       }
 
       const response = await login(formData);
@@ -42,10 +42,10 @@ export default function LoginPage() {
         setAuthUser(response.user);
         navigate("/");
       } else {
-        setError(response.message || "Ошибка входа");
+        setError(response.message || "Login error");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Ошибка входа");
+      setError(err instanceof Error ? err.message : "Login error");
       console.error(err);
     } finally {
       setLoading(false);
@@ -55,14 +55,14 @@ export default function LoginPage() {
   return (
     <section className={styles.loginPage}>
       <div className={`container ${styles.container}`}>
-        <h1 className={styles.title}>Вход</h1>
+        <h1 className={styles.title}>Login</h1>
 
         {error && <div className={styles.error}>{error}</div>}
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.field}>
             <label htmlFor="username" className={styles.label}>
-              Имя пользователя *
+              Username *
             </label>
             <input
               id="username"
@@ -70,7 +70,7 @@ export default function LoginPage() {
               value={formData.username}
               onChange={(e) => handleChange("username", e.target.value)}
               className={styles.input}
-              placeholder="Введите имя пользователя"
+              placeholder="Enter username"
               required
               autoComplete="username"
             />
@@ -78,7 +78,7 @@ export default function LoginPage() {
 
           <div className={styles.field}>
             <label htmlFor="password" className={styles.label}>
-              Пароль *
+              Password *
             </label>
             <input
               id="password"
@@ -86,7 +86,7 @@ export default function LoginPage() {
               value={formData.password}
               onChange={(e) => handleChange("password", e.target.value)}
               className={styles.input}
-              placeholder="Введите пароль"
+              placeholder="Enter password"
               required
               autoComplete="current-password"
             />
@@ -97,13 +97,13 @@ export default function LoginPage() {
               type="submit"
               disabled={loading}
             >
-              {loading ? "Вход..." : "Войти"}
+              {loading ? "Logging in..." : "Login"}
             </Button>
           </div>
 
           <div className={styles.footer}>
             <p>
-              Нет аккаунта? <Link to="/signup">Зарегистрироваться</Link>
+              Don't have an account? <Link to="/signup">Sign up</Link>
             </p>
           </div>
         </form>

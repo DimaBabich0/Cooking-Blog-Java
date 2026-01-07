@@ -41,12 +41,28 @@ public class BlogService implements CrudService<BlogDto, Long> {
      *
      * @return list of {@link BlogDto} representing all blogs
      */
-    @Override
-    public List<BlogDto> findAll() {
-        return blogRepo.findAll().stream()
-                .map(BlogMapper::toDto)
-                .collect(Collectors.toList());
-    }
+	@Override
+	public List<BlogDto> findAll() {
+		return findAllByStatus(null); // null means all statuses
+	}
+
+	/**
+	 * Retrieves blog posts filtered by status.
+	 *
+	 * @param status the content status to filter by, or {@code null} for all statuses
+	 * @return list of {@link BlogDto} representing filtered blogs
+	 */
+	public List<BlogDto> findAllByStatus(com.cb.backend.model.ContentStatus status) {
+		List<com.cb.backend.model.Blog> blogs;
+		if (status != null) {
+			blogs = blogRepo.findAllByStatus(status);
+		} else {
+			blogs = blogRepo.findAll();
+		}
+		return blogs.stream()
+				.map(BlogMapper::toDto)
+				.collect(Collectors.toList());
+	}
 
     /**
      * Finds a blog post by its ID.
@@ -77,7 +93,15 @@ public class BlogService implements CrudService<BlogDto, Long> {
     public BlogDto create(BlogDto dto) {
         User user = userRepo.findById(dto.getUserDto().getId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
+        
+        // Check if user has permission to create content
+        if (user.getRole() == null || 
+            (user.getRole() != com.cb.backend.model.Role.AUTHOR && 
+             user.getRole() != com.cb.backend.model.Role.ADMIN && 
+             user.getRole() != com.cb.backend.model.Role.MODERATOR)) {
+            throw new RuntimeException("Only users with AUTHOR, ADMIN, or MODERATOR role can create blogs");
+        }
+		
         Blog blog = new Blog();
         BlogMapper.updateEntity(blog, dto, user);
         return BlogMapper.toDto(blogRepo.save(blog));

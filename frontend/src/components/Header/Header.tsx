@@ -54,8 +54,15 @@ const Header = () => {
                     )}
                     <span className={styles.username}>{user.username}</span>
                   </Link>
+                  {/* TODO: Uncomment when admin panel is ready
+                  {(user.role === "ADMIN" || user.role === "MODERATOR") && (
+                    <Link to="/admin" className={styles.adminLink}>
+                      Admin
+                    </Link>
+                  )}
+                  */}
                   <button onClick={handleLogout} className={styles.logoutBtn}>
-                    Выйти
+                    Logout
                   </button>
                 </div>
               ) : (
