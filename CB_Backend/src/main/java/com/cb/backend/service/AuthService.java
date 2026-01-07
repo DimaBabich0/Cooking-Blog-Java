@@ -11,6 +11,30 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Service class responsible for authentication-related operations.
+ *
+ * <p>
+ * Provides functionality for:
+ * <ul>
+ *     <li>Authenticating users by username and password</li>
+ *     <li>Retrieving the currently authenticated user</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * This service uses {@link UserRepository} to access user data
+ * and {@link BCrypt} for secure password verification.
+ * </p>
+ *
+ * <p>
+ * All authentication results are returned as {@link LoginResponse}
+ * objects containing status, message, and user data (if applicable).
+ * </p>
+ * 
+ * @author Artem Borisenko
+ * @since 1.0
+ */
 @Service
 public class AuthService {
     private final UserRepository userRepository;
@@ -19,6 +43,29 @@ public class AuthService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Authenticates a user using provided login credentials.
+     *
+     * <p>
+     * Validation steps:
+     * <ul>
+     *     <li>Username must not be {@code null} or empty</li>
+     *     <li>Password must not be {@code null} or empty</li>
+     *     <li>User must exist</li>
+     *     <li>Password hash must be present</li>
+     *     <li>Provided password must match stored BCrypt hash</li>
+     * </ul>
+     * </p>
+     *
+     * <p>
+     * In case of validation or authentication failure,
+     * a {@link LoginResponse} with {@code success = false}
+     * and an appropriate message is returned.
+     * </p>
+     *
+     * @param request login request containing username and password
+     * @return {@link LoginResponse} describing the authentication result
+     */
     public LoginResponse login(LoginRequest request) {
         try {
             if (request.getUsername() == null || request.getUsername().trim().isEmpty()) {
@@ -61,7 +108,18 @@ public class AuthService {
             return new LoginResponse(false, "Ошибка сервера: " + e.getMessage(), null);
         }
     }
-
+    
+    /**
+     * Retrieves the currently authenticated user by ID.
+     *
+     * <p>
+     * Typically used after authentication when the user's ID
+     * is stored in the HTTP session.
+     * </p>
+     *
+     * @param userId ID of the authenticated user
+     * @return {@link UserDto} of the user, or {@code null} if not found or invalid
+     */
     public UserDto getCurrentUser(Long userId) {
         try {
             if (userId == null) {

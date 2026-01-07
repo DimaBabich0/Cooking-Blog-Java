@@ -10,6 +10,9 @@ import com.cb.backend.model.Product;
  * Provides methods to convert a Product entity to a ProductDto and to update an existing Product
  * entity with data from a ProductDto.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 public class ProductMapper {
 	/**

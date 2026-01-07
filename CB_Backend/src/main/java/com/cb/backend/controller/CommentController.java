@@ -23,17 +23,15 @@ import org.springframework.web.bind.annotation.RestController;
  * <p>
  * Delegates all operations to {@link CommentService}.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 @RestController
 @RequestMapping("/api/comments")
 public class CommentController extends AbstractCrudController<CommentDto, Long> {
 	private final CommentService commentService;
 
-    /**
-     * Constructs a CommentController with the provided CommentService.
-     *
-     * @param commentService the service used for comment CRUD operations
-     */
     public CommentController(CommentService commentService) {
         this.commentService = commentService;
     }

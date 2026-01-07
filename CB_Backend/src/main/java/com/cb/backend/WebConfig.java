@@ -10,6 +10,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * <p>
  * Defines allowed origins, HTTP methods, headers, and credentials for API and file endpoints.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {

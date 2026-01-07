@@ -23,17 +23,15 @@ import org.springframework.web.bind.annotation.RestController;
  * <p>
  * Delegates all operations to {@link RecipeService}.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 @RestController
 @RequestMapping("/api/recipes")
 public class RecipeController extends AbstractCrudController<RecipeDto, Long> {
 	private final RecipeService recipeService;
 
-    /**
-     * Constructs a RecipeController with the provided RecipeService.
-     *
-     * @param recipeService the service used for recipe CRUD operations
-     */
     public RecipeController(RecipeService recipeService) {
         this.recipeService = recipeService;
     }

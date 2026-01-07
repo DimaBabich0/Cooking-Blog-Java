@@ -12,6 +12,9 @@ import java.util.List;
  *
  * @param <DTO> the type of Data Transfer Object handled by the controller
  * @param <ID>  the type of the entity identifier
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 public interface CrudController<DTO, ID> {
     /**

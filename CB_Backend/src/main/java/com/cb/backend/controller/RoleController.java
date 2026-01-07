@@ -14,6 +14,9 @@ import java.util.List;
  *     <li>GET /api/roles – returns a list of all role names as strings.</li>
  * </ul>
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 @RestController
 @RequestMapping("/api/roles")

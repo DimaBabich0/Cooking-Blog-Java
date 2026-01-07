@@ -26,6 +26,9 @@ import java.util.stream.Collectors;
  * <p>
  * Throws {@link RuntimeException} if referenced user, recipe, or comment is not found.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 @Service
 public class CommentService implements CrudService<CommentDto, Long> {

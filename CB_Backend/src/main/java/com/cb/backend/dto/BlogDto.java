@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 
 /**
  * DTO representing a {@link com.cb.backend.model.Blog} entity.
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 public class BlogDto {
 	// --- Variables ---

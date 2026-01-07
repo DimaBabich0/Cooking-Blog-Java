@@ -15,6 +15,9 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
  * Provides methods to convert a User entity to a UserDto and to update an existing User
  * entity with data from a UserDto.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 public class UserMapper {
 	/**

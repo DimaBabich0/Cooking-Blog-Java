@@ -17,6 +17,9 @@ import jakarta.persistence.Converter;
  * The converter is annotated with {@link Converter#autoApply() autoApply = true},
  * so it is automatically applied to all entity attributes of type {@link Role}.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 @Converter(autoApply = true)
 public class RoleConverter implements AttributeConverter<Role, String> {

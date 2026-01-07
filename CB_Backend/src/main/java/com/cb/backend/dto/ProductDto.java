@@ -2,6 +2,9 @@ package com.cb.backend.dto;
 
 /**
  * DTO representing a {@link com.cb.backend.model.Product} entity.
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 public class ProductDto {
 	// --- Variables ---

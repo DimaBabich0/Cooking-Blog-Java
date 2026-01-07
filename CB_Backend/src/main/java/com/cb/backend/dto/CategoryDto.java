@@ -2,6 +2,9 @@ package com.cb.backend.dto;
 
 /**
  * DTO representing a {@link com.cb.backend.model.Category} entity.
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 public class CategoryDto {
 	// --- Variables ---

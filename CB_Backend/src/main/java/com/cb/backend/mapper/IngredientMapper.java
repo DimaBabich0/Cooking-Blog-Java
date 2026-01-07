@@ -17,6 +17,9 @@ import com.cb.backend.model.RecipeIngredientKey;
  * <p>
  * Handles relationships with {@link Product} and {@link Recipe} entities, including composite primary keys.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 public class IngredientMapper {
 	/**

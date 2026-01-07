@@ -4,6 +4,9 @@ import java.time.LocalDate;
 
 /**
  * DTO representing a {@link com.cb.backend.model.User} entity.
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 public class UserDto {
     private Long id;

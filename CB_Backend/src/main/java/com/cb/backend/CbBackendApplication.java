@@ -5,6 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * Entry point for the Spring Boot application.
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 @SpringBootApplication
 public class CbBackendApplication {

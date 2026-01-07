@@ -1,5 +1,17 @@
 package com.cb.backend.dto;
 
+/**
+ * DTO representing a login response.
+ *
+ * <p>
+ * Returned to the client after a login attempt.
+ * Contains information about whether authentication was successful,
+ * an optional message, and authenticated user details.
+ * </p>
+ * 
+ * @author Artem Borisenko
+ * @since 1.0
+ */
 public class LoginResponse {
     private boolean success;
     private String message;

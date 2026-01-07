@@ -5,6 +5,9 @@ import java.util.List;
 
 /**
  * DTO representing a {@link com.cb.backend.model.Recipe} entity.
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 public class RecipeDto {
 	// --- Variables ---

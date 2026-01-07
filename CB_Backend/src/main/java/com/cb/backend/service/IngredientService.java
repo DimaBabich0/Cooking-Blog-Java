@@ -26,6 +26,9 @@ import java.util.stream.Collectors;
  * <p>
  * Throws {@link RuntimeException} if referenced recipe, product, or ingredient is not found.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 @Service
 public class IngredientService implements CrudService<IngredientDto, RecipeIngredientKey> {

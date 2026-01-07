@@ -23,17 +23,15 @@ import org.springframework.web.bind.annotation.RestController;
  * <p>
  * Delegates all operations to {@link RatingService}.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 @RestController
 @RequestMapping("/api/ratings")
 public class RatingController extends AbstractCrudController<RatingDto, Long> {
 	private final RatingService ratingService;
 
-    /**
-     * Constructs a RatingController with the provided RatingService.
-     *
-     * @param ratingService the service used for rating CRUD operations
-     */
     public RatingController(RatingService ratingService) {
         this.ratingService = ratingService;
     }

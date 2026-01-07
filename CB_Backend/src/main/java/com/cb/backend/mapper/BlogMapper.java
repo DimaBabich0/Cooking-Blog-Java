@@ -11,6 +11,9 @@ import com.cb.backend.model.User;
  * Provides methods to convert a Blog entity to a BlogDto and to update an existing Blog entity
  * with data from a BlogDto.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 public class BlogMapper {
     /**

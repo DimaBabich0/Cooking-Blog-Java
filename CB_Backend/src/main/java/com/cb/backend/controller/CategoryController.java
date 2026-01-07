@@ -23,17 +23,15 @@ import org.springframework.web.bind.annotation.RestController;
  * <p>
  * Delegates all operations to {@link CategoryService}.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController extends AbstractCrudController<CategoryDto, Long> {
 	private final CategoryService categoryService;
 
-    /**
-     * Constructs a CategoryController with the provided CategoryService.
-     *
-     * @param categoryService the service used for category CRUD operations
-     */
     public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
     }

@@ -16,6 +16,9 @@ import com.cb.backend.model.User;
  * <p>
  * Handles relationships with {@link User} and {@link Recipe} entities.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 public class RatingMapper {
 	/**

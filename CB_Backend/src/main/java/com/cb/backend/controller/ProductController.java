@@ -23,17 +23,15 @@ import org.springframework.web.bind.annotation.RestController;
  * <p>
  * Delegates all operations to {@link ProductService}.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 @RestController
 @RequestMapping("/api/products")
 public class ProductController extends AbstractCrudController<ProductDto, Long> {
 	private final ProductService productService;
 
-    /**
-     * Constructs a ProductController with the provided ProductService.
-     *
-     * @param productService the service used for product CRUD operations
-     */
     public ProductController(ProductService productService) {
         this.productService = productService;
     }

@@ -22,6 +22,9 @@ import java.util.Map;
  *     <li>GET /api/files/images/{folder}/{fileName:.+} – get file by path and file name</li>
  * </ul>
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 @RestController
 @RequestMapping("/api/files")

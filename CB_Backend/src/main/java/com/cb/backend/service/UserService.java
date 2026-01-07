@@ -21,6 +21,9 @@ import java.util.stream.Collectors;
  * Supports searching users by username with {@link #searchUsersByUsername(String)}.
  * Throws {@link RuntimeException} if the user is not found when updating.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 @Service
 public class UserService implements CrudService<UserDto, Long> {

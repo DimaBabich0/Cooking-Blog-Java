@@ -34,6 +34,9 @@ import java.util.stream.Collectors;
  * Automatically creates products for ingredients if they do not exist.
  * Throws {@link RuntimeException} if referenced user, category, or recipe is not found.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 @Service
 public class RecipeService implements CrudService<RecipeDto, Long> {

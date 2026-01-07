@@ -24,17 +24,15 @@ import org.springframework.web.bind.annotation.RestController;
  * <p>
  * Delegates all operations to {@link IngredientService}.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 @RestController
 @RequestMapping("/api/ingredients")
 public class IngredientController extends AbstractCrudController<IngredientDto, RecipeIngredientKey> {
 	private final IngredientService ingredientService;
 
-    /**
-     * Constructs a IngredientController with the provided IngredientService.
-     *
-     * @param ingredientService the service used for ingredient CRUD operations
-     */
     public IngredientController(IngredientService ingredientService) {
         this.ingredientService = ingredientService;
     }

@@ -35,17 +35,15 @@ import org.springframework.web.bind.annotation.RestController;
  * <p>
  * Delegates all operations to {@link UserService}.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 @RestController
 @RequestMapping("/api/users")
 public class UserController extends AbstractCrudController<UserDto, Long> {
     private final UserService userService;
 
-    /**
-     * Constructs a UserController with the provided UserService.
-     *
-     * @param userService the service used for user CRUD operations
-     */
     public UserController(UserService userService) {
         this.userService = userService;
     }

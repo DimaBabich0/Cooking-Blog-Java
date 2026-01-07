@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
  * Maps properties with the prefix "file" from application.properties or application.yml
  * to this component. Primarily used to define the upload directory for file storage.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 @Component
 @ConfigurationProperties(prefix = "file")

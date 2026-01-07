@@ -17,6 +17,9 @@ import com.cb.backend.model.User;
  * Provides methods to convert a Recipe entity to a RecipeDto and to update an existing Recipe
  * entity with data from a RecipeDto.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 public class RecipeMapper {
 	/**

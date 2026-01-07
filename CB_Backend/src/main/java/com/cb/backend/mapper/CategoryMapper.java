@@ -10,6 +10,9 @@ import com.cb.backend.model.Category;
  * Provides methods to convert a Category entity to a CategoryDto and to update an existing Category
  * entity with data from a CategoryDto.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 public class CategoryMapper {
 	/**

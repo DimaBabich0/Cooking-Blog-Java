@@ -18,6 +18,9 @@ import java.util.UUID;
  * Supports subfolders and generates unique filenames using UUIDs to prevent collisions.
  * Throws {@link RuntimeException} in case of invalid paths or I/O errors.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 @Service
 public class FileStorageService {

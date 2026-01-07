@@ -4,6 +4,8 @@ import java.util.List;
 import org.springframework.web.bind.annotation.*;
 import com.cb.backend.service.CrudService;
 
+import jakarta.persistence.EntityNotFoundException;
+
 /**
  * Abstract base class for standard CRUD REST controllers.
  *
@@ -26,6 +28,9 @@ import com.cb.backend.service.CrudService;
  *
  * @param <DTO> the type of Data Transfer Object handled by the controller
  * @param <ID>  the type of the entity identifier
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 public abstract class AbstractCrudController<DTO, ID> implements CrudController<DTO, ID> {
     /**
@@ -48,14 +53,19 @@ public abstract class AbstractCrudController<DTO, ID> implements CrudController<
     }
 
     /**
-     * Retrieves a single entity by its ID.
+     * Retrieves a single entity by its ID. If not found, throw EntityNotFoundException
      *
      * @param id the identifier of the entity
      * @return the corresponding DTO, or null if not found
+     * @throws EntityNotFoundException if the associated entity not found
      */
     @GetMapping("/{id}")
     public DTO getById(@PathVariable("id") ID id) {
-        return getService().findById(id);
+        DTO dto = getService().findById(id);
+        if (dto == null) {
+            throw new EntityNotFoundException("Entity not found with id=" + id);
+        }
+        return dto;
     }
 
     /**

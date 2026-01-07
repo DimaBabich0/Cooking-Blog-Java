@@ -7,6 +7,8 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import jakarta.persistence.EntityNotFoundException;
+
 import java.util.Map;
 
 /**
@@ -16,6 +18,9 @@ import java.util.Map;
  * Handles database constraint violations and other general exceptions, providing
  * consistent HTTP responses with error messages.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -72,6 +77,19 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", message));
     }
 
+    /**
+     * Handles EntityNotFoundException
+     *
+     * @param ex the thrown {@link EntityNotFoundException}
+     * @return a {@link ResponseEntity} with status 404 and the exception message
+     */
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<?> handleNotFound(EntityNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", ex.getMessage()));
+    }
+    
     /**
      * Handles all other uncaught exceptions.
      *

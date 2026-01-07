@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
  * <p>
  * Throws {@link RuntimeException} if the product is not found when updating.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 @Service
 public class ProductService implements CrudService<ProductDto, Long> {

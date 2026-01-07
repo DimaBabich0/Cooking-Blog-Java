@@ -23,17 +23,15 @@ import org.springframework.web.bind.annotation.RestController;
  * <p>
  * Delegates all operations to {@link BlogService}.
  * </p>
+ * 
+ * @author Dmytro Babich
+ * @since 1.0
  */
 @RestController
 @RequestMapping("/api/blogs")
 public class BlogController extends AbstractCrudController<BlogDto, Long> {
     private final BlogService blogService;
 
-    /**
-     * Constructs a BlogController with the provided BlogService.
-     *
-     * @param blogService the service used for blog CRUD operations
-     */
     public BlogController(BlogService blogService) {
         this.blogService = blogService;
     }
