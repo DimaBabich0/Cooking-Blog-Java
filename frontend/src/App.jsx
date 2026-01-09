@@ -13,13 +13,12 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import SignUpPage from "./pages/SignUpPage/SignUpPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import ComponentsTestPage from "./pages/ComponentsTestPage/ComponentsTestPage";
-// TODO: Uncomment when admin panel is ready
-// import AdminPage from "./pages/AdminPage/AdminPage";
-// import AdminUsersPage from "./pages/AdminPage/AdminUsersPage";
-// import AdminRecipesPage from "./pages/AdminPage/AdminRecipesPage";
-// import AdminBlogsPage from "./pages/AdminPage/AdminBlogsPage";
-// import AdminCategoriesPage from "./pages/AdminPage/AdminCategoriesPage";
-// import AdminRoute from "./components/AdminRoute/AdminRoute";
+import AdminPage from "./pages/AdminPage/AdminPage";
+import AdminUsersPage from "./pages/AdminPage/AdminUsersPage";
+import AdminRecipesPage from "./pages/AdminPage/AdminRecipesPage";
+import AdminBlogsPage from "./pages/AdminPage/AdminBlogsPage";
+import AdminCategoriesPage from "./pages/AdminPage/AdminCategoriesPage";
+import AdminRoute from "./components/AdminRoute/AdminRoute";
 import Footer from "./components/Footer/Footer";
 import { useAuth } from "./contexts/AuthContext";
 
@@ -82,7 +81,6 @@ export default function App() {
             }
           />
           <Route path="components-test" element={<ComponentsTestPage />} />
-          {/* TODO: Uncomment when admin panel is ready
           <Route
             path="admin"
             element={
@@ -123,7 +121,6 @@ export default function App() {
               </AdminRoute>
             }
           />
-          */}
         </Routes>
       </main>
       <Footer />

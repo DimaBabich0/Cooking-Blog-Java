@@ -72,18 +72,6 @@ export default function AdminPage() {
       path: "/admin/categories",
       icon: "🏷️",
     },
-    {
-      title: "Products",
-      description: "Manage product database",
-      path: "/admin/products",
-      icon: "🥘",
-    },
-    {
-      title: "Comments",
-      description: "Moderate user comments",
-      path: "/admin/comments",
-      icon: "💬",
-    },
   ];
 
   return (

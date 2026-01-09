@@ -73,11 +73,17 @@ export async function getRecipe(id: number | string): Promise<RecipeDto> {
 }
 
 export async function updateRecipe(id: number, recipe: Partial<RecipeDto>): Promise<RecipeDto> {
+  // Ensure status is included if provided
+  const payload = { ...recipe };
+  if (recipe.status !== undefined) {
+    payload.status = recipe.status;
+  }
+  
   const res = await fetch(`${RECIPE_API}/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: JSON.stringify(recipe),
+    body: JSON.stringify(payload),
   });
   if (!res.ok) {
     const error = await res.json();

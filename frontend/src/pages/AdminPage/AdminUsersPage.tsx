@@ -105,6 +105,9 @@ export default function AdminUsersPage() {
                       <Link to={`/admin/users/${user.id}`}>
                         <Button variant="secondary">View</Button>
                       </Link>
+                      <Link to={`/admin/users/${user.id}/edit`}>
+                        <Button variant="secondary">Edit</Button>
+                      </Link>
                     </div>
                   </td>
                 </tr>

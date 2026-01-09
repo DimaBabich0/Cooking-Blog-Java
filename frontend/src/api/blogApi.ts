@@ -45,11 +45,17 @@ export async function createBlog(blog: Partial<BlogDto>): Promise<BlogDto> {
 }
 
 export async function updateBlog(id: number, blog: Partial<BlogDto>): Promise<BlogDto> {
+  // Ensure status is included if provided
+  const payload = { ...blog };
+  if (blog.status !== undefined) {
+    payload.status = blog.status;
+  }
+  
   const res = await fetch(`${BLOG_API}/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: JSON.stringify(blog),
+    body: JSON.stringify(payload),
   });
   if (!res.ok) {
     const error = await res.json();

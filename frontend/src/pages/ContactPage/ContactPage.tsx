@@ -6,8 +6,10 @@ import Subscription from "../../components/Subscribtion/Subscription";
 import RecipesSlider from "../../components/RecipesSlider/RecipesSlider";
 import { getRecipes, RecipeDto } from "../../api/recipeApi";
 import { getImageUrl } from "../../api/filesApi";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function ContactPage() {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -24,13 +26,22 @@ export default function ContactPage() {
     async function loadRecipes() {
       try {
         const recipes = await getRecipes();
-        setRelatedRecipes(recipes); // Берем все рецепты для слайдера
+        // Filter by status: only PUBLISHED for regular users
+        const isAdminOrModerator =
+          user?.role === "ADMIN" || user?.role === "MODERATOR";
+        const filteredRecipes = isAdminOrModerator
+          ? recipes
+          : recipes.filter((r) => {
+              const status = r.status?.toUpperCase();
+              return status === "PUBLISHED";
+            });
+        setRelatedRecipes(filteredRecipes);
       } catch (err) {
         console.error("Error loading recipes:", err);
       }
     }
     loadRecipes();
-  }, []);
+  }, [user]);
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({

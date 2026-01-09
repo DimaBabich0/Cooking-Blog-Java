@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { createRecipe, RecipeDto, IngredientDto } from "../../api/recipeApi";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { createRecipe, updateRecipe, getRecipe, RecipeDto, IngredientDto } from "../../api/recipeApi";
 import QuillEditor from "../../components/QuillEditor/QuillEditor";
 import { getUsers, UserDto } from "../../api/userApi";
 import { getCategories, CategoryDto } from "../../api/categoryApi";
@@ -12,6 +12,9 @@ import styles from "./CreateRecipePage.module.scss";
 
 export default function CreateRecipePage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const editId = searchParams.get("edit");
+  const isEditMode = !!editId;
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,36 +44,80 @@ export default function CreateRecipePage() {
         ]);
         setCategories(categoriesData);
         
-        if (user) {
-          setFormData((prev) => ({
-            ...prev,
-            userDto: {
-              id: user.id,
-              username: user.username,
-              firstName: user.firstName,
-              lastName: user.lastName,
-              photoUrl: user.photoUrl,
+        // If editing, load recipe data
+        if (isEditMode && editId) {
+          const recipe = await getRecipe(editId);
+          
+          // Check permissions: admin can only edit their own recipes
+          if (user?.role === "ADMIN" && recipe.userDto?.id !== user.id) {
+            setError("You can only edit your own recipes");
+            navigate("/admin/recipes");
+            return;
+          }
+          
+          // Check permissions: author can only edit their own recipes
+          if (user?.role === "AUTHOR" && recipe.userDto?.id !== user.id) {
+            setError("You can only edit your own recipes");
+            navigate("/recipes");
+            return;
+          }
+          
+          // Load recipe data into form
+          setFormData({
+            id: recipe.id,
+            title: recipe.title || "",
+            description: recipe.description || "",
+            text: recipe.text || "",
+            photoUrl: recipe.photoUrl || "",
+            cookingTime: recipe.cookingTime || 0,
+            prepTime: recipe.prepTime || 0,
+            cookTime: recipe.cookTime || 0,
+            calories: recipe.calories || 0,
+            totalFat: recipe.totalFat || 0,
+            protein: recipe.protein || 0,
+            carbohydrates: recipe.carbohydrates || 0,
+            cholesterol: recipe.cholesterol || 0,
+            status: recipe.status,
+            userDto: recipe.userDto || {
+              id: user?.id || 0,
+              username: user?.username || "",
             },
-          }));
+            categoryDtos: recipe.categoryDtos || [],
+            ingredientsDto: recipe.ingredientsDto || [],
+          });
         } else {
-          // If user is not logged in, load first user
-          const users = await getUsers();
-          if (users && users.length > 0) {
-            const firstUser = users[0];
+          // Creating new recipe
+          if (user) {
             setFormData((prev) => ({
               ...prev,
               userDto: {
-                id: firstUser.id,
-                username: firstUser.username,
-                firstName: firstUser.firstName,
-                lastName: firstUser.lastName,
-                photoUrl: firstUser.photoUrl,
+                id: user.id,
+                username: user.username,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                photoUrl: user.photoUrl,
               },
             }));
+          } else {
+            // If user is not logged in, load first user
+            const users = await getUsers();
+            if (users && users.length > 0) {
+              const firstUser = users[0];
+              setFormData((prev) => ({
+                ...prev,
+                userDto: {
+                  id: firstUser.id,
+                  username: firstUser.username,
+                  firstName: firstUser.firstName,
+                  lastName: firstUser.lastName,
+                  photoUrl: firstUser.photoUrl,
+                },
+              }));
+            }
           }
         }
-      } catch (err) {
-        setError("Error loading data");
+      } catch (err: any) {
+        setError(err.message || "Error loading data");
         console.error(err);
       } finally {
         setInitializing(false);
@@ -78,7 +125,7 @@ export default function CreateRecipePage() {
     }
 
     loadData();
-  }, [user]);
+  }, [user, isEditMode, editId, navigate]);
 
   const handleChange = (field: keyof RecipeDto, value: any) => {
     setFormData((prev) => ({
@@ -167,8 +214,15 @@ export default function CreateRecipePage() {
 
       console.log("Submitting recipe:", recipeToSubmit);
 
-      await createRecipe(recipeToSubmit);
-      navigate("/recipes");
+      if (isEditMode && editId) {
+        // Update existing recipe
+        await updateRecipe(Number(editId), recipeToSubmit);
+        navigate("/admin/recipes");
+      } else {
+        // Create new recipe
+        await createRecipe(recipeToSubmit);
+        navigate("/recipes");
+      }
     } catch (err: any) {
       setError(err.message || "Error creating recipe");
       console.error("Recipe creation error:", err);
@@ -191,7 +245,7 @@ export default function CreateRecipePage() {
     <section className={styles.createRecipe}>
       <div className="container">
         <div className={styles.form_wrapper}>
-          <h1>Create Recipe</h1>
+          <h1>{isEditMode ? "Edit Recipe" : "Create Recipe"}</h1>
 
           {error && <div className={styles.error}>{error}</div>}
 
@@ -480,7 +534,9 @@ export default function CreateRecipePage() {
 
             <div className={styles.actions}>
               <Button type="submit" disabled={loading}>
-                {loading ? "Creating..." : "Create Recipe"}
+                {loading 
+                  ? (isEditMode ? "Updating..." : "Creating...") 
+                  : (isEditMode ? "Update Recipe" : "Create Recipe")}
               </Button>
               <Button
                 type="button"

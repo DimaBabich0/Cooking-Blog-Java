@@ -12,12 +12,14 @@ import RecipesSlider from "../../components/RecipesSlider/RecipesSlider";
 import Subscription from "../../components/Subscribtion/Subscription";
 import AdSection from "../../components/AdSection/AdSection";
 import { Timer, ForkKnife, Printer, Share, Filter } from "../../iconComponents";
+import { useAuth } from "../../contexts/AuthContext";
 import styles from "./RecipesPage.module.scss";
 import blogStyles from "../BlogPage/BlogPage.module.scss";
 
 const RECIPES_PER_PAGE = 6;
 
 export default function RecipesPage() {
+  const { user } = useAuth();
   const { id } = useParams<{ id: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const [recipe, setRecipe] = useState<RecipeDto | null>(null);
@@ -73,10 +75,16 @@ export default function RecipesPage() {
           ]);
           console.log("Recipe loaded:", recipeData);
           setRecipe(recipeData);
-          // Exclude current recipe from related
-          setRelatedRecipes(
-            recipesData.filter((r) => r.id !== recipeData.id).slice(0, 12)
-          );
+          // Exclude current recipe from related, filter by status for regular users
+          const isAdminOrModerator =
+            user?.role === "ADMIN" || user?.role === "MODERATOR";
+          const filteredRelated = isAdminOrModerator
+            ? recipesData.filter((r) => r.id !== recipeData.id)
+            : recipesData.filter((r) => {
+                const status = r.status?.toUpperCase();
+                return r.id !== recipeData.id && status === "PUBLISHED";
+              });
+          setRelatedRecipes(filteredRelated.slice(0, 12));
         } else {
           // Load recipes list and blogs for sidebar
           const [recipesData, blogsData, categoriesData] = await Promise.all([
@@ -84,8 +92,24 @@ export default function RecipesPage() {
             getBlogs(),
             getCategories(),
           ]);
-          setAllRecipes(recipesData);
-          setBlogs(blogsData.slice(0, 3)); // For sidebar
+          // Filter by status: only PUBLISHED for regular users and authors
+          const isAdminOrModerator =
+            user?.role === "ADMIN" || user?.role === "MODERATOR";
+          const filteredRecipes = isAdminOrModerator
+            ? recipesData
+            : recipesData.filter((r) => {
+                const status = r.status?.toUpperCase();
+                return status === "PUBLISHED";
+              });
+          setAllRecipes(filteredRecipes);
+          // Filter blogs by status for regular users
+          const filteredBlogs = isAdminOrModerator
+            ? blogsData
+            : blogsData.filter((b) => {
+                const status = b.status?.toUpperCase();
+                return status === "PUBLISHED";
+              });
+          setBlogs(filteredBlogs); // For sidebar and grid
           setCategories(categoriesData);
         }
       } catch (err) {
@@ -97,7 +121,7 @@ export default function RecipesPage() {
     }
 
     loadData();
-  }, [id]);
+  }, [id, user]);
 
   // Reset page when filters change
   useEffect(() => {
@@ -118,6 +142,12 @@ export default function RecipesPage() {
   // Фильтрация рецептов
   const filteredRecipes = allRecipes
     .filter((recipe) => {
+      // Фильтр по статусу: только PUBLISHED для обычных пользователей
+      const isAdminOrModerator =
+        user?.role === "ADMIN" || user?.role === "MODERATOR";
+      const recipeStatus = recipe.status?.toUpperCase();
+      const matchesStatus = isAdminOrModerator || recipeStatus === "PUBLISHED";
+
       // Поиск по тексту
       const matchesSearch =
         recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -140,7 +170,7 @@ export default function RecipesPage() {
         matchesTime = cookingTime > 60;
       }
 
-      return matchesSearch && matchesCategory && matchesTime;
+      return matchesStatus && matchesSearch && matchesCategory && matchesTime;
     })
     .sort((a, b) => {
       // Сортировка
@@ -456,6 +486,40 @@ export default function RecipesPage() {
                 {/* Ad Section */}
                 <AdSection />
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Blogs Tasty Grid - shown on 1024px and below */}
+        <section className={styles.blogs_tasty_grid}>
+          <div className="container">
+            <div className={styles.blogs_tasty_grid_header}>
+              <h2>Try this delicious blog to make your day</h2>
+              <p>
+                Lorem ipsum dolor sit amet, consectetuipisicing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqut enim
+                ad minim
+              </p>
+            </div>
+            <div className={styles.blogs_tasty_grid_list}>
+              {blogs.slice(0, 8).map((blog) => (
+                <Link
+                  key={blog.id}
+                  to={`/blog/${blog.id}`}
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  <Card
+                    name={blog.title}
+                    imageSrc={
+                      blog.photoUrl ? getImageUrl(blog.photoUrl) : undefined
+                    }
+                    cookingTime={
+                      blog.cookingTime ? blog.cookingTime.toString() : "30"
+                    }
+                    foodType="General"
+                  />
+                </Link>
+              ))}
             </div>
           </div>
         </section>

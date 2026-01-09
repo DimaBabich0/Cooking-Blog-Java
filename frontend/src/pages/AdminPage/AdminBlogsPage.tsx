@@ -32,9 +32,53 @@ export default function AdminBlogsPage() {
       const blog = blogs.find(b => b.id === blogId);
       if (!blog) return;
 
-      await updateBlog(blogId, { ...blog, status: newStatus });
+      // Check if status is actually changing
+      const currentStatus = blog.status || "PENDING";
+      if (currentStatus.toUpperCase() === newStatus.toUpperCase()) {
+        return; // No change needed
+      }
+
+      // Ask for confirmation
+      const statusLabels: { [key: string]: string } = {
+        PENDING: "Pending",
+        PUBLISHED: "Published",
+        REJECTED: "Rejected",
+      };
+      
+      const currentLabel = statusLabels[currentStatus.toUpperCase()] || currentStatus;
+      const newLabel = statusLabels[newStatus.toUpperCase()] || newStatus;
+      
+      const confirmed = window.confirm(
+        `Are you sure you want to change the status of "${blog.title}" from "${currentLabel}" to "${newLabel}"?`
+      );
+      
+      if (!confirmed) {
+        // Reset select to original value
+        const select = document.querySelector(
+          `select[data-blog-id="${blogId}"]`
+        ) as HTMLSelectElement;
+        if (select) {
+          select.value = currentStatus;
+        }
+        return;
+      }
+
+      // Create minimal payload with only necessary fields + status
+      const updatePayload: Partial<BlogDto> = {
+        id: blog.id,
+        title: blog.title,
+        text: blog.text,
+        description: blog.description,
+        photoUrl: blog.photoUrl,
+        cookingTime: blog.cookingTime,
+        status: newStatus, // Explicitly set status
+        userDto: blog.userDto,
+      };
+      
+      await updateBlog(blogId, updatePayload);
       await loadBlogs();
     } catch (err) {
+      console.error("Error updating blog status:", err);
       setError(err instanceof Error ? err.message : "Error updating blog status");
     }
   }
@@ -129,6 +173,7 @@ export default function AdminBlogsPage() {
                   <div className={styles.statusControl}>
                     <label>Status:</label>
                     <select
+                      data-blog-id={blog.id}
                       value={blog.status || "PENDING"}
                       onChange={(e) => handleStatusChange(blog.id, e.target.value)}
                       className={styles.statusSelect}
@@ -141,6 +186,9 @@ export default function AdminBlogsPage() {
                   <div className={styles.actionButtons}>
                     <Link to={`/blog/${blog.id}`}>
                       <Button variant="secondary">View</Button>
+                    </Link>
+                    <Link to={`/blog/create?edit=${blog.id}`}>
+                      <Button variant="secondary">Edit</Button>
                     </Link>
                     <Button
                       variant="secondary"

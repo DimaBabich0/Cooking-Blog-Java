@@ -1,24 +1,56 @@
 @import "../../styles/variables.scss";
 
 header {
+  width: 100%;
   padding: 2.5rem 0;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  position: relative;
   .header_container {
+    display: flex;
     flex-direction: row;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    position: relative;
+    gap: 1rem;
     .logo {
       font-family: "Lobster";
       font-size: 1.5rem;
       text-decoration: none;
       color: inherit;
+      z-index: 1001;
     }
-    ul {
+    .burgerButton {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      color: $black;
+      z-index: 1001;
+      transition: color 0.2s;
+      &:hover {
+        color: #c41e3a;
+      }
+      svg {
+        width: 24px;
+        height: 24px;
+      }
+    }
+    .nav {
       display: flex;
-      align-items: center;
-      gap: 3.75rem;
-      a {
-        @include header-link;
+      ul {
+        display: flex;
+        align-items: center;
+        gap: 3.75rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        a {
+          @include header-link;
+        }
+      }
+      .mobileUserSection {
+        display: none; // Скрыто на десктопе
       }
     }
     .rightSection {
@@ -112,6 +144,296 @@ header {
       display: flex;
       align-items: center;
       gap: 2.5rem;
+    }
+  }
+
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+
+    &.overlayVisible {
+      opacity: 1;
+      pointer-events: all;
+    }
+  }
+}
+
+// Responsive styles
+@media (max-width: 1100px) {
+  header {
+    padding: 1.5rem 0;
+
+    .header_container {
+      .logo {
+        font-size: 1.25rem;
+        flex-shrink: 0;
+      }
+
+      .navAndRightSection {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .burgerButton {
+        display: block;
+        flex-shrink: 0;
+      }
+
+      .nav {
+        display: none; // Скрываем навигацию по умолчанию
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 280px;
+        height: 100vh;
+        background: white;
+        box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+        transition: right 0.3s ease;
+        z-index: 1000;
+        padding: 5rem 2rem 2rem;
+        overflow-y: auto;
+
+        &.navOpen {
+          display: flex; // Показываем когда меню открыто
+          right: 0;
+        }
+
+        ul {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1.5rem;
+          width: 100%;
+
+          li {
+            width: 100%;
+
+            a {
+              display: block;
+              padding: 0.75rem 0;
+              font-size: 1.1rem;
+              border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            }
+          }
+        }
+      }
+
+      .rightSection {
+        gap: 0.75rem;
+        display: flex;
+        align-items: center;
+
+        .userMenu {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          flex-direction: row;
+
+          .userInfo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+
+            .username {
+              display: block;
+            }
+          }
+
+          .adminLink,
+          .logoutBtn {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            white-space: nowrap;
+          }
+        }
+
+        .authButtons {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          flex-direction: row;
+
+          .loginBtn {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            white-space: nowrap;
+          }
+
+          a {
+            button {
+              padding: 0.5rem 1rem;
+              font-size: 0.9rem;
+              white-space: nowrap;
+            }
+          }
+        }
+
+        .socials {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 550px) {
+  header {
+    .header_container {
+      .rightSection {
+        display: none; // Скрываем все кнопки и аватар на маленьких экранах
+      }
+
+      .nav {
+        flex-direction: column;
+
+        .mobileUserSection {
+          display: block;
+          margin-top: 2rem;
+          padding-top: 2rem;
+          border-top: 1px solid rgba(0, 0, 0, 0.1);
+
+          .mobileUserMenu {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+
+            .mobileUserInfo {
+              display: flex;
+              align-items: center;
+              gap: 1rem;
+              padding: 0.75rem 0;
+              text-decoration: none;
+              color: inherit;
+
+              .mobileAvatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 2px solid #c41e3a;
+              }
+
+              .mobileUsername {
+                font-weight: 600;
+                font-size: 1rem;
+              }
+            }
+
+            .mobileAdminLink,
+            .mobileLogoutBtn {
+              width: 100%;
+              padding: 0.75rem 1rem;
+              border-radius: 8px;
+              text-align: left;
+              font-size: 0.95rem;
+              font-weight: 600;
+              cursor: pointer;
+              border: none;
+              transition: all 0.2s;
+            }
+
+            .mobileAdminLink {
+              background: $sky-blue;
+              color: $black;
+              text-decoration: none;
+              display: block;
+
+              &:hover {
+                background: darken($sky-blue, 5%);
+              }
+            }
+
+            .mobileLogoutBtn {
+              background: white;
+              color: #666;
+              border: 1px solid #ddd;
+
+              &:hover {
+                background: #f5f5f5;
+                border-color: #c41e3a;
+                color: #c41e3a;
+              }
+            }
+          }
+
+          .mobileAuthButtons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+
+            .mobileLoginBtn {
+              width: 100%;
+              padding: 0.75rem 1rem;
+              border-radius: 8px;
+              text-align: center;
+              text-decoration: none;
+              font-weight: 600;
+              font-size: 0.95rem;
+              color: #1a1a1a;
+              transition: all 0.2s;
+
+              &:hover {
+                color: #c41e3a;
+              }
+            }
+
+            a {
+              width: 100%;
+
+              button {
+                width: 100%;
+                padding: 0.75rem 1rem;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    padding: 1rem 0;
+
+    .header_container {
+      .logo {
+        font-size: 1.1rem;
+      }
+
+      .burgerButton {
+        padding: 0.4rem;
+
+        svg {
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      .nav {
+        width: 100%;
+        right: -100%;
+
+        &.navOpen {
+          right: 0;
+        }
+
+        ul {
+          li {
+            a {
+              font-size: 1rem;
+            }
+          }
+        }
+      }
     }
   }
 }

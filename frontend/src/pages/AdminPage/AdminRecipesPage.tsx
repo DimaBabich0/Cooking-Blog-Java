@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getRecipes, updateRecipe, deleteRecipe, RecipeDto } from "../../api/recipeApi";
 import { getImageUrl } from "../../api/filesApi";
+import { useAuth } from "../../contexts/AuthContext";
 import Button from "../../components/Button/Button";
 import styles from "./AdminRecipesPage.module.scss";
 
 export default function AdminRecipesPage() {
+  const { user } = useAuth();
   const [recipes, setRecipes] = useState<RecipeDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -32,9 +34,62 @@ export default function AdminRecipesPage() {
       const recipe = recipes.find(r => r.id === recipeId);
       if (!recipe) return;
 
-      await updateRecipe(recipeId, { ...recipe, status: newStatus });
+      // Check if status is actually changing
+      const currentStatus = recipe.status || "PENDING";
+      if (currentStatus.toUpperCase() === newStatus.toUpperCase()) {
+        return; // No change needed
+      }
+
+      // Ask for confirmation
+      const statusLabels: { [key: string]: string } = {
+        PENDING: "Pending",
+        PUBLISHED: "Published",
+        REJECTED: "Rejected",
+      };
+      
+      const currentLabel = statusLabels[currentStatus.toUpperCase()] || currentStatus;
+      const newLabel = statusLabels[newStatus.toUpperCase()] || newStatus;
+      
+      const confirmed = window.confirm(
+        `Are you sure you want to change the status of "${recipe.title}" from "${currentLabel}" to "${newLabel}"?`
+      );
+      
+      if (!confirmed) {
+        // Reset select to original value
+        const select = document.querySelector(
+          `select[data-recipe-id="${recipeId}"]`
+        ) as HTMLSelectElement;
+        if (select) {
+          select.value = currentStatus;
+        }
+        return;
+      }
+
+      // Create minimal payload with only necessary fields + status
+      const updatePayload: Partial<RecipeDto> = {
+        id: recipe.id,
+        title: recipe.title,
+        text: recipe.text,
+        description: recipe.description,
+        photoUrl: recipe.photoUrl,
+        cookingTime: recipe.cookingTime,
+        prepTime: recipe.prepTime,
+        cookTime: recipe.cookTime,
+        calories: recipe.calories,
+        totalFat: recipe.totalFat,
+        protein: recipe.protein,
+        carbohydrates: recipe.carbohydrates,
+        cholesterol: recipe.cholesterol,
+        status: newStatus, // Explicitly set status
+        userDto: recipe.userDto,
+        categoryDtos: recipe.categoryDtos,
+        ingredientsDto: recipe.ingredientsDto,
+      };
+      
+      await updateRecipe(recipeId, updatePayload);
       await loadRecipes();
     } catch (err) {
+      console.error("Error updating recipe status:", err);
       setError(err instanceof Error ? err.message : "Error updating recipe status");
     }
   }
@@ -129,6 +184,7 @@ export default function AdminRecipesPage() {
                   <div className={styles.statusControl}>
                     <label>Status:</label>
                     <select
+                      data-recipe-id={recipe.id}
                       value={recipe.status || "PENDING"}
                       onChange={(e) => handleStatusChange(recipe.id, e.target.value)}
                       className={styles.statusSelect}
@@ -142,6 +198,13 @@ export default function AdminRecipesPage() {
                     <Link to={`/recipes/${recipe.id}`}>
                       <Button variant="secondary">View</Button>
                     </Link>
+                    {/* Admin can only edit their own recipes */}
+                    {user?.id === recipe.userDto?.id && (
+                      <Link to={`/recipes/create?edit=${recipe.id}`}>
+                        <Button variant="secondary">Edit</Button>
+                      </Link>
+                    )}
+                    {/* Admin can delete all recipes */}
                     <Button
                       variant="secondary"
                       onClick={() => handleDelete(recipe.id)}

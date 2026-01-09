@@ -218,17 +218,20 @@ public class RecipeService implements CrudService<RecipeDto, Long> {
 	                .toList();
 
 	    RecipeMapper.updateEntity(recipe, dto, user, categories, new ArrayList<>());
-        recipeRepo.save(recipe);
+        recipe = recipeRepo.save(recipe);
 
+        // Handle ingredients separately - don't save recipe here
         ingredientRepo.deleteAll(recipe.getIngredients());
         recipe.getIngredients().clear();
-        recipeRepo.save(recipe);
-
+        
         List<Ingredient> ingredients = createIngredientsForRecipe(dto, recipe);
         ingredientRepo.saveAll(ingredients);
         recipe.getIngredients().addAll(ingredients);
+        
+        // Final save with all ingredients - status should be preserved
+        recipe = recipeRepo.save(recipe);
 
-        return RecipeMapper.toDto(recipeRepo.save(recipe));
+        return RecipeMapper.toDto(recipe);
 	}
 
 	/**

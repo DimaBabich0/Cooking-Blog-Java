@@ -113,9 +113,19 @@
   .actions {
     display: flex;
     gap: 0.5rem;
+    flex-wrap: wrap;
 
     a {
       text-decoration: none;
+      flex: 0 0 auto;
+      
+      button {
+        min-width: auto;
+        width: auto;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        white-space: nowrap;
+      }
     }
   }
 }

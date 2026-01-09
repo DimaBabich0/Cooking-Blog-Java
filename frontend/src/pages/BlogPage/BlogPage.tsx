@@ -5,6 +5,7 @@ import { getRecipes, RecipeDto } from "../../api/recipeApi";
 import { getImageUrl } from "../../api/filesApi";
 import { useAuth } from "../../contexts/AuthContext";
 import PostCard from "../../components/PostCard/PostCard";
+import Card from "../../components/Card/Card";
 import Button from "../../components/Button/Button";
 import AdSection from "../../components/AdSection/AdSection";
 import styles from "./BlogPage.module.scss";
@@ -24,7 +25,7 @@ export default function BlogPage() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [user]);
 
   async function loadData() {
     try {
@@ -33,8 +34,23 @@ export default function BlogPage() {
         getBlogs(),
         getRecipes(),
       ]);
-      setBlogs(blogsData);
-      setRecipes(recipesData.slice(0, 3)); // For sidebar
+      // Filter by status: only PUBLISHED for regular users
+      const isAdminOrModerator =
+        user?.role === "ADMIN" || user?.role === "MODERATOR";
+      const filteredBlogs = isAdminOrModerator
+        ? blogsData
+        : blogsData.filter((b) => {
+            const status = b.status?.toUpperCase();
+            return status === "PUBLISHED";
+          });
+      const filteredRecipes = isAdminOrModerator
+        ? recipesData
+        : recipesData.filter((r) => {
+            const status = r.status?.toUpperCase();
+            return status === "PUBLISHED";
+          });
+      setBlogs(filteredBlogs);
+      setRecipes(filteredRecipes.slice(0, 3)); // For sidebar
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error loading data");
@@ -295,6 +311,49 @@ export default function BlogPage() {
               {/* Ad Section */}
               <AdSection />
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Recipes Tasty Grid - shown on 1024px and below */}
+      <section className={styles.recipes_tasty_grid}>
+        <div className="container">
+          <div className={styles.recipes_tasty_grid_header}>
+            <h2>Try this delicious recipe to make your day</h2>
+            <p>
+              Lorem ipsum dolor sit amet, consectetuipisicing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqut enim ad
+              minim
+            </p>
+          </div>
+          <div className={styles.recipes_tasty_grid_list}>
+            {recipes.slice(0, 8).map((recipe) => (
+              <Link
+                key={recipe.id}
+                to={`/recipes/${recipe.id}`}
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                <Card
+                  recipeId={recipe.id}
+                  name={recipe.title}
+                  imageSrc={
+                    recipe.photoUrl ? getImageUrl(recipe.photoUrl) : undefined
+                  }
+                  cookingTime={
+                    recipe.cookTime
+                      ? recipe.cookTime.toString()
+                      : recipe.cookingTime
+                      ? recipe.cookingTime.toString()
+                      : "30"
+                  }
+                  foodType={
+                    recipe.categoryDtos && recipe.categoryDtos.length > 0
+                      ? recipe.categoryDtos[0].name
+                      : "General"
+                  }
+                />
+              </Link>
+            ))}
           </div>
         </div>
       </section>

@@ -11,7 +11,7 @@
 }
 
 .list_search {
-  margin: 5rem 0;
+  margin: 3rem 0;
   .search {
     box-sizing: content-box;
     border: 1px solid rgba(0, 0, 0, 0.1);
@@ -167,6 +167,9 @@
     flex-direction: column;
     max-width: 480px;
     gap: 2rem;
+    @media (max-width: 1024px) {
+      display: none; // Hide sidebar on 1024px and below
+    }
   }
 
   .sidebar_section {
@@ -179,6 +182,12 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    @media (max-width: 1024px) {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      align-items: center;
+      gap: 1rem;
+    }
   }
 
   .sidebar_item {
@@ -187,6 +196,49 @@
     }
   }
 }
+
+.recipes_tasty_grid {
+  margin: 5rem 0;
+
+  @media (min-width: 1025px) {
+    display: none; // Hide on desktop, show only on 1024px and below
+  }
+
+  .recipes_tasty_grid_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10rem;
+    margin-bottom: 5rem;
+
+    @media (max-width: 1024px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    @media (max-width: 768px) {
+      margin-bottom: 2rem;
+
+      h2 {
+        font-size: 1.5rem;
+      }
+    }
+  }
+
+  .recipes_tasty_grid_list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
+}
+
 .subscription_container {
   margin: 10rem auto !important;
 }

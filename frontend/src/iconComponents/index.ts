@@ -1,10 +1,12 @@
 export { default as ArrowDown } from "./ArrowDown";
 export { default as Check } from "./Check";
+export { default as Close } from "./Close";
 export { default as Facebook } from "./Facebook";
 export { default as Filter } from "./Filter";
 export { default as ForkKnife } from "./ForkKnife";
 export { default as Heart } from "./Heart";
 export { default as Instagram } from "./Instagram";
+export { default as Menu } from "./Menu";
 export { default as PlayBtn } from "./PlayBtn";
 export { default as Printer } from "./Printer";
 export { default as Share } from "./Share";

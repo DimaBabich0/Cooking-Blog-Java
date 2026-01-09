@@ -16,9 +16,12 @@ import { getRecipes, RecipeDto } from "../../api/recipeApi";
 import { getBlogs, BlogDto } from "../../api/blogApi";
 import { getCategories, CategoryDto } from "../../api/categoryApi";
 import { getImageUrl } from "../../api/filesApi";
+import { useAuth } from "../../contexts/AuthContext";
+import { Timer, ForkKnife } from "../../iconComponents";
 import styles from "./HomePage.module.scss";
 
 export default function HomePage() {
+  const { user } = useAuth();
   const [topRecipe, setTopRecipe] = useState<RecipeDto | null>(null);
   const [recipes, setRecipes] = useState<RecipeDto[]>([]);
   const [blogs, setBlogs] = useState<BlogDto[]>([]);
@@ -28,7 +31,7 @@ export default function HomePage() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [user]);
 
   async function loadData() {
     try {
@@ -41,13 +44,32 @@ export default function HomePage() {
         getCategories(),
       ]);
 
-      setRecipes(recipesData);
-      setBlogs(blogsData.slice(0, 3)); // Take first 3 blogs
+      // Filter recipes: only PUBLISHED for regular users and authors, all for admins/moderators
+      const isAdminOrModerator =
+        user?.role === "ADMIN" || user?.role === "MODERATOR";
+
+      const filteredRecipes = isAdminOrModerator
+        ? recipesData
+        : recipesData.filter((r) => {
+            const status = r.status?.toUpperCase();
+            return status === "PUBLISHED";
+          });
+
+      // Filter blogs: only PUBLISHED for regular users
+      const filteredBlogs = isAdminOrModerator
+        ? blogsData
+        : blogsData.filter((b) => {
+            const status = b.status?.toUpperCase();
+            return status === "PUBLISHED";
+          });
+
+      setRecipes(filteredRecipes);
+      setBlogs(filteredBlogs.slice(0, 3)); // Take first 3 blogs
       setCategories(categoriesData);
 
       // Take first recipe as top recipe
-      if (recipesData.length > 0) {
-        setTopRecipe(recipesData[0]);
+      if (filteredRecipes.length > 0) {
+        setTopRecipe(filteredRecipes[0]);
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Unknown error";
@@ -150,16 +172,27 @@ export default function HomePage() {
                         "Lorem ipsum dolor sit amet, consectetuipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqut enim ad minim"}
                     </p>
                     <div className={styles.recipe_tags}>
-                      {recipe.cookingTime && (
-                        <div className={styles.tag}>
-                          <img src="" alt="" />
-                          <p>{recipe.cookingTime} Minutes</p>
-                        </div>
-                      )}
+                      {(() => {
+                        // Логика: если есть prepTime и cookTime - суммируем, иначе используем cookTime или cookingTime
+                        let totalTime: number | null = null;
+                        if (recipe.prepTime && recipe.cookTime) {
+                          totalTime = recipe.prepTime + recipe.cookTime;
+                        } else if (recipe.cookTime) {
+                          totalTime = recipe.cookTime;
+                        } else if (recipe.cookingTime) {
+                          totalTime = recipe.cookingTime;
+                        }
+                        return totalTime ? (
+                          <div className={styles.tag}>
+                            <Timer />
+                            <p>{totalTime} Minutes</p>
+                          </div>
+                        ) : null;
+                      })()}
                       {recipe.categoryDtos &&
                         recipe.categoryDtos.length > 0 && (
                           <div className={styles.tag}>
-                            <img src="" alt="" />
+                            <ForkKnife />
                             <p>{recipe.categoryDtos[0].name}</p>
                           </div>
                         )}
@@ -210,44 +243,6 @@ export default function HomePage() {
               </SwiperSlide>
             ))}
           </Swiper>
-        </div>
-      </section>
-
-      <section className={styles.categories}>
-        <div className={`${styles.categories_container} container`}>
-          <div className={styles.categories_header}>
-            <h2>Categories</h2>
-            <Button as="a" href="/recipes" variant="secondary">
-              View All Categories
-            </Button>
-          </div>
-          <div className={styles.categories_list}>
-            {categories.length > 0
-              ? categories.slice(0, 6).map((category) => (
-                  <Link
-                    key={category.id}
-                    to={`/recipes?category=${category.id}`}
-                    className={styles.category_item}
-                  >
-                    {category.photoUrl && (
-                      <img
-                        src={getImageUrl(category.photoUrl)}
-                        alt={category.name}
-                      />
-                    )}
-                    <span>{category.name}</span>
-                  </Link>
-                ))
-              : // Placeholders for layout when no categories
-                Array.from({ length: 6 }).map((_, index) => (
-                  <div key={index} className={styles.category_item}>
-                    <div className={styles.category_placeholder}>
-                      {/* Image placeholder */}
-                    </div>
-                    <span>Category {index + 1}</span>
-                  </div>
-                ))}
-          </div>
         </div>
       </section>
 

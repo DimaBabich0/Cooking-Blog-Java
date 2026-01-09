@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { updateUser, UserDto } from "../../api/userApi";
-import { getRecipes, RecipeDto } from "../../api/recipeApi";
-import { getBlogs, BlogDto } from "../../api/blogApi";
+import { getRecipes, deleteRecipe, RecipeDto } from "../../api/recipeApi";
+import { getBlogs, deleteBlog, BlogDto } from "../../api/blogApi";
 import { getImageUrl } from "../../api/filesApi";
 import ImageUploader from "../../components/ImageUploader/ImageUploader";
 import Button from "../../components/Button/Button";
@@ -16,7 +16,11 @@ export default function ProfilePage() {
   const [recipes, setRecipes] = useState<RecipeDto[]>([]);
   const [blogs, setBlogs] = useState<BlogDto[]>([]);
   const [statsLoading, setStatsLoading] = useState(true);
-  const [formData, setFormData] = useState<Partial<UserDto & { password: string; confirmPassword: string }>>({
+  const [showRecipes, setShowRecipes] = useState(false);
+  const [showBlogs, setShowBlogs] = useState(false);
+  const [formData, setFormData] = useState<
+    Partial<UserDto & { password: string; confirmPassword: string }>
+  >({
     username: user?.username || "",
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
@@ -43,17 +47,45 @@ export default function ProfilePage() {
         getRecipes(),
         getBlogs(),
       ]);
-      
+
       // Filter by current user
-      const userRecipes = allRecipes.filter(r => r.userDto?.id === user?.id);
-      const userBlogs = allBlogs.filter(b => b.userDto?.id === user?.id);
-      
+      const userRecipes = allRecipes.filter((r) => r.userDto?.id === user?.id);
+      const userBlogs = allBlogs.filter((b) => b.userDto?.id === user?.id);
+
       setRecipes(userRecipes);
       setBlogs(userBlogs);
     } catch (err) {
       console.error("Error loading user stats:", err);
     } finally {
       setStatsLoading(false);
+    }
+  }
+
+  async function handleDeleteRecipe(recipeId: number) {
+    if (!confirm("Are you sure you want to delete this recipe?")) {
+      return;
+    }
+
+    try {
+      await deleteRecipe(recipeId);
+      await loadUserStats(); // Reload stats
+      setSuccess("Recipe deleted successfully");
+    } catch (err: any) {
+      setError(err.message || "Error deleting recipe");
+    }
+  }
+
+  async function handleDeleteBlog(blogId: number) {
+    if (!confirm("Are you sure you want to delete this blog post?")) {
+      return;
+    }
+
+    try {
+      await deleteBlog(blogId);
+      await loadUserStats(); // Reload stats
+      setSuccess("Blog post deleted successfully");
+    } catch (err: any) {
+      setError(err.message || "Error deleting blog post");
     }
   }
 
@@ -134,7 +166,7 @@ export default function ProfilePage() {
       await refreshUser();
       setSuccess("Profile updated successfully");
       setIsEditing(false);
-      
+
       setFormData({
         username: updatedUser.username || "",
         firstName: updatedUser.firstName || "",
@@ -176,7 +208,10 @@ export default function ProfilePage() {
     return null;
   }
 
-  const canCreateContent = user.role === "AUTHOR" || user.role === "ADMIN" || user.role === "MODERATOR";
+  const canCreateContent =
+    user.role === "AUTHOR" ||
+    user.role === "ADMIN" ||
+    user.role === "MODERATOR";
   const userRecipesCount = recipes.length;
   const userBlogsCount = blogs.length;
 
@@ -191,7 +226,7 @@ export default function ProfilePage() {
         {/* Profile Header Card */}
         <div className={styles.profileHeader}>
           <div className={styles.avatarSection}>
-            {(formData.photoUrl || user.photoUrl) ? (
+            {formData.photoUrl || user.photoUrl ? (
               <img
                 src={getImageUrl(formData.photoUrl || user.photoUrl || "")}
                 alt={user.username}
@@ -222,7 +257,11 @@ export default function ProfilePage() {
           <div className={styles.statsCard}>
             <h3 className={styles.statsTitle}>Your Content</h3>
             <div className={styles.statsGrid}>
-              <div className={styles.statItem}>
+              <div
+                className={styles.statItem}
+                onClick={() => setShowRecipes(!showRecipes)}
+                style={{ cursor: "pointer" }}
+              >
                 <div className={styles.statIcon}>📝</div>
                 <div className={styles.statInfo}>
                   <div className={styles.statValue}>
@@ -231,7 +270,11 @@ export default function ProfilePage() {
                   <div className={styles.statLabel}>Recipes</div>
                 </div>
               </div>
-              <div className={styles.statItem}>
+              <div
+                className={styles.statItem}
+                onClick={() => setShowBlogs(!showBlogs)}
+                style={{ cursor: "pointer" }}
+              >
                 <div className={styles.statIcon}>📄</div>
                 <div className={styles.statInfo}>
                   <div className={styles.statValue}>
@@ -241,6 +284,132 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
+
+            {/* Recipes List */}
+            {showRecipes && (
+              <div className={styles.contentList}>
+                <h4 className={styles.contentListTitle}>Your Recipes</h4>
+                {recipes.length === 0 ? (
+                  <p className={styles.emptyMessage}>
+                    No recipes yet.{" "}
+                    <Link to="/recipes/create">Create your first recipe</Link>
+                  </p>
+                ) : (
+                  <div className={styles.contentItems}>
+                    {recipes.map((recipe) => (
+                      <div key={recipe.id} className={styles.contentItem}>
+                        <div className={styles.contentItemInfo}>
+                          {recipe.photoUrl && (
+                            <img
+                              src={getImageUrl(recipe.photoUrl)}
+                              alt={recipe.title}
+                              className={styles.contentItemImage}
+                            />
+                          )}
+                          <div className={styles.contentItemText}>
+                            <h5 className={styles.contentItemTitle}>
+                              {recipe.title}
+                            </h5>
+                            <p className={styles.contentItemMeta}>
+                              Status:{" "}
+                              <span className={styles.statusBadge}>
+                                {recipe.status || "PENDING"}
+                              </span>
+                              {recipe.createdAt && (
+                                <>
+                                  {" "}
+                                  •{" "}
+                                  {new Date(
+                                    recipe.createdAt
+                                  ).toLocaleDateString()}
+                                </>
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                        <div className={styles.contentItemActions}>
+                          <Link to={`/recipes/${recipe.id}`}>
+                            <Button variant="secondary">View</Button>
+                          </Link>
+                          <Link to={`/recipes/create?edit=${recipe.id}`}>
+                            <Button variant="secondary">Edit</Button>
+                          </Link>
+                          <Button
+                            variant="secondary"
+                            onClick={() => handleDeleteRecipe(recipe.id)}
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Blogs List */}
+            {showBlogs && (
+              <div className={styles.contentList}>
+                <h4 className={styles.contentListTitle}>Your Blog Posts</h4>
+                {blogs.length === 0 ? (
+                  <p className={styles.emptyMessage}>
+                    No blog posts yet.{" "}
+                    <Link to="/blog/create">Create your first blog post</Link>
+                  </p>
+                ) : (
+                  <div className={styles.contentItems}>
+                    {blogs.map((blog) => (
+                      <div key={blog.id} className={styles.contentItem}>
+                        <div className={styles.contentItemInfo}>
+                          {blog.photoUrl && (
+                            <img
+                              src={getImageUrl(blog.photoUrl)}
+                              alt={blog.title}
+                              className={styles.contentItemImage}
+                            />
+                          )}
+                          <div className={styles.contentItemText}>
+                            <h5 className={styles.contentItemTitle}>
+                              {blog.title}
+                            </h5>
+                            <p className={styles.contentItemMeta}>
+                              Status:{" "}
+                              <span className={styles.statusBadge}>
+                                {blog.status || "PENDING"}
+                              </span>
+                              {blog.createdAt && (
+                                <>
+                                  {" "}
+                                  •{" "}
+                                  {new Date(
+                                    blog.createdAt
+                                  ).toLocaleDateString()}
+                                </>
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                        <div className={styles.contentItemActions}>
+                          <Link to={`/blog/${blog.id}`}>
+                            <Button variant="secondary">View</Button>
+                          </Link>
+                          <Link to={`/blog/create?edit=${blog.id}`}>
+                            <Button variant="secondary">Edit</Button>
+                          </Link>
+                          <Button
+                            variant="secondary"
+                            onClick={() => handleDeleteBlog(blog.id)}
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
 
@@ -354,7 +523,9 @@ export default function ProfilePage() {
                     id="confirmPassword"
                     type="password"
                     value={formData.confirmPassword || ""}
-                    onChange={(e) => handleChange("confirmPassword", e.target.value)}
+                    onChange={(e) =>
+                      handleChange("confirmPassword", e.target.value)
+                    }
                     className={styles.input}
                   />
                 </div>
@@ -369,10 +540,7 @@ export default function ProfilePage() {
                 >
                   Cancel
                 </Button>
-                <Button
-                  type="submit"
-                  disabled={loading}
-                >
+                <Button type="submit" disabled={loading}>
                   {loading ? "Saving..." : "Save changes"}
                 </Button>
               </div>
@@ -440,11 +608,7 @@ export default function ProfilePage() {
 
         {/* Logout Button */}
         <div className={styles.logoutSection}>
-          <Button
-            type="button"
-            onClick={handleLogout}
-            variant="secondary"
-          >
+          <Button type="button" onClick={handleLogout} variant="secondary">
             Logout
           </Button>
         </div>

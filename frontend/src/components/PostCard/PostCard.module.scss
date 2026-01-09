@@ -3,13 +3,25 @@
   gap: 2.5rem;
   align-items: center;
 
+  @media (max-width: 624px) {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
   .post_card_image {
     border-radius: 1.5rem;
-    min-height: 200px;
-    height: 100%;
-    width: 100%;
+    // height: 100%;
+    // width: 100%;
     max-width: 290px;
+    min-height: 200px;
     object-fit: cover;
+    flex-shrink: 0;
+    transition: max-width 0.3s ease, min-height 0.3s ease;
+
+    @media (max-width: 624px) {
+      max-width: 100%;
+      width: auto;
+    }
   }
   .post_card_image_placeholder {
     border-radius: 1.5rem;
@@ -22,18 +34,37 @@
     justify-content: center;
     color: #999;
     font-size: 0.9rem;
+    flex-shrink: 0;
+    transition: max-width 0.3s ease, height 0.3s ease;
+
+    @media (max-width: 525px) {
+      max-width: clamp(150px, 35vw, 200px);
+      height: 150px;
+      flex-shrink: 1;
+    }
   }
   .post_card_info {
     display: flex;
     flex-direction: column;
     padding: 0.75rem 0;
+    @media (max-width: 624px) {
+      width: 100%;
+      align-items: baseline;
+    }
     .description {
       margin: 1rem 0 2rem 0;
+      @media (max-width: 525px) {
+        margin: 0.5rem 0;
+      }
     }
     .bottom {
       display: flex;
       gap: 1.5rem;
       align-items: center;
+      @media (max-width: 525px) {
+        flex-direction: column;
+        align-items: baseline;
+      }
       .author {
         display: flex;
         align-items: center;
@@ -51,6 +82,9 @@
         width: 1px;
         height: 40px;
         background: #00000010;
+        @media (max-width: 525px) {
+          display: none;
+        }
       }
     }
     .small_card_bottom {
