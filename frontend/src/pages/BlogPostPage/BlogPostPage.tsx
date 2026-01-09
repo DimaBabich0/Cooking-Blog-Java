@@ -6,6 +6,7 @@ import { getImageUrl } from "../../api/filesApi";
 import { Facebook, Twitter, Instagram, Share } from "../../iconComponents";
 import Subscription from "../../components/Subscribtion/Subscription";
 import RecipesSlider from "../../components/RecipesSlider/RecipesSlider";
+import Comments from "../../components/Comments/Comments";
 import styles from "./BlogPostPage.module.scss";
 
 export default function BlogPostPage() {
@@ -132,6 +133,15 @@ export default function BlogPostPage() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Comments Section */}
+      <section>
+        <div className="container">
+          <div className={styles.comments_section}>
+            <Comments blogId={blog.id} />
           </div>
         </div>
       </section>

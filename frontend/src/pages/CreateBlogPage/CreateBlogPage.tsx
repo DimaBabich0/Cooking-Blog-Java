@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 // import ReactQuill from "react-quill"; // Временно отключен из-за несовместимости с React 19
 // import "react-quill/dist/quill.snow.css";
-import { createBlog, BlogDto } from "../../api/blogApi";
+import { createBlog, updateBlog, getBlog, BlogDto } from "../../api/blogApi";
 import { getUsers, UserDto } from "../../api/userApi";
 import ImageUploader from "../../components/ImageUploader/ImageUploader";
 import PhotoUploader from "../../components/PhotoUploader/PhotoUploader";
@@ -11,6 +11,9 @@ import styles from "./CreateBlogPage.module.scss";
 
 export default function CreateBlogPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const editId = searchParams.get("edit");
+  const isEditMode = !!editId;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,39 +31,60 @@ export default function CreateBlogPage() {
     },
   });
 
-  // Load first user on page load
+  // Load data on page load
   useEffect(() => {
-    async function loadUser() {
+    async function loadData() {
       try {
-        const users = await getUsers();
-        if (users && users.length > 0) {
-          const user = users[0];
-          setFormData((prev) => ({
-            ...prev,
-            userDto: {
-              id: user.id,
-              username: user.username,
-              firstName: user.firstName,
-              lastName: user.lastName,
-              photoUrl: user.photoUrl,
+        // If editing, load blog data
+        if (isEditMode && editId) {
+          const blog = await getBlog(editId);
+          
+          // Load blog data into form
+          setFormData({
+            id: blog.id,
+            title: blog.title || "",
+            description: blog.description || "",
+            text: blog.text || "",
+            photoUrl: blog.photoUrl || "",
+            cookingTime: blog.cookingTime || 0,
+            status: blog.status,
+            userDto: blog.userDto || {
+              id: 0,
+              username: "",
             },
-          }));
+          });
         } else {
-          setError(
-            "No users found in database. Create a user via admin panel or run SQL script insert_sample_user.sql"
-          );
+          // Creating new blog - load first user
+          const users = await getUsers();
+          if (users && users.length > 0) {
+            const user = users[0];
+            setFormData((prev) => ({
+              ...prev,
+              userDto: {
+                id: user.id,
+                username: user.username,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                photoUrl: user.photoUrl,
+              },
+            }));
+          } else {
+            setError(
+              "No users found in database. Create a user via admin panel or run SQL script insert_sample_user.sql"
+            );
+          }
         }
       } catch (err) {
-        console.error("Error loading user:", err);
+        console.error("Error loading data:", err);
         setError(
-          "Failed to load user. Make sure the backend is running."
+          err instanceof Error ? err.message : "Failed to load data. Make sure the backend is running."
         );
       } finally {
         setInitializing(false);
       }
     }
-    loadUser();
-  }, []);
+    loadData();
+  }, [isEditMode, editId]);
 
   const handleChange = (field: string, value: string | number) => {
     setFormData((prev) => ({
@@ -134,8 +158,15 @@ export default function CreateBlogPage() {
         );
       }
 
-      const blog = await createBlog(formData);
-      navigate(`/blog/${blog.id}`);
+      if (isEditMode && editId) {
+        // Update existing blog - redirect to previous page
+        await updateBlog(parseInt(editId), formData);
+        navigate(-1); // Go back to previous page
+      } else {
+        // Create new blog - redirect to blog page
+        const blog = await createBlog(formData);
+        navigate(`/blog/${blog.id}`);
+      }
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Error creating post"
@@ -188,7 +219,9 @@ export default function CreateBlogPage() {
   return (
     <section className={styles.createBlog}>
       <div className={`container ${styles.container}`}>
-        <h1 className={styles.title}>Create New Post</h1>
+        <h1 className={styles.title}>
+          {isEditMode ? "Edit Post" : "Create New Post"}
+        </h1>
 
         {error && <div className={styles.error}>{error}</div>}
 
@@ -315,7 +348,13 @@ export default function CreateBlogPage() {
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Creating..." : "Create Post"}
+              {loading
+                ? isEditMode
+                  ? "Updating..."
+                  : "Creating..."
+                : isEditMode
+                ? "Update Post"
+                : "Create Post"}
             </Button>
           </div>
         </form>

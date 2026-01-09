@@ -26,8 +26,12 @@ public class Comment {
     private User user;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recipe_id", nullable = false)
+    @JoinColumn(name = "recipe_id", nullable = true)
     private Recipe recipe;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "blog_id", nullable = true)
+    private Blog blog;
 
     // --- Methods ---
     @PrePersist
@@ -59,4 +63,7 @@ public class Comment {
 
     public Recipe getRecipe() { return recipe; }
     public void setRecipe(Recipe recipe) { this.recipe = recipe; }
+    
+    public Blog getBlog() { return blog; }
+    public void setBlog(Blog blog) { this.blog = blog; }
 }

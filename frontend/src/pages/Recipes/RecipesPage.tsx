@@ -11,6 +11,7 @@ import Card from "../../components/Card/Card";
 import RecipesSlider from "../../components/RecipesSlider/RecipesSlider";
 import Subscription from "../../components/Subscribtion/Subscription";
 import AdSection from "../../components/AdSection/AdSection";
+import Comments from "../../components/Comments/Comments";
 import { Timer, ForkKnife, Printer, Share, Filter } from "../../iconComponents";
 import { useAuth } from "../../contexts/AuthContext";
 import styles from "./RecipesPage.module.scss";
@@ -130,14 +131,20 @@ export default function RecipesPage() {
     }
   }, [searchQuery, selectedCategory, cookingTimeFilter, sortBy, id]);
 
-  // Update URL when category changes
+  // Update URL when category changes (only on list page, not on recipe detail page)
   useEffect(() => {
-    if (selectedCategory) {
-      setSearchParams({ category: selectedCategory.toString() });
-    } else {
-      setSearchParams({});
+    if (!id) {
+      // Only update URL when on list page, not on recipe detail page
+      if (selectedCategory) {
+        setSearchParams(
+          { category: selectedCategory.toString() },
+          { replace: true }
+        );
+      } else {
+        setSearchParams({}, { replace: true });
+      }
     }
-  }, [selectedCategory, setSearchParams]);
+  }, [selectedCategory, setSearchParams, id]);
 
   // Фильтрация рецептов
   const filteredRecipes = allRecipes
@@ -1037,6 +1044,15 @@ export default function RecipesPage() {
               </div>
               <AdSection />
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Comments Section */}
+      <section>
+        <div className="container">
+          <div className={styles.comments_section}>
+            <Comments recipeId={recipe.id} />
           </div>
         </div>
       </section>

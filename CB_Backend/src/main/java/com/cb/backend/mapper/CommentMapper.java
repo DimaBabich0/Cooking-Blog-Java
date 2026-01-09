@@ -3,6 +3,7 @@ package com.cb.backend.mapper;
 import com.cb.backend.dto.CommentDto;
 import com.cb.backend.model.Comment;
 import com.cb.backend.model.Recipe;
+import com.cb.backend.model.Blog;
 import com.cb.backend.model.User;
 
 /**
@@ -33,7 +34,12 @@ public class CommentMapper {
         dto.setText(comment.getText());
         dto.setCreatedAt(comment.getCreatedAt());
         dto.setUpdatedAt(comment.getUpdatedAt());
-        dto.setRecipeId(comment.getRecipe().getId());
+        if (comment.getRecipe() != null) {
+            dto.setRecipeId(comment.getRecipe().getId());
+        }
+        if (comment.getBlog() != null) {
+            dto.setBlogId(comment.getBlog().getId());
+        }
         dto.setUserDto(UserMapper.toDto(comment.getUser()));
         return dto;
     }
@@ -43,13 +49,19 @@ public class CommentMapper {
      *
      * @param comment the entity to update
      * @param dto the DTO containing new values
-     * @param recipe the {@link Recipe} entity associated with the comment
+     * @param recipe the {@link Recipe} entity associated with the comment (can be null if blog is provided)
+     * @param blog the {@link Blog} entity associated with the comment (can be null if recipe is provided)
      * @param user the {@link User} entity who made the comment
      */
-    public static void updateEntity(Comment comment, CommentDto dto, Recipe recipe, User user) {
+    public static void updateEntity(Comment comment, CommentDto dto, Recipe recipe, Blog blog, User user) {
     	comment.setText(dto.getText());
     	comment.setUpdatedAt(dto.getUpdatedAt());
+    	// Clear old relationships before setting new ones
+    	comment.setRecipe(null);
+    	comment.setBlog(null);
+    	// Set new relationship
     	comment.setRecipe(recipe);
+    	comment.setBlog(blog);
     	comment.setUser(user);
     }
 }

@@ -215,11 +215,11 @@ export default function CreateRecipePage() {
       console.log("Submitting recipe:", recipeToSubmit);
 
       if (isEditMode && editId) {
-        // Update existing recipe
+        // Update existing recipe - redirect to previous page
         await updateRecipe(Number(editId), recipeToSubmit);
-        navigate("/admin/recipes");
+        navigate(-1); // Go back to previous page
       } else {
-        // Create new recipe
+        // Create new recipe - redirect to recipes page
         await createRecipe(recipeToSubmit);
         navigate("/recipes");
       }

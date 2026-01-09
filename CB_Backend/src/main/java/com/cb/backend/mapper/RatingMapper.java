@@ -3,6 +3,7 @@ package com.cb.backend.mapper;
 import com.cb.backend.dto.RatingDto;
 import com.cb.backend.model.Rating;
 import com.cb.backend.model.Recipe;
+import com.cb.backend.model.Blog;
 import com.cb.backend.model.User;
 
 /**
@@ -31,7 +32,12 @@ public class RatingMapper {
     	RatingDto dto = new RatingDto();
         dto.setId(rating.getId());
         dto.setRating(rating.getRating());
-        dto.setRecipeId(rating.getRecipe().getId());
+        if (rating.getRecipe() != null) {
+            dto.setRecipeId(rating.getRecipe().getId());
+        }
+        if (rating.getBlog() != null) {
+            dto.setBlogId(rating.getBlog().getId());
+        }
         dto.setUserId(rating.getUser().getId());
         return dto;
     }
@@ -41,12 +47,18 @@ public class RatingMapper {
      *
      * @param rating the entity to update
      * @param dto the DTO containing new values
-     * @param recipe the associated {@link Recipe} entity
+     * @param recipe the associated {@link Recipe} entity (can be null if blog is provided)
+     * @param blog the associated {@link Blog} entity (can be null if recipe is provided)
      * @param user the {@link User} entity who made the rating
      */
-    public static void updateEntity(Rating rating, RatingDto dto, Recipe recipe, User user) {
+    public static void updateEntity(Rating rating, RatingDto dto, Recipe recipe, Blog blog, User user) {
     	rating.setRating(dto.getRating());
+    	// Clear old relationships before setting new ones
+    	rating.setRecipe(null);
+    	rating.setBlog(null);
+    	// Set new relationship
     	rating.setRecipe(recipe);
+    	rating.setBlog(blog);
     	rating.setUser(user);
     }
 }

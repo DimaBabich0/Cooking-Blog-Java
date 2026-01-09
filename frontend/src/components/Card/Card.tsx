@@ -12,52 +12,52 @@ type Props = {
     withBlueBg?: boolean;
 }
 
-const WISHLIST_KEY = 'recipe_wishlist';
+const BOOKMARKS_KEY = 'recipe_bookmarks';
 
 const Card = ({recipeId, cookingTime, foodType, name, imageSrc, withBlueBg = false} : Props) => {
     const { user } = useAuth();
-    const [isInWishlist, setIsInWishlist] = useState(false);
+    const [isInBookmarks, setIsInBookmarks] = useState(false);
 
     useEffect(() => {
         if (user && recipeId) {
-            const wishlist = getWishlist();
-            setIsInWishlist(wishlist.includes(recipeId));
+            const bookmarks = getBookmarks();
+            setIsInBookmarks(bookmarks.includes(recipeId));
         }
     }, [user, recipeId]);
 
-    const getWishlist = (): number[] => {
-        const stored = localStorage.getItem(WISHLIST_KEY);
+    const getBookmarks = (): number[] => {
+        const stored = localStorage.getItem(BOOKMARKS_KEY);
         return stored ? JSON.parse(stored) : [];
     };
 
-    const toggleWishlist = (e: React.MouseEvent) => {
+    const toggleBookmark = (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
         
         if (!user || !recipeId) return;
 
-        const wishlist = getWishlist();
-        const index = wishlist.indexOf(recipeId);
+        const bookmarks = getBookmarks();
+        const index = bookmarks.indexOf(recipeId);
         
         if (index > -1) {
-            wishlist.splice(index, 1);
+            bookmarks.splice(index, 1);
         } else {
-            wishlist.push(recipeId);
+            bookmarks.push(recipeId);
         }
         
-        localStorage.setItem(WISHLIST_KEY, JSON.stringify(wishlist));
-        setIsInWishlist(!isInWishlist);
+        localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(bookmarks));
+        setIsInBookmarks(!isInBookmarks);
     };
 
     const showHeart = user !== null && user !== undefined;
-    const heartClass = isInWishlist ? styles.liked : '';
+    const heartClass = isInBookmarks ? styles.liked : '';
 
     return (
         <div className={`${styles.card} ${withBlueBg ? styles.blue_bg : ''}`}>
             {showHeart && (
                 <div 
                     className={`${styles.heart} ${heartClass}`}
-                    onClick={toggleWishlist}
+                    onClick={toggleBookmark}
                     style={{ cursor: 'pointer' }}
                 >
                     <Heart />

@@ -1,0 +1,56 @@
+@import "../../styles/variables.scss";
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin: 0;
+}
+
+.stars {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.star {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #ddd;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s, transform 0.1s;
+  line-height: 1;
+
+  &:hover:not(:disabled) {
+    color: #ffc107;
+    transform: scale(1.1);
+  }
+
+  &.filled {
+    color: #ffc107;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.rating_info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: $gray;
+}
+
+.average {
+  font-weight: 600;
+  color: $black;
+}
+
+.count {
+  color: $gray;
+}

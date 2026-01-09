@@ -12,6 +12,7 @@ public class RatingDto {
     private Integer rating;
     private Long userId;
     private Long recipeId;
+    private Long blogId;
 
     // --- Methods ---
     @Override
@@ -21,6 +22,7 @@ public class RatingDto {
                 ", rating=" + rating +
                 ", userId=" + userId +
                 ", recipeId=" + recipeId +
+                ", blogId=" + blogId +
                 '}';
     }
     
@@ -36,4 +38,7 @@ public class RatingDto {
     
     public Long getRecipeId() { return recipeId; }
     public void setRecipeId(Long recipeId) { this.recipeId = recipeId; }
+    
+    public Long getBlogId() { return blogId; }
+    public void setBlogId(Long blogId) { this.blogId = blogId; }
 }

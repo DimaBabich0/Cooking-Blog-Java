@@ -46,8 +46,15 @@ public class Rating {
      * Recipe that is being rated.
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recipe_id", nullable = false)
+    @JoinColumn(name = "recipe_id", nullable = true)
     private Recipe recipe;
+    
+    /**
+     * Blog that is being rated.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "blog_id", nullable = true)
+    private Blog blog;
     
     // --- Methods ---
     /**
@@ -75,4 +82,7 @@ public class Rating {
 
     public Recipe getRecipe() { return recipe; }
     public void setRecipe(Recipe recipe) { this.recipe = recipe; }
+    
+    public Blog getBlog() { return blog; }
+    public void setBlog(Blog blog) { this.blog = blog; }
 }

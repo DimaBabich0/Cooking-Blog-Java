@@ -15,6 +15,7 @@ public class CommentDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Long recipeId;
+    private Long blogId;
     private UserDto userDto;
 	
     // --- Methods ---
@@ -26,6 +27,7 @@ public class CommentDto {
                 ", createdAt=" + createdAt + "" +
                 ", updatedAt=" + updatedAt + "" +
                 ", recipeId=" + recipeId + "" +
+                ", blogId=" + blogId + "" +
                 ", UserDto=" + userDto + "" +
                 '}';
     }
@@ -45,6 +47,9 @@ public class CommentDto {
     
     public Long getRecipeId() { return recipeId; }
     public void setRecipeId(Long recipeId) { this.recipeId = recipeId; }
+    
+    public Long getBlogId() { return blogId; }
+    public void setBlogId(Long blogId) { this.blogId = blogId; }
     
     public UserDto getUserDto() { return userDto; }
     public void setUserDto(UserDto userDto) { this.userDto = userDto; }

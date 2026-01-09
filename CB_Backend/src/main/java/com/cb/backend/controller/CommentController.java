@@ -3,8 +3,13 @@ package com.cb.backend.controller;
 import com.cb.backend.dto.CommentDto;
 import com.cb.backend.service.CommentService;
 import com.cb.backend.service.CrudService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * REST controller for managing {@link CommentDto} entities.
@@ -44,5 +49,27 @@ public class CommentController extends AbstractCrudController<CommentDto, Long> 
     @Override
     protected CrudService<CommentDto, Long> getService() {
         return commentService;
+    }
+    
+    /**
+     * Gets all comments for a specific recipe.
+     *
+     * @param recipeId the recipe ID
+     * @return list of comments for the recipe
+     */
+    @GetMapping("/recipe/{recipeId}")
+    public List<CommentDto> getCommentsByRecipe(@PathVariable("recipeId") Long recipeId) {
+        return commentService.findByRecipeId(recipeId);
+    }
+    
+    /**
+     * Gets all comments for a specific blog.
+     *
+     * @param blogId the blog ID
+     * @return list of comments for the blog
+     */
+    @GetMapping("/blog/{blogId}")
+    public List<CommentDto> getCommentsByBlog(@PathVariable("blogId") Long blogId) {
+        return commentService.findByBlogId(blogId);
     }
 }
