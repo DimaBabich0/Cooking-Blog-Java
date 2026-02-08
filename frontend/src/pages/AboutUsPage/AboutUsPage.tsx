@@ -6,7 +6,7 @@ export default function AboutUsPage() {
       <div className="container">
         <h1>About Us</h1>
         <p>
-          Welcome to our Culinary Blog! 🍳  
+          Welcome to our Culinary Blog! 🍳
           Here we share our love for cooking, inspiring recipes, and kitchen stories.
         </p>
         <p>

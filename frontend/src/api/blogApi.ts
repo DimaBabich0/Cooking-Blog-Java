@@ -50,7 +50,7 @@ export async function updateBlog(id: number, blog: Partial<BlogDto>): Promise<Bl
   if (blog.status !== undefined) {
     payload.status = blog.status;
   }
-  
+
   const res = await fetch(`${BLOG_API}/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },

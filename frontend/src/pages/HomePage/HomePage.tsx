@@ -51,17 +51,17 @@ export default function HomePage() {
       const filteredRecipes = isAdminOrModerator
         ? recipesData
         : recipesData.filter((r) => {
-            const status = r.status?.toUpperCase();
-            return status === "PUBLISHED";
-          });
+          const status = r.status?.toUpperCase();
+          return status === "PUBLISHED";
+        });
 
       // Filter blogs: only PUBLISHED for regular users
       const filteredBlogs = isAdminOrModerator
         ? blogsData
         : blogsData.filter((b) => {
-            const status = b.status?.toUpperCase();
-            return status === "PUBLISHED";
-          });
+          const status = b.status?.toUpperCase();
+          return status === "PUBLISHED";
+        });
 
       setRecipes(filteredRecipes);
       setBlogs(filteredBlogs.slice(0, 3)); // Take first 3 blogs
@@ -208,7 +208,7 @@ export default function HomePage() {
                         <div>
                           <span>
                             {recipe.userDto?.firstName &&
-                            recipe.userDto?.lastName
+                              recipe.userDto?.lastName
                               ? `${recipe.userDto.firstName} ${recipe.userDto.lastName}`
                               : recipe.userDto?.username || "Unknown"}
                           </span>
@@ -275,8 +275,8 @@ export default function HomePage() {
                     recipe.cookTime
                       ? recipe.cookTime.toString()
                       : recipe.cookingTime
-                      ? recipe.cookingTime.toString()
-                      : "30"
+                        ? recipe.cookingTime.toString()
+                        : "30"
                   }
                   foodType={
                     recipe.categoryDtos && recipe.categoryDtos.length > 0
@@ -354,8 +354,8 @@ export default function HomePage() {
                     recipe.cookTime
                       ? recipe.cookTime.toString()
                       : recipe.cookingTime
-                      ? recipe.cookingTime.toString()
-                      : "30"
+                        ? recipe.cookingTime.toString()
+                        : "30"
                   }
                   foodType={
                     recipe.categoryDtos && recipe.categoryDtos.length > 0

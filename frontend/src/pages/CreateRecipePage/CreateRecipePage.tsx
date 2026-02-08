@@ -43,25 +43,25 @@ export default function CreateRecipePage() {
           getCategories(),
         ]);
         setCategories(categoriesData);
-        
+
         // If editing, load recipe data
         if (isEditMode && editId) {
           const recipe = await getRecipe(editId);
-          
+
           // Check permissions: admin can only edit their own recipes
           if (user?.role === "ADMIN" && recipe.userDto?.id !== user.id) {
             setError("You can only edit your own recipes");
             navigate("/admin/recipes");
             return;
           }
-          
+
           // Check permissions: author can only edit their own recipes
           if (user?.role === "AUTHOR" && recipe.userDto?.id !== user.id) {
             setError("You can only edit your own recipes");
             navigate("/recipes");
             return;
           }
-          
+
           // Load recipe data into form
           setFormData({
             id: recipe.id,
@@ -534,8 +534,8 @@ export default function CreateRecipePage() {
 
             <div className={styles.actions}>
               <Button type="submit" disabled={loading}>
-                {loading 
-                  ? (isEditMode ? "Updating..." : "Creating...") 
+                {loading
+                  ? (isEditMode ? "Updating..." : "Creating...")
                   : (isEditMode ? "Update Recipe" : "Create Recipe")}
               </Button>
               <Button

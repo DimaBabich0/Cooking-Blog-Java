@@ -82,9 +82,9 @@ export default function RecipesPage() {
           const filteredRelated = isAdminOrModerator
             ? recipesData.filter((r) => r.id !== recipeData.id)
             : recipesData.filter((r) => {
-                const status = r.status?.toUpperCase();
-                return r.id !== recipeData.id && status === "PUBLISHED";
-              });
+              const status = r.status?.toUpperCase();
+              return r.id !== recipeData.id && status === "PUBLISHED";
+            });
           setRelatedRecipes(filteredRelated.slice(0, 12));
         } else {
           // Load recipes list and blogs for sidebar
@@ -99,17 +99,17 @@ export default function RecipesPage() {
           const filteredRecipes = isAdminOrModerator
             ? recipesData
             : recipesData.filter((r) => {
-                const status = r.status?.toUpperCase();
-                return status === "PUBLISHED";
-              });
+              const status = r.status?.toUpperCase();
+              return status === "PUBLISHED";
+            });
           setAllRecipes(filteredRecipes);
           // Filter blogs by status for regular users
           const filteredBlogs = isAdminOrModerator
             ? blogsData
             : blogsData.filter((b) => {
-                const status = b.status?.toUpperCase();
-                return status === "PUBLISHED";
-              });
+              const status = b.status?.toUpperCase();
+              return status === "PUBLISHED";
+            });
           setBlogs(filteredBlogs); // For sidebar and grid
           setCategories(categoriesData);
         }
@@ -414,13 +414,13 @@ export default function RecipesPage() {
                           date={
                             r.createdAt
                               ? new Date(r.createdAt).toLocaleDateString(
-                                  "en-US",
-                                  {
-                                    day: "numeric",
-                                    month: "long",
-                                    year: "numeric",
-                                  }
-                                )
+                                "en-US",
+                                {
+                                  day: "numeric",
+                                  month: "long",
+                                  year: "numeric",
+                                }
+                              )
                               : undefined
                           }
                           imageSrc={
@@ -762,14 +762,14 @@ export default function RecipesPage() {
       return steps.length > 0
         ? steps
         : [
-            {
-              number: 1,
-              title: "",
-              contentBeforeImage: tempDiv.innerHTML.trim(),
-              image: null,
-              contentAfterImage: "",
-            },
-          ];
+          {
+            number: 1,
+            title: "",
+            contentBeforeImage: tempDiv.innerHTML.trim(),
+            image: null,
+            contentAfterImage: "",
+          },
+        ];
     }
 
     // Если нет изображений и заголовков, показываем весь контент как один шаг
@@ -1033,8 +1033,8 @@ export default function RecipesPage() {
                           r.cookTime
                             ? r.cookTime.toString()
                             : r.cookingTime
-                            ? r.cookingTime.toString()
-                            : "30"
+                              ? r.cookingTime.toString()
+                              : "30"
                         }
                         foodType={r.categoryDtos?.[0]?.name || "General"}
                       />

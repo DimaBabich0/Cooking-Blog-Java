@@ -46,14 +46,14 @@ export default function AdminRecipesPage() {
         PUBLISHED: "Published",
         REJECTED: "Rejected",
       };
-      
+
       const currentLabel = statusLabels[currentStatus.toUpperCase()] || currentStatus;
       const newLabel = statusLabels[newStatus.toUpperCase()] || newStatus;
-      
+
       const confirmed = window.confirm(
         `Are you sure you want to change the status of "${recipe.title}" from "${currentLabel}" to "${newLabel}"?`
       );
-      
+
       if (!confirmed) {
         // Reset select to original value
         const select = document.querySelector(
@@ -85,7 +85,7 @@ export default function AdminRecipesPage() {
         categoryDtos: recipe.categoryDtos,
         ingredientsDto: recipe.ingredientsDto,
       };
-      
+
       await updateRecipe(recipeId, updatePayload);
       await loadRecipes();
     } catch (err) {
@@ -96,7 +96,7 @@ export default function AdminRecipesPage() {
 
   async function handleDelete(recipeId: number) {
     if (!confirm("Are you sure you want to delete this recipe?")) return;
-    
+
     try {
       await deleteRecipe(recipeId);
       await loadRecipes();
@@ -105,8 +105,8 @@ export default function AdminRecipesPage() {
     }
   }
 
-  const filteredRecipes = statusFilter === "all" 
-    ? recipes 
+  const filteredRecipes = statusFilter === "all"
+    ? recipes
     : recipes.filter(r => r.status === statusFilter);
 
   const statusCounts = {

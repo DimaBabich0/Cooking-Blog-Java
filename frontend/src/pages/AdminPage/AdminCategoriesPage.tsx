@@ -89,7 +89,7 @@ export default function AdminCategoriesPage() {
 
   async function handleDelete(categoryId: number) {
     if (!confirm("Are you sure you want to delete this category?")) return;
-    
+
     try {
       await deleteCategory(categoryId);
       await loadCategories();

@@ -40,15 +40,15 @@ export default function BlogPage() {
       const filteredBlogs = isAdminOrModerator
         ? blogsData
         : blogsData.filter((b) => {
-            const status = b.status?.toUpperCase();
-            return status === "PUBLISHED";
-          });
+          const status = b.status?.toUpperCase();
+          return status === "PUBLISHED";
+        });
       const filteredRecipes = isAdminOrModerator
         ? recipesData
         : recipesData.filter((r) => {
-            const status = r.status?.toUpperCase();
-            return status === "PUBLISHED";
-          });
+          const status = r.status?.toUpperCase();
+          return status === "PUBLISHED";
+        });
       setBlogs(filteredBlogs);
       setRecipes(filteredRecipes.slice(0, 3)); // For sidebar
       setError(null);
@@ -232,13 +232,13 @@ export default function BlogPage() {
                         date={
                           blog.createdAt
                             ? new Date(blog.createdAt).toLocaleDateString(
-                                "en-US",
-                                {
-                                  day: "numeric",
-                                  month: "long",
-                                  year: "numeric",
-                                }
-                              )
+                              "en-US",
+                              {
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric",
+                              }
+                            )
                             : undefined
                         }
                         imageSrc={
@@ -343,8 +343,8 @@ export default function BlogPage() {
                     recipe.cookTime
                       ? recipe.cookTime.toString()
                       : recipe.cookingTime
-                      ? recipe.cookingTime.toString()
-                      : "30"
+                        ? recipe.cookingTime.toString()
+                        : "30"
                   }
                   foodType={
                     recipe.categoryDtos && recipe.categoryDtos.length > 0

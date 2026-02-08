@@ -36,10 +36,12 @@
     overflow: hidden;
     width: 100%;
     max-width: 100%;
+
     @media (max-width: 1024px) {
       display: flex;
       flex-direction: column-reverse;
     }
+
     .recipe_info {
       display: flex;
       flex-direction: column;
@@ -49,17 +51,21 @@
       @media (max-width: 1024px) {
         padding: 2.5rem;
       }
+
       @media (max-width: 525px) {
         padding: 1.5rem;
       }
+
       .recipe_category {
         padding: 0.75rem 1.25rem;
         border-radius: 30px;
         background: $white;
         width: fit-content;
+
         @media (max-width: 525px) {
           display: none;
         }
+
         span {
           font-size: 0.875rem;
           font-weight: 600;
@@ -68,6 +74,7 @@
 
       h1 {
         margin: 2rem 0 1.5rem 0;
+
         @media (max-width: 1024px) {
           line-height: 1.5;
           margin: 0.5rem 0 1rem 0;
@@ -76,12 +83,15 @@
 
       .recipe_tags {
         margin: 1.875rem 0 6.5rem 0;
+
         @media (max-width: 1024px) {
           margin: 1.5rem 0 2rem 0;
         }
+
         display: flex;
         align-items: center;
         gap: 1rem;
+
         .tag {
           display: flex;
           align-items: center;
@@ -110,15 +120,18 @@
         width: 100%;
         justify-content: space-between;
         display: flex;
+
         @media (max-width: 525px) {
           flex-direction: column;
           align-items: flex-start;
           gap: 1rem;
         }
+
         .author {
           display: flex;
           gap: 1.75rem;
           align-items: center;
+
           img {
             width: 3.125rem;
             height: 3.125rem;
@@ -130,6 +143,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+
             span {
               font-weight: 600;
             }
@@ -221,12 +235,11 @@
       align-items: center;
       border-radius: 30px;
       gap: 3rem;
-      background: linear-gradient(
-        to bottom,
-        transparent,
-        rgba(112, 130, 70, 0.1)
-      );
+      background: linear-gradient(to bottom,
+          transparent,
+          rgba(112, 130, 70, 0.1));
       padding: 0 2.5rem 1.875rem 2.5rem;
+
       img {
         border-radius: 1.5rem;
       }
@@ -248,6 +261,7 @@
     margin: 6rem 0;
     align-items: center;
     text-align: center;
+
     * {
       max-width: 700px;
     }
@@ -364,6 +378,7 @@
     gap: 1.5rem;
     align-items: center;
     text-align: center;
+
     * {
       max-width: 840px;
     }

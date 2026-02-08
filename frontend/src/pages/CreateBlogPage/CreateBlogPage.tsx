@@ -38,7 +38,7 @@ export default function CreateBlogPage() {
         // If editing, load blog data
         if (isEditMode && editId) {
           const blog = await getBlog(editId);
-          
+
           // Load blog data into form
           setFormData({
             id: blog.id,
@@ -353,8 +353,8 @@ export default function CreateBlogPage() {
                   ? "Updating..."
                   : "Creating..."
                 : isEditMode
-                ? "Update Post"
-                : "Create Post"}
+                  ? "Update Post"
+                  : "Create Post"}
             </Button>
           </div>
         </form>

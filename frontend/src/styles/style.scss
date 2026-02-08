@@ -14,9 +14,11 @@ html {
   max-width: 100vw;
   overflow-x: hidden;
   font-size: 16px;
+
   @media (max-width: 1300px) {
     font-size: 14px;
   }
+
   // @media (max-width:525px) {
   //     font-size: 12px;
   // }
@@ -41,6 +43,7 @@ main,
 footer {
   width: 100%;
 }
+
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -48,6 +51,7 @@ footer {
   position: relative;
   min-height: 100vh;
 }
+
 .container {
   display: flex;
   flex-direction: column;
@@ -68,15 +72,19 @@ main {
 h1 {
   @include h1;
 }
+
 h2 {
   @include h2;
 }
+
 h3 {
   @include h3;
 }
+
 h4 {
   @include h4;
 }
+
 p,
 li {
   @include paragraph;

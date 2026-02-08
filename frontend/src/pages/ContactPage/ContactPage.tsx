@@ -32,9 +32,9 @@ export default function ContactPage() {
         const filteredRecipes = isAdminOrModerator
           ? recipes
           : recipes.filter((r) => {
-              const status = r.status?.toUpperCase();
-              return status === "PUBLISHED";
-            });
+            const status = r.status?.toUpperCase();
+            return status === "PUBLISHED";
+          });
         setRelatedRecipes(filteredRecipes);
       } catch (err) {
         console.error("Error loading recipes:", err);

@@ -78,7 +78,7 @@ export async function updateRecipe(id: number, recipe: Partial<RecipeDto>): Prom
   if (recipe.status !== undefined) {
     payload.status = recipe.status;
   }
-  
+
   const res = await fetch(`${RECIPE_API}/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
@@ -138,7 +138,7 @@ export async function createRecipe(recipe: Partial<RecipeDto>): Promise<RecipeDt
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-  
+
   if (!res.ok) {
     let errorMessage = "Error creating recipe";
     try {

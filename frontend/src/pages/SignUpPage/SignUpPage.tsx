@@ -56,7 +56,7 @@ export default function SignUpPage() {
       };
 
       const createdUser = await createUser(userToCreate);
-      
+
       // Автоматически входим после регистрации
       setAuthUser(createdUser);
       navigate("/");

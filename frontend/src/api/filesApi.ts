@@ -10,17 +10,17 @@ export async function uploadFile(file: File, folder: string): Promise<string> {
   const formData = new FormData();
   formData.append("file", file);
   formData.append("folder", folder);
-  
+
   try {
     const res = await fetch(UPLOAD_URL, {
       method: "POST",
       body: formData,
     });
-    
+
     if (!res.ok) {
       const errorText = await res.text();
       let errorMessage = "Ошибка загрузки файла";
-      
+
       if (res.status === 413) {
         errorMessage = "Файл слишком большой (максимум 5MB)";
       } else if (res.status === 404) {
@@ -30,10 +30,10 @@ export async function uploadFile(file: File, folder: string): Promise<string> {
       } else {
         errorMessage = `Ошибка ${res.status}: ${errorText || "Неизвестная ошибка"}`;
       }
-      
+
       throw new Error(errorMessage);
     }
-    
+
     const data = await res.json();
     return data.path; // Возвращает "folder/filename"
   } catch (error) {

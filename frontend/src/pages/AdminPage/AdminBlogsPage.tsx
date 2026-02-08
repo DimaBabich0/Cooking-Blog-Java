@@ -44,14 +44,14 @@ export default function AdminBlogsPage() {
         PUBLISHED: "Published",
         REJECTED: "Rejected",
       };
-      
+
       const currentLabel = statusLabels[currentStatus.toUpperCase()] || currentStatus;
       const newLabel = statusLabels[newStatus.toUpperCase()] || newStatus;
-      
+
       const confirmed = window.confirm(
         `Are you sure you want to change the status of "${blog.title}" from "${currentLabel}" to "${newLabel}"?`
       );
-      
+
       if (!confirmed) {
         // Reset select to original value
         const select = document.querySelector(
@@ -74,7 +74,7 @@ export default function AdminBlogsPage() {
         status: newStatus, // Explicitly set status
         userDto: blog.userDto,
       };
-      
+
       await updateBlog(blogId, updatePayload);
       await loadBlogs();
     } catch (err) {
@@ -85,7 +85,7 @@ export default function AdminBlogsPage() {
 
   async function handleDelete(blogId: number) {
     if (!confirm("Are you sure you want to delete this blog post?")) return;
-    
+
     try {
       await deleteBlog(blogId);
       await loadBlogs();
@@ -94,8 +94,8 @@ export default function AdminBlogsPage() {
     }
   }
 
-  const filteredBlogs = statusFilter === "all" 
-    ? blogs 
+  const filteredBlogs = statusFilter === "all"
+    ? blogs
     : blogs.filter(b => b.status === statusFilter);
 
   const statusCounts = {
